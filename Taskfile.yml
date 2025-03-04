@@ -1,0 +1,22 @@
+# https://taskfile.dev
+
+version: "3"
+
+tasks:
+  default:
+    desc: list all tasks
+    cmds:
+      - task --list-all
+    silent: true
+  setup:
+    desc: setup
+    cmds:
+      - npm i
+  start:
+    cmds:
+      - task setup
+      - npm run dev
+  start-prod:
+    cmds:
+      - task setup
+      - npm start
