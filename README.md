@@ -2,6 +2,8 @@
 
 ## Uruchamianie
 
+TLDR: `task start`
+
 Aby uruchomić projekt, zainstaluj zależności:
 
 ```bash

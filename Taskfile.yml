@@ -9,14 +9,16 @@ tasks:
       - task --list-all
     silent: true
   setup:
-    desc: setup
+    desc: setup dependencies
     cmds:
       - npm i
   start:
+    desc: start in development mode
     cmds:
       - task setup
       - npm run dev
   start-prod:
+    desc: start in producion mode
     cmds:
       - task setup
       - npm start
