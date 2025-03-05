@@ -1,6 +1,7 @@
 import { transform } from 'typescript';
 import './maze/Maze';
-import { Maze, MazeNode, Vec2d } from './maze/Maze';
+import { Maze, MazeNode } from './maze/Maze';
+import { Vec2d } from './types';
 
 const maze = new Maze({
     size: new Vec2d({ x: 5, y: 5 }),
