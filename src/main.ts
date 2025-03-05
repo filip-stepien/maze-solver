@@ -1,15 +1,44 @@
+import { transform } from 'typescript';
 import './maze/Maze';
-import { Maze, MazeNode } from './maze/Maze';
+import { Maze, MazeNode, Vec2d } from './maze/Maze';
 
-const maze = new Maze({ x: 5, y: 3, initializer: new MazeNode({ isSolid: true }) });
+const maze = new Maze({
+    size: new Vec2d({ x: 5, y: 5 }),
+    initializer: new MazeNode({ isSolid: true })
+});
 
-console.log(maze);
+// console.log(maze);
 
-maze.transformNode(1, 1, (node: MazeNode) => {
-    node.setIsSolid(false);
-    return node;
+[
+    [0, 0],
+    [1, 0],
+    [2, 0],
+    [0, 3],
+    [1, 4],
+    [0, 4],
+    [2, 1],
+    [2,2],
+    [1,2],
+    [0,2],
+    [3,1],
+    [4,1],
+    [4,0],
+    [2,4],
+    [3,4],
+    [4,4],
+    [3,3]
+].forEach(e => {
+    console.debug('main(): setting ', e);
+    const pos = new Vec2d({
+        x: e[0],
+        y: e[1]
+    });
+
+    maze.transformNode(pos, node => {
+        node.setIsSolid(false);
+        return node;
+    });
 });
 
 console.log(maze.toString());
-
-console.log('ziutek');
+// console.dir(maze, { depth: null });
