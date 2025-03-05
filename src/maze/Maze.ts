@@ -16,6 +16,14 @@ export class MazeNode {
     isSolid(): boolean {
         return this.m_isSolid;
     }
+
+    toString(): string {
+        if (this.isSolid()) {
+            return '▓';
+        } else {
+            return ' ';
+        }
+    }
 }
 
 export class Maze<T extends MazeNode> {
@@ -115,7 +123,7 @@ export class Maze<T extends MazeNode> {
         this.matrix.forEach(e => {
             e.forEach(node => {
                 // console.debug(node);
-                str += node.isSolid() ? '▓' : '~';
+                str += node.toString();
             });
             str += '\n';
         });
