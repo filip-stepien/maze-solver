@@ -19,8 +19,7 @@ export class MazeNode {
 }
 
 export class Maze<T extends MazeNode> {
-    protected matrix: MazeNode[][];
-
+    protected matrix: T[][];
     protected size: Vec2d;
 
     get getSize() {
@@ -129,13 +128,13 @@ export class Maze<T extends MazeNode> {
      * @param y vertical postion of node
      * @param transform lambda function that takes current state of node and returns modfied one
      */
-    public transformNode(pos: Vec2d, transform: (node: MazeNode) => MazeNode): void {
+    public transformNode(pos: Vec2d, transform: (node: T) => T): void {
         console.debug('Maze::transformNode');
         this.validateNodePosition(pos);
         const { x, y } = pos;
-        const oldNode: MazeNode = this.matrix[y][x];
+        const oldNode: T = this.matrix[y][x];
 
-        const node: MazeNode = transform(oldNode);
+        const node: T = transform(oldNode);
 
         this.matrix[y][x] = node;
         // console.debug('transformed', node);
