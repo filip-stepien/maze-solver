@@ -2,7 +2,7 @@ import { transform } from 'typescript';
 import './maze/Maze';
 import { Maze, MazeNode } from './maze/Maze';
 import { Vec2d } from './types';
-import MazePathFinder from './maze/MazePathFinder';
+import MazePathFinder, { MazePathFinderNode } from './maze/MazePathFinder';
 
 const setupMaze = () => {
     console.debug('initializer: ', MazeNode.initializer);
@@ -48,14 +48,16 @@ const setupMaze = () => {
 // console.dir(maze, { depth: null });
 
 const findPath = (maze: Maze<MazeNode>) => {
-    // const mpf = new MazePathFinder(maze);
+    const mpf = new MazePathFinder(maze, MazePathFinderNode.initializer);
     // console.debug(mpf);
-    // console.dir(mpf, { depth: null });
+    console.dir(mpf, { depth: null });
 };
 
 const main = () => {
     const maze = setupMaze();
+    console.log('-----------------------------');
     console.log(maze.toString());
+    console.log('-----------------------------');
     findPath(maze);
 };
 export default main;

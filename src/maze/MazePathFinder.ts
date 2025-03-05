@@ -8,9 +8,14 @@ import { Maze, MazeNode } from './Maze';
  * - candidate -- algorithm might use this node for finall path
  * - selected -- algorithm has chosen node for finall path
  */
-type MazePathFinderNodeState = 'notproceesed' |'candidate' | 'selected';
+type MazePathFinderNodeState = 'notproceesed' | 'candidate' | 'selected';
 
 export class MazePathFinderNode extends MazeNode {
+    static initializer: MazePathFinderNode = new this();
+
+    constructor() {
+        super(undefined);
+    }
 
     state: MazePathFinderNodeState = 'notproceesed';
 
@@ -32,8 +37,8 @@ export class MazePathFinderNode extends MazeNode {
     }
 
     /**
-    * Inicate that this node is/was selected for final path by algorithm
-    */
+     * Inicate that this node is/was selected for final path by algorithm
+     */
     tagSelected() {
         // can't select node that was not processed
         this.tagCandidate();
@@ -43,26 +48,28 @@ export class MazePathFinderNode extends MazeNode {
     /**
      * @returns current most important state of node
      */
-    getState() : MazePathFinderNodeState {
-        if(this.m_selected){
-            return 'selected'
+    getState(): MazePathFinderNodeState {
+        if (this.m_selected) {
+            return 'selected';
         }
-        if(this.m_candidate){
-            return 'candidate'
+        if (this.m_candidate) {
+            return 'candidate';
         }
 
-        return 'notproceesed'
+        return 'notproceesed';
     }
-
 }
 
 export default class MazePathFinder<T extends MazePathFinderNode> extends Maze<T> {
     protected strategy: MazePathFindStrategy<T>;
 
     constructor(maze: Maze<MazeNode>, initializer: T) {
-        super({ data: maze.getNodeMatrix().map(row => row.map( e => {
-            // TODO extend e to T
-        )});
+        const transformedMaze = maze.getNodeMatrix().map(row => {
+            return row.map(e => {
+                return Object.assign({}, initializer, e);
+            });
+        });
+        super({ data: transformedMaze });
     }
 
     findPath(start: Vec2d, end: Vec2d): MazePath {
