@@ -7,7 +7,7 @@ export class Vec2d implements Point {
     x: number;
     y: number;
 
-    constructor(arg: Point | Array<number>[2]) {
+    constructor(arg: Point | Array<number>) {
         if (typeof arg === 'object' && !Array.isArray(arg)) {
             this.x = arg.x;
             this.y = arg.y;

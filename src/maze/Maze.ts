@@ -2,10 +2,14 @@ import { Vec2d } from '../types';
 import { logFunctionCall } from './Debug';
 
 export class MazeNode {
-    private m_isSolid: boolean;
+    public static initializer = new this(undefined);
 
-    constructor({ isSolid }: { isSolid: boolean }) {
-        this.m_isSolid = isSolid;
+    private m_isSolid: boolean = false;
+
+    constructor(arg: { isSolid?: boolean } | never) {
+        if (arg?.isSolid) {
+            this.m_isSolid = arg.isSolid;
+        }
     }
 
     setIsSolid(isSolid: boolean): void {
@@ -21,17 +25,17 @@ export class MazeNode {
         if (this.isSolid()) {
             return '▓';
         } else {
-            return ' ';
+            return '·';
         }
     }
 }
 
 export class Maze<T extends MazeNode> {
-    protected matrix: T[][];
-    protected size: Vec2d;
+    protected m_matrix: T[][] = [[]];
+    protected m_size: Vec2d = new Vec2d([0, 0]);
 
     get getSize() {
-        return this.size;
+        return this.m_size;
     }
 
     /**
@@ -45,10 +49,10 @@ export class Maze<T extends MazeNode> {
         if (
             // check x bound
             x < 0 ||
-            x > this.size.x ||
+            x > this.m_size.x ||
             // check y bound
             y < 0 ||
-            y > this.size.y
+            y > this.m_size.y
         ) {
             const mess = 'Postion ${pos.toString()} is out of bounds';
             throw RangeError(mess);
@@ -78,15 +82,15 @@ export class Maze<T extends MazeNode> {
         console.debug('Maze::Maze');
         if (data) {
             console.debug('Maze::Maze intializing with data matrix');
-            this.matrix = data;
+            this.m_matrix = data;
             return;
         }
 
         if (size.x && size.y && initializer) {
             console.debug('Maze::Maze intializing with template object');
             const { x, y } = size;
-            this.size = size;
-            this.matrix = Array.from(
+            this.m_size = size;
+            this.m_matrix = Array.from(
                 // create vector
                 { length: y },
                 // cosisting of vectors
@@ -114,13 +118,17 @@ export class Maze<T extends MazeNode> {
      * @param y vertical postion of node
      * @returns node at given postion
      */
-    public getNode(pos: Vec2d): MazeNode {
-        return this.matrix[pos.x][pos.y];
+    public getNode(pos: Vec2d): T {
+        return this.m_matrix[pos.x][pos.y];
+    }
+
+    public getNodeMatrix(): T[][] {
+        return this.m_matrix;
     }
 
     public toString(): string {
         let str = '';
-        this.matrix.forEach(e => {
+        this.m_matrix.forEach(e => {
             e.forEach(node => {
                 // console.debug(node);
                 str += node.toString();
@@ -140,11 +148,11 @@ export class Maze<T extends MazeNode> {
         console.debug('Maze::transformNode');
         this.validateNodePosition(pos);
         const { x, y } = pos;
-        const oldNode: T = this.matrix[y][x];
+        const oldNode: T = this.m_matrix[y][x];
 
         const node: T = transform(oldNode);
 
-        this.matrix[y][x] = node;
+        this.m_matrix[y][x] = node;
         // console.debug('transformed', node);
     }
 }

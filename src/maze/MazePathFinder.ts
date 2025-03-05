@@ -2,42 +2,68 @@ import { MazePathFindStrategy } from '../strategies/MazePathFindStrategy';
 import { MazePath, Vec2d } from '../types';
 import { Maze, MazeNode } from './Maze';
 
+/**
+ * Node states
+ * - notproccesed -- algorithm did not touch that node
+ * - candidate -- algorithm might use this node for finall path
+ * - selected -- algorithm has chosen node for finall path
+ */
+type MazePathFinderNodeState = 'notproceesed' |'candidate' | 'selected';
+
 export class MazePathFinderNode extends MazeNode {
+
+    state: MazePathFinderNodeState = 'notproceesed';
+
     /**
      * Indicates that node was considered by algorithm for finding path
      */
-    private m_consdered: boolean;
-
-    /**
-     * Inicate that this node was considered by algorithm
-     */
-    tagConsidered() {
-        this.m_consdered = true;
-    }
-
-    /**
-     * Query weather node was considered
-     */
-    isConsidered(): boolean {
-        return this.m_consdered;
-    }
+    private m_candidate: boolean = false;
 
     /**
      * Indicates that node was chosen for path by algorithm
      */
-    private m_selected: boolean;
+    private m_selected: boolean = false;
 
+    /**
+     * Inicate that this node is or was considered by algorithm
+     */
+    tagCandidate() {
+        this.m_candidate = true;
+    }
+
+    /**
+    * Inicate that this node is/was selected for final path by algorithm
+    */
     tagSelected() {
+        // can't select node that was not processed
+        this.tagCandidate();
         this.m_selected = true;
     }
 
-    isSelected() {
-        return this.m_selected;
+    /**
+     * @returns current most important state of node
+     */
+    getState() : MazePathFinderNodeState {
+        if(this.m_selected){
+            return 'selected'
+        }
+        if(this.m_candidate){
+            return 'candidate'
+        }
+
+        return 'notproceesed'
     }
+
 }
 
 export default class MazePathFinder<T extends MazePathFinderNode> extends Maze<T> {
     protected strategy: MazePathFindStrategy<T>;
+
+    constructor(maze: Maze<MazeNode>, initializer: T) {
+        super({ data: maze.getNodeMatrix().map(row => row.map( e => {
+            // TODO extend e to T
+        )});
+    }
 
     findPath(start: Vec2d, end: Vec2d): MazePath {
         if (!this.strategy) {
