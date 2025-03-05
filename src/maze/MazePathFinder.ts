@@ -40,6 +40,10 @@ export default class MazePathFinder<T extends MazePathFinderNode> extends Maze<T
     protected strategy: MazePathFindStrategy<T>;
 
     findPath(start: Vec2d, end: Vec2d): MazePath {
+        if (!this.strategy) {
+            throw new Error('MazePathFinder::findPath strategy is not set');
+            return;
+        }
         return this.strategy.findPath(this, start, end);
     }
 }
