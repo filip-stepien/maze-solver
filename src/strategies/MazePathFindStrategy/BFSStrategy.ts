@@ -7,9 +7,8 @@ import { MazePathFindStrategy } from './MazePathFindStrategy';
  */
 export class BFSStrategy<T extends MazePathFinderNode> implements MazePathFindStrategy<T> {
     findPath(maze: MazePathFinder<T>, start: Vec2d, end: Vec2d): MazePath {
-        const startNode = maze.getNode(start);
-        console.debug(startNode);
-        // throw new Error('Method not implemented.');
+        console.debug(`${BFSStrategy.name}::findPath()`);
+        
         return [];
     }
 }

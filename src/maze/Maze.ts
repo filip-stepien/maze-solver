@@ -2,18 +2,12 @@ import { Vec2d } from '../types';
 import { logFunctionCall } from './Debug';
 
 export class MazeNode {
-    public static initializer = new this(undefined);
+    public static initializer = new this();
 
     private m_isSolid: boolean = false;
 
-    constructor(arg: { isSolid?: boolean } | never) {
-        if (arg?.isSolid) {
-            this.m_isSolid = arg.isSolid;
-        }
-    }
-
     setIsSolid(isSolid: boolean): void {
-        console.debug('MazeNode::setIsSolid');
+        // console.debug('MazeNode::setIsSolid');
         this.m_isSolid = isSolid;
     }
 
@@ -31,6 +25,10 @@ export class MazeNode {
 }
 
 export class Maze<T extends MazeNode> {
+    protected getDefaultNode() {
+        return new MazeNode();
+    }
+
     protected m_matrix: T[][] = [[]];
     protected m_size: Vec2d = new Vec2d([0, 0]);
 
@@ -59,59 +57,42 @@ export class Maze<T extends MazeNode> {
         }
     }
 
+    private initMatrix({ x, y }: Vec2d) {
+        Array.from({ length: this.m_size.y }, () => {
+            Array.from({ length: this.m_size.x }, () => {
+                return Object.getPrototypeOf(this.getDefaultNode()).constructor();
+            });
+        });
+    }
+
     /**
      * @param x size of maze in horizontal direction
      * @param y size of maze in vertical drection
-     * @param initializer value used to initialzie maze cells
-     * @param data maze matrix to initialze with
+     * @param data solidity matrix to initialze with
      * @returns Maze
      *
      * @brief
      * - If data is specified, all other parameters are ignored
      * - If it is not x, y and initializer are used
      */
-    public constructor({
-        size,
-        initializer,
-        data
-    }: {
-        size?: Vec2d;
-        initializer?: T;
-        data?: T[][];
-    }) {
+    public constructor({ size, solididtyData }: { size?: Vec2d; solididtyData?: boolean[][] }) {
         console.debug('Maze::Maze');
-        if (data) {
+        if (solididtyData) {
             console.debug('Maze::Maze intializing with data matrix');
-            this.m_size.y = data.length;
-            this.m_size.x = data[0].length;
-            this.m_matrix = data;
-            return;
+            this.initMatrix(new Vec2d([solididtyData.length, solididtyData[0].length]));
+
+            try {
+                this.validateNodePosition(this.m_size);
+            } catch (error) {
+                throw RangeError('Maze size requested is invalid');
+            }
         }
 
-        if (size.x && size.y && initializer) {
-            console.debug('Maze::Maze intializing with template object');
-            const { x, y } = size;
-            this.m_size = size;
-            this.m_matrix = Array.from(
-                // create vector
-                { length: y },
-                // cosisting of vectors
-                () =>
-                    Array.from(
-                        { length: x },
-                        // with value of initalizer
-                        () => {
-                            return Object.assign(
-                                Object.create(Object.getPrototypeOf(initializer)),
-                                initializer
-                            );
-                        }
-                    )
-            );
+        if (size.x && size.y) {
+            console.debug('Maze::Maze intializing ');
+            this.initMatrix(size);
             return;
         }
-
-        throw Error('Invalid maze intialization');
     }
 
     /**
@@ -120,14 +101,10 @@ export class Maze<T extends MazeNode> {
      * @param y vertical postion of node
      * @returns node at given postion
      */
-    public getNode(pos: Vec2d): T {
-        this.validateNodePosition(pos);
+    protected getNode(pos: Vec2d): T {
         console.debug('Maze::getNode()', pos);
+        this.validateNodePosition(pos);
         return this.m_matrix[pos.y][pos.x];
-    }
-
-    public getNodeMatrix(): T[][] {
-        return this.m_matrix;
     }
 
     public toString(): string {

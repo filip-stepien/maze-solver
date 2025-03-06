@@ -8,18 +8,18 @@ import { BFSStrategy } from './strategies/MazePathFindStrategy/BFSStrategy';
 const setupMaze = () => {
     console.debug('initializer: ', MazeNode.initializer);
 
-    // initially make everything solid
-    const maze = new Maze({
-        size: new Vec2d({ x: 5, y: 6 }),
-        initializer: MazeNode.initializer
+    console.info('creatig maze');
+    const maze = new MazePathFinder({
+        size: new Vec2d({ x: 5, y: 6 })
     });
 
-    // crave some maze
+    console.info('making every maze node solid');
     maze.transformEachNode(e => {
         e.setIsSolid(true);
         return e;
     });
 
+    console.info('setting some maze nodes to not solid');
     [
         [0, 0],
         [1, 0],
@@ -52,25 +52,29 @@ const setupMaze = () => {
     return maze;
 };
 
-// const mpf = new MazePathFinder(maze);
-// console.dir(maze, { depth: null });
+// const findPath = (maze: Maze<MazeNode>) => {
+//     const mpf = new MazePathFinder(maze);
+//     console.info(`initialzied ${Object.getPrototypeOf(mpf).constructor.name}`);
+//     const strategy = new BFSStrategy();
+//     mpf.setPathFindStrategy(strategy);
+//     console.info(
+//         `${Object.getPrototypeOf(mpf).constructor.name} strategy set ${
+//             Object.getPrototypeOf(strategy).constructor.name
+//         }`
+//     );
 
-const findPath = (maze: Maze<MazeNode>) => {
-    const mpf = new MazePathFinder(maze, MazePathFinderNode.s_initializer);
-    const strategy = new BFSStrategy();
-    mpf.setPathFindStrategy(strategy);
-    // console.debug(mpf);
-    console.dir(mpf, { depth: null });
-
-    mpf.findPath(new Vec2d([0, 0]), new Vec2d([3, 3]));
-};
+//     mpf.findPath(new Vec2d([0, 0]), new Vec2d([3, 3]));
+//     console.dir(mpf, { depth: null });
+// };
 
 const main = () => {
     const maze = setupMaze();
     console.log('-----------------------------');
-    console.log(maze.toString());
+    console.info('drawing maze using toString');
+    console.log(`${maze}`);
     console.log('-----------------------------');
-    findPath(maze);
+    console.info('finding path');
+    // findPath(maze);
 };
 export default main;
 

@@ -6,8 +6,10 @@ import { Maze, MazeNode } from './Maze';
  * Node states
  * - candidate -- algorithm might use this node for finall path
  * - selected -- algorithm has chosen node for finall path
+ * - start -- required start node of path
+ * - finsih -- required end node of path
  */
-type MazePathFinderNodeStateLabel = 'candidate' | 'selected';
+type MazePathFinderNodeStateLabel = 'start' | 'finish' | 'candidate' | 'selected';
 
 /**
  * On top of representing node,
@@ -15,13 +17,12 @@ type MazePathFinderNodeStateLabel = 'candidate' | 'selected';
  * pathfinding algorithm use this class methods to indicate state of node.
  */
 export class MazePathFinderNode extends MazeNode {
-    static s_initializer: MazePathFinderNode = new this();
-
     constructor() {
-        super(undefined);
+        super();
+        this.m_labels = new Set([]);
     }
 
-    private m_labels: Set<MazePathFinderNodeStateLabel> = Object.seal(new Set([]));
+    private m_labels: Set<MazePathFinderNodeStateLabel> = new Set([]);
 
     /**
      * adds label to node
@@ -63,16 +64,6 @@ export class MazePathFinderNode extends MazeNode {
 export default class MazePathFinder<T extends MazePathFinderNode> extends Maze<T> {
     protected m_pathfindStrategy: MazePathFindStrategy<T>;
 
-    constructor(maze: Maze<MazeNode>, initializer: T) {
-        const transformedMaze = maze.getNodeMatrix().map(row => {
-            return row.map(e => {
-                const obj = Object.assign({}, initializer, e);
-                return Object.seal(obj);
-            });
-        });
-        super({ data: transformedMaze });
-    }
-
     setPathFindStrategy(strategy: MazePathFindStrategy<T>): void {
         this.m_pathfindStrategy = strategy;
     }
@@ -84,6 +75,11 @@ export default class MazePathFinder<T extends MazePathFinderNode> extends Maze<T
         if (!this.m_pathfindStrategy) {
             throw new Error('MazePathFinder::findPath strategy is not set');
         }
+        this.transformNode(start, e => {
+            e.addLabels(['start']);
+            return e;
+        });
+        this.getNode(end).addLabels(['finish']);
         return this.m_pathfindStrategy.findPath(this, start, end);
     }
 }
