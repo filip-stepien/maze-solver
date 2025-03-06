@@ -36,7 +36,7 @@ export class Maze<T extends MazeNode> {
     protected m_matrix: T[][] = [[]];
     protected m_size: Vec2d = new Vec2d([0, 0]);
 
-    get getSize() {
+    getSize() {
         return this.m_size;
     }
 
@@ -73,7 +73,8 @@ export class Maze<T extends MazeNode> {
     /**
      * @param x size of maze in horizontal direction
      * @param y size of maze in vertical drection
-     * @param data solidity matrix to initialze with
+     * @param nodeFactory factory to fill nodes in maze
+     * @param
      * @returns Maze
      *
      * @brief
@@ -82,32 +83,26 @@ export class Maze<T extends MazeNode> {
      */
     public constructor({
         size,
-        solididtyData,
+        solidityGenerator,
         nodeFactory
     }: {
         size?: Vec2d;
-        solididtyData?: boolean[][];
-        nodeFactory?: () => T;
+        nodeFactory: () => T;
+        solidityGenerator?: boolean[][]; //YX
     }) {
         console.debug('Maze::Maze');
-        if (solididtyData) {
-            console.debug('Maze::Maze intializing with data matrix');
-            this.initMatrix(
-                new Vec2d([solididtyData.length, solididtyData[0].length]),
-                nodeFactory
-            );
 
-            try {
-                this.validateNodePosition(this.m_size);
-            } catch (error) {
-                throw RangeError('Maze size requested is invalid');
-            }
-        }
-
-        if (size.x && size.y && nodeFactory) {
-            console.debug('Maze::Maze intializing ');
+        if (size.x && size.y && !solidityGenerator) {
+            console.debug('Maze::Maze intializing by size');
             this.initMatrix(size, nodeFactory);
             return;
+        }
+        if (!size.x && !size.y && solidityGenerator) {
+            solidityGenerator.forEach(row => {
+                row.forEach(e => {
+                    console.log('x');
+                });
+            });
         }
     }
 

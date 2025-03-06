@@ -10,7 +10,7 @@ const setupMaze = () => {
 
     console.info('creatig maze');
     const maze = new MazePathFinder({
-        size: new Vec2d({ x: 5, y: 6 }),
+        size: new Vec2d({ x: 5, y: 8 }),
         nodeFactory: () => {
             return new MazePathFinderNode();
         }
