@@ -1,8 +1,7 @@
-import { node } from 'globals';
 import { Vec2d } from '../types';
 import { Maze } from './Maze';
 import { MazeNode } from './MazeNode';
-import { getNameOfDeclaration } from 'typescript';
+import { test, describe, beforeEach, beforeAll, expect } from 'vitest';
 
 test('Maze size and factory constructor', () => {
     const maze = new Maze({
@@ -111,5 +110,23 @@ describe('Maze methods', () => {
         size.x = 69;
 
         expect(JSON.stringify(maze.getSize()) !== JSON.stringify(size)).toBeTruthy();
+    });
+});
+
+describe('Maze getAdjacientNodes works correctly', () => {
+    let maze: Maze<MazeNode>;
+
+    beforeAll(() => {
+        maze = new Maze({
+            size: new Vec2d({ x: 3, y: 3 }),
+            nodeFactory: () => {
+                return new MazeNode();
+            }
+        });
+    });
+
+    test('top left corner', () => {
+        const nodes = maze.getAdjacentNodes(new Vec2d([0, 0]));
+        expect(nodes.length).toEqual(2);
     });
 });

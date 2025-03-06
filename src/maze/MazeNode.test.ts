@@ -1,4 +1,5 @@
 import { MazeNode } from './MazeNode';
+import { test, expect } from 'vitest';
 
 test('make mazeNode colliding', () => {
     const node = new MazeNode();
