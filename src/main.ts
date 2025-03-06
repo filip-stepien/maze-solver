@@ -10,12 +10,15 @@ const setupMaze = () => {
 
     console.info('creatig maze');
     const maze = new MazePathFinder({
-        size: new Vec2d({ x: 5, y: 6 })
+        size: new Vec2d({ x: 5, y: 6 }),
+        nodeFactory: () => {
+            return new MazePathFinderNode();
+        }
     });
 
     console.info('making every maze node solid');
     maze.transformEachNode(e => {
-        e.setIsSolid(true);
+        e.makeSolid();
         return e;
     });
 
@@ -45,27 +48,27 @@ const setupMaze = () => {
         });
 
         maze.transformNode(pos, node => {
-            node.setIsSolid(false);
+            node.makeNotSolid();
             return node;
         });
     });
     return maze;
 };
 
-// const findPath = (maze: Maze<MazeNode>) => {
-//     const mpf = new MazePathFinder(maze);
-//     console.info(`initialzied ${Object.getPrototypeOf(mpf).constructor.name}`);
-//     const strategy = new BFSStrategy();
-//     mpf.setPathFindStrategy(strategy);
-//     console.info(
-//         `${Object.getPrototypeOf(mpf).constructor.name} strategy set ${
-//             Object.getPrototypeOf(strategy).constructor.name
-//         }`
-//     );
+const findPath = (maze: MazePathFinder<MazePathFinderNode>) => {
+    const mpf = maze;
+    console.info(`initialzied ${Object.getPrototypeOf(mpf).constructor.name}`);
+    const strategy = new BFSStrategy();
+    mpf.setPathFindStrategy(strategy);
+    console.info(
+        `${Object.getPrototypeOf(mpf).constructor.name} strategy set ${
+            Object.getPrototypeOf(strategy).constructor.name
+        }`
+    );
 
-//     mpf.findPath(new Vec2d([0, 0]), new Vec2d([3, 3]));
-//     console.dir(mpf, { depth: null });
-// };
+    mpf.findPath(new Vec2d([0, 0]), new Vec2d([3, 3]));
+    console.dir(mpf, { depth: null });
+};
 
 const main = () => {
     const maze = setupMaze();
@@ -74,7 +77,7 @@ const main = () => {
     console.log(`${maze}`);
     console.log('-----------------------------');
     console.info('finding path');
-    // findPath(maze);
+    findPath(maze);
 };
 export default main;
 
