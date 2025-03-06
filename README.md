@@ -1,18 +1,11 @@
 # 🔍 Labirynth solver 🔍
 
-## Uruchamianie
-
-TLDR: `task start`
-
-Aby uruchomić projekt, zainstaluj zależności:
+## Usage
 
 ```bash
+# install dependencies
 npm i
-```
-
-Następnie, aby uruchomić aplikację:
-
-```bash
+# run app
 npm start
 ```
 
