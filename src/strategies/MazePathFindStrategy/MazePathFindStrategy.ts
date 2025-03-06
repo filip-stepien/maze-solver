@@ -1,4 +1,5 @@
-import MazePathFinder, { MazePathFinderNode } from '../../maze/MazePathFinder';
+import MazePathFinder from '../../maze/MazePathFinder';
+import { MazePathFinderNode } from '../../maze/MazePathFinderNode';
 import { Vec2d, MazePath } from '../../types';
 
 export interface MazePathFindStrategy<T extends MazePathFinderNode> {
