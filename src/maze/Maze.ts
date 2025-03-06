@@ -112,6 +112,34 @@ export class Maze<T extends MazeNode> {
         }
     }
 
+    getAdjacentNodes(pos: Vec2d) {
+        this.validateNodePosition(pos);
+        const offsets = [
+            //left
+            [-1, 0],
+            //right
+            [1, 0],
+            //down
+            [0, 1],
+            // up
+            [0, -1]
+        ].map(e => new Vec2d(e));
+
+        let result: { node: T; pos: Vec2d }[] = [];
+
+        offsets.forEach(pos => {
+            // ignore out of bounds
+            try {
+                this.validateNodePosition(pos);
+            } catch (error) {
+                return;
+            }
+            result = result.concat([{ pos, node: this.getNode(pos) }]);
+        });
+
+        return result;
+    }
+
     public toString(): string {
         let str = '';
         this.m_matrix.forEach(e => {
