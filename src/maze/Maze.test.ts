@@ -13,7 +13,30 @@ test('Maze size and factory constructor', () => {
     expect(maze.getSize()).toEqual(new Vec2d([1, 2]));
 });
 
-test.todo('Maze initialization using collsionState constructor');
+test('Maze initialization using collsionState constructor', () => {
+    const data: number[][] = [
+        [0, 0, 1, 1, 0],
+        [1, 0, 1, 0, 0],
+        [0, 0, 0, 0, 1]
+    ];
+
+    const colsate = data.map(row => {
+        return row.map(e => e != 0);
+    });
+
+    const maze = new Maze({
+        collsionState: colsate,
+        nodeFactory: () => {
+            return new MazeNode();
+        }
+    });
+
+    for (let y = 0; y < colsate.length; ++y) {
+        for (let x = 0; x < colsate[y].length; ++x) {
+            expect(maze.getNode({ x, y }).isColliding()).toBe(colsate[y][x]);
+        }
+    }
+});
 
 test('Maze trasform node to be colliding', () => {
     const maze = new Maze({

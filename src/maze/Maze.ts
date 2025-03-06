@@ -61,17 +61,30 @@ export class Maze<T extends MazeNode> {
     }) {
         // console.debug('Maze::Maze');
 
-        if (size.x && size.y && !collsionState) {
+        if (size?.x && size?.y && !collsionState) {
             // console.debug('Maze::Maze intializing by size');
             this.initMatrix(size, nodeFactory);
             return;
         }
-        if (!size.x && !size.y && collsionState) {
-            collsionState.forEach(row => {
-                row.forEach(e => {
-                    console.log(e ? 'x' : 'o');
-                });
+        if (!size?.x && !size?.y && collsionState) {
+            // read size
+            size = new Vec2d({
+                x: collsionState[0].length,
+                y: collsionState.length
             });
+
+            this.initMatrix(size, nodeFactory);
+
+            for (let y = 0; y < this.m_size.y; ++y) {
+                for (let x = 0; x < this.m_size.x; ++x) {
+                    const node = this.getNode({ x, y });
+                    if (collsionState[y][x] == true) {
+                        node.makeColliding();
+                    } else {
+                        node.makeNotColliding();
+                    }
+                }
+            }
         }
     }
 
