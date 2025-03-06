@@ -1,4 +1,4 @@
-import { Camera, Mesh } from 'three';
+import { Camera, Object3D as ThreeObject } from 'three';
 import { Object3D } from './Object3D';
 
 export abstract class Scene {
@@ -11,8 +11,8 @@ export abstract class Scene {
     abstract start(camera: Camera): void;
     abstract loop(camera: Camera, delta: number, time: number): void;
 
-    public getMeshes(): Mesh[] {
-        return this._objects.map(obj => obj.mesh);
+    public get objects(): Object3D[] {
+        return this._objects;
     }
 
     public addToScene(...objects: Object3D[]) {

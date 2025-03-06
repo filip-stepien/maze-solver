@@ -1,36 +1,39 @@
 import { OrthographicCamera as ThreeOrthographicCamera } from 'three';
-import { Camera } from './Camera';
+import { Camera3D } from './Camera3D';
 
-export class OrthographicCamera implements Camera {
+export class OrthographicCamera extends Camera3D {
     private _size: number;
-    private _near: number;
-    private _far: number;
-    private _aspectRatio: number;
-    private _camera: ThreeOrthographicCamera;
+    private _left: number;
+    private _right: number;
 
-    constructor(size?: number, near?: number, far?: number) {
-        this._size = size || 75;
-        this._near = near || 0.1;
-        this._far = far || 1000;
-        this._aspectRatio = window.innerWidth / window.innerHeight;
-        this._camera = new ThreeOrthographicCamera(
-            -(this._aspectRatio * this._size),
-            this._aspectRatio * this._size,
+    constructor(size: number = 75, near?: number, far?: number) {
+        super(near, far);
+        this._size = size;
+        this._left = this.calculateLeftFrustum();
+        this._right = this.calculateRightFrustum();
+    }
+
+    private calculateLeftFrustum() {
+        return -(this._aspectRatio * this._size);
+    }
+
+    private calculateRightFrustum() {
+        return this._aspectRatio * this._size;
+    }
+
+    public override resize() {
+        this._left = this.calculateLeftFrustum();
+        this._right = this.calculateRightFrustum();
+    }
+
+    public override get threeCameraFactory() {
+        return new ThreeOrthographicCamera(
+            this._left,
+            this._right,
             this._size,
             -this._size,
             this._near,
             this._far
         );
-
-        window.addEventListener('resize', () => {
-            this._aspectRatio = window.innerWidth / window.innerHeight;
-            this._camera.right = this._aspectRatio * this._size;
-            this._camera.left = -(this._aspectRatio * this._size);
-            this._camera.updateProjectionMatrix();
-        });
-    }
-
-    public get threeCamera() {
-        return this._camera;
     }
 }

@@ -1,15 +1,14 @@
-import { Mesh, BufferGeometry, Material } from 'three';
-import { Scene } from './Scene';
+import { Object3D as ThreeObject } from 'three';
 
-export abstract class Object3D {
-    protected _mesh: Mesh;
+export class Object3D {
+    public _threeObject: ThreeObject;
 
-    constructor(geometry: BufferGeometry, material: Material, scene: Scene) {
-        this._mesh = new Mesh(geometry, material);
-        scene.addToScene(this);
+    public get threeObject(): ThreeObject {
+        if (!this._threeObject) this._threeObject = this.threeObjectFactory;
+        return this._threeObject;
     }
 
-    public get mesh() {
-        return this._mesh;
+    protected get threeObjectFactory(): ThreeObject {
+        return new ThreeObject();
     }
 }

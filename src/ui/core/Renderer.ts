@@ -1,11 +1,11 @@
 import { WebGLRenderer, Scene as ThreeScene, Clock } from 'three';
-import { Camera } from './Camera';
 import { Scene } from './Scene';
+import { Camera3D } from './Camera3D';
 
 export class Renderer {
     private static _instance: Renderer;
     private _renderer: WebGLRenderer;
-    private _camera: Camera;
+    private _camera: Camera3D;
     private _scenes: Scene[];
     private _threeScene: ThreeScene;
     private _clock: Clock;
@@ -32,6 +32,7 @@ export class Renderer {
             this._scenes.forEach(scene =>
                 scene.loop(this._camera.threeCamera, this._clock.getDelta(), time)
             );
+
             this._renderer.render(this._threeScene, this._camera.threeCamera);
         });
 
@@ -43,16 +44,16 @@ export class Renderer {
     }
 
     public addScene(...scenes: Scene[]) {
-        this._scenes.push(...scenes);
         scenes.forEach(scene => {
             scene.start(this._camera.threeCamera);
-            scene.getMeshes().forEach(mesh => {
-                this._threeScene.add(mesh);
+            this._scenes.push(scene);
+            scene.objects.forEach(obj => {
+                this._threeScene.add(obj.threeObject);
             });
         });
     }
 
-    public set camera(camera: Camera) {
+    public set camera(camera: Camera3D) {
         this._camera = camera;
     }
 

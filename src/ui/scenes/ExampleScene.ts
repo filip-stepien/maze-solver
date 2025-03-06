@@ -10,8 +10,8 @@ export class ExampleScene extends Scene {
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
                 const box = new MazeBox(this);
-                box.mesh.position.x = i * 0.25;
-                box.mesh.position.z = j * 0.25;
+                box.threeObject.position.x = i * 0.25;
+                box.threeObject.position.z = j * 0.25;
                 this._boxes.push(box);
             }
         }

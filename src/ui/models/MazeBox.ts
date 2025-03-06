@@ -1,11 +1,9 @@
-import { BoxGeometry, MeshNormalMaterial } from 'three';
-import { Object3D } from '../core/Object3D';
+import { BoxGeometry, MeshNormalMaterial, MeshStandardMaterial } from 'three';
+import { Model3D } from '../core/Model3D';
 import { Scene } from '../core/Scene';
 
-export class MazeBox extends Object3D {
+export class MazeBox extends Model3D {
     constructor(scene: Scene) {
-        const geometry = new BoxGeometry(0.2, 0.2, 0.2);
-        const material = new MeshNormalMaterial();
-        super(geometry, material, scene);
+        super(new BoxGeometry(0.2, 0.2, 0.2), new MeshNormalMaterial(), scene);
     }
 }

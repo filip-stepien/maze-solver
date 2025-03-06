@@ -1,33 +1,15 @@
 import { PerspectiveCamera as ThreePerspectiveCamera } from 'three';
-import { Camera } from './Camera';
+import { Camera3D } from './Camera3D';
 
-export class PerspectiveCamera implements Camera {
+export class PerspectiveCamera extends Camera3D {
     private _fov: number;
-    private _near: number;
-    private _far: number;
-    private _aspectRatio: number;
-    private _camera: ThreePerspectiveCamera;
 
-    constructor(fov?: number, near?: number, far?: number) {
-        this._fov = fov || 75;
-        this._near = near || 0.1;
-        this._far = far || 1000;
-        this._aspectRatio = window.innerWidth / window.innerHeight;
-        this._camera = new ThreePerspectiveCamera(
-            this._fov,
-            this._aspectRatio,
-            this._near,
-            this._far
-        );
-
-        window.addEventListener('resize', () => {
-            this._aspectRatio = window.innerWidth / window.innerHeight;
-            this._camera.aspect = this._aspectRatio;
-            this._camera.updateProjectionMatrix();
-        });
+    constructor(fov: number = 75, near?: number, far?: number) {
+        super(near, far);
+        this._fov = fov;
     }
 
-    public get threeCamera() {
-        return this._camera;
+    public override get threeCameraFactory() {
+        return new ThreePerspectiveCamera(this._fov, this._aspectRatio, this._near, this._far);
     }
 }
