@@ -163,7 +163,7 @@ describe('getAdjacientNodes returns correct results', () => {
     });
 
     test('bottom right', () => {
-        const origin = new Vec2d(maze.getSize().move(new Vec2d([-1, -1])));
+        const origin = maze.getSize().move(new Vec2d([-1, -1]));
         testPostions(
             origin,
             [
