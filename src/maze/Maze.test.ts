@@ -1,7 +1,7 @@
 import { Vec2d } from '../types';
 import { Maze } from './Maze';
 import { MazeNode } from './MazeNode';
-import { test, describe, beforeEach, beforeAll, expect } from 'vitest';
+import { test, describe, beforeEach, beforeAll, expect, assert } from 'vitest';
 
 test('Maze size and factory constructor', () => {
     const maze = new Maze({
@@ -33,7 +33,7 @@ test('Maze initialization using collsionState constructor', () => {
 
     for (let y = 0; y < colsate.length; ++y) {
         for (let x = 0; x < colsate[y].length; ++x) {
-            expect(maze.getNode({ x, y }).isColliding()).toBe(colsate[y][x]);
+            expect(maze.getNode(new Vec2d({ x, y })).isColliding()).toBe(colsate[y][x]);
         }
     }
 });
@@ -97,7 +97,7 @@ describe('Maze methods', () => {
     });
 
     test('Maze trasform node to be colliding', () => {
-        const pos: Vec2d = { x: 1, y: 2 };
+        const pos: Vec2d = new Vec2d({ x: 1, y: 2 });
         maze.getNode(pos).makeColliding();
         expect(maze.getNode(pos).isColliding()).toBeTruthy();
     });
@@ -113,20 +113,87 @@ describe('Maze methods', () => {
     });
 });
 
-describe('Maze getAdjacientNodes works correctly', () => {
+describe('getAdjacientNodes returns correct results', () => {
     let maze: Maze<MazeNode>;
+
+    function testPostions(origin: Vec2d, validPositions: Vec2d[]) {
+        // get adjacent nodes
+        // console.log(origin);
+        const nodes = maze.getAdjacentNodes(origin);
+        // console.log(nodes);
+
+        // Assert that each returned node postion is one of correct ones
+        nodes.forEach(mazeNodeIterator => {
+            expect(JSON.stringify(mazeNodeIterator.pos)).oneOf(
+                validPositions.map(e => JSON.stringify(e))
+            );
+        });
+    }
 
     beforeAll(() => {
         maze = new Maze({
-            size: new Vec2d({ x: 3, y: 3 }),
+            // keep it miniumum 4x4
+            size: new Vec2d({ x: 7, y: 4 }),
             nodeFactory: () => {
                 return new MazeNode();
             }
         });
     });
 
-    test('top left corner', () => {
-        const nodes = maze.getAdjacentNodes(new Vec2d([0, 0]));
-        expect(nodes.length).toEqual(2);
+    test('top left', () => {
+        const origin = new Vec2d([0, 0]);
+        testPostions(
+            origin,
+            [
+                [1, 0],
+                [0, 1]
+            ].map(offset => origin.move(new Vec2d(offset)))
+        );
+    });
+
+    test('top right', () => {
+        const origin = new Vec2d([maze.getSize().x - 1, 0]);
+        testPostions(
+            origin,
+            [
+                [-1, 0],
+                [0, 1]
+            ].map(offset => origin.move(new Vec2d(offset)))
+        );
+    });
+
+    test('bottom right', () => {
+        const origin = new Vec2d(maze.getSize().move(new Vec2d([-1, -1])));
+        testPostions(
+            origin,
+            [
+                [-1, 0],
+                [0, -1]
+            ].map(offset => origin.move(new Vec2d(offset)))
+        );
+    });
+
+    test('bottom left', () => {
+        const origin = new Vec2d([0, maze.getSize().y - 1]);
+        testPostions(
+            origin,
+            [
+                [1, 0],
+                [0, -1]
+            ].map(offset => origin.move(new Vec2d(offset)))
+        );
+    });
+
+    test('center', () => {
+        const origin = new Vec2d([2, 2]);
+        testPostions(
+            origin,
+            [
+                [-1, 0],
+                [1, 0],
+                [0, 1],
+                [0, -1]
+            ].map(offset => origin.move(new Vec2d(offset)))
+        );
     });
 });
