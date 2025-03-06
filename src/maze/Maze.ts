@@ -40,15 +40,13 @@ export class Maze<T extends MazeNode> {
     }
 
     /**
-     * @param x size of maze in horizontal direction
-     * @param y size of maze in vertical drection
-     * @param nodeFactory factory to fill nodes in maze
-     * @param
+     * @param size size of maze
+     * @param nodeFactory factory to fill nodes in maze, it has to return node in any valid state
+     * @param collsionState optional matrix indicating which nodes should be colliding
      * @returns Maze
      *
-     * @brief
-     * - If data is specified, all other parameters are ignored
-     * - If it is not x, y and initializer are used
+     * @warn collsionState and size are mutualy exclusive
+     *
      */
     public constructor({
         size,
