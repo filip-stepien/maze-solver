@@ -16,6 +16,20 @@ export class Vec2d implements Point {
             this.y = arg[1];
         }
     }
+
+    /**
+     *
+     * @param offset vector of movement
+     * @returns Vector after apllying offset
+     *
+     * @note this does not mutate object called on
+     */
+    move(offset: Vec2d) {
+        return new Vec2d({
+            x: this.x + offset.x,
+            y: this.y + offset.y
+        });
+    }
 }
 
 export type MazePath = Array<Vec2d>[];
