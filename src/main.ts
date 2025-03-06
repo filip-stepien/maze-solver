@@ -12,7 +12,7 @@ const setupMaze = () => {
 
     console.info('creatig maze');
     const maze = new MazePathFinder({
-        size: new Vec2d({ x: 5, y: 8 }),
+        size: new Vec2d({ x: 5, y: 6 }),
         nodeFactory: () => {
             return new MazePathFinderNode();
         }
@@ -64,7 +64,8 @@ const findPath = (maze: MazePathFinder<MazePathFinderNode>) => {
     );
 
     mpf.findPath(new Vec2d([0, 0]), new Vec2d([3, 3]));
-    console.dir(mpf, { depth: null });
+    console.log(`${mpf}`);
+    // console.dir(mpf, { depth: null });
 };
 
 const main = () => {

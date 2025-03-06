@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import { MazeNode } from './MazeNode';
 
 /**
@@ -52,5 +53,22 @@ export class MazePathFinderNode extends MazeNode {
 
     hasLabel(label: MazePathFinderNodeStateLabel): boolean {
         return this.m_labels.has(label);
+    }
+
+    toString(): string {
+        if (this.hasLabel('finish')) {
+            return chalk.green('');
+        }
+        if (this.hasLabel('start')) {
+            return '';
+        }
+        if (this.hasLabel('selected')) {
+            return chalk.green(super.toString());
+        }
+        if (this.hasLabel('candidate')) {
+            return chalk.yellow(super.toString());
+        }
+
+        return super.toString();
     }
 }

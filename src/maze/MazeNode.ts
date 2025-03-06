@@ -1,3 +1,5 @@
+import chalk from 'chalk';
+
 export class MazeNode {
     public static initializer = new this();
 
@@ -17,9 +19,9 @@ export class MazeNode {
 
     toString(): string {
         if (this.isColliding()) {
-            return '▓';
+            return chalk.grey('▓');
         } else {
-            return '·';
+            return chalk.grey('·');
         }
     }
 
