@@ -32,4 +32,4 @@ export class Vec2d implements Point {
     }
 }
 
-export type MazePath = Array<Vec2d>[];
+export type MazePath = Vec2d[];
