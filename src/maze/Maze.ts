@@ -31,7 +31,7 @@ export class Maze<T extends MazeNode> {
     }
 
     private initMatrix({ x, y }: Vec2d, factory: () => T) {
-        this.m_size = { x, y };
+        this.m_size = new Vec2d({ x, y });
         this.m_matrix = Array.from({ length: this.m_size.y }, () => {
             return Array.from({ length: this.m_size.x }, () => {
                 return factory();
@@ -105,7 +105,7 @@ export class Maze<T extends MazeNode> {
     public forEachNode(callback: ({ pos, node }: { pos: Vec2d; node: T }) => void): void {
         for (let y = 0; y < this.m_size.y; ++y) {
             for (let x = 0; x < this.m_size.x; ++x) {
-                const pos: Vec2d = { x, y };
+                const pos = new Vec2d({ x, y });
                 const node = this.getNode(pos);
                 callback({ pos, node });
             }
