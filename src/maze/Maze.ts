@@ -6,20 +6,20 @@ export class MazeNode {
 
     private m_isSolid: boolean = false;
 
-    makeSolid(): void {
+    makeColliding(): void {
         this.m_isSolid = true;
     }
 
-    makeNotSolid(): void {
+    makeNotColliding(): void {
         this.m_isSolid = false;
     }
 
-    isSolid(): boolean {
+    isColliding(): boolean {
         return this.m_isSolid;
     }
 
     toString(): string {
-        if (this.isSolid()) {
+        if (this.isColliding()) {
             return '▓';
         } else {
             return '·';

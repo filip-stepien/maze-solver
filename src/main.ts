@@ -18,7 +18,7 @@ const setupMaze = () => {
 
     console.info('making every maze node solid');
     maze.transformEachNode(e => {
-        e.makeSolid();
+        e.makeColliding();
         return e;
     });
 
@@ -51,7 +51,7 @@ const setupMaze = () => {
         });
 
         maze.transformNode(pos, node => {
-            node.makeNotSolid();
+            node.makeNotColliding();
             return node;
         });
     });
