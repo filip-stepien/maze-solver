@@ -1,36 +1,6 @@
 import { Vec2d } from '../types';
 import { logFunctionCall } from './Debug';
-
-export class MazeNode {
-    public static initializer = new this();
-
-    private m_isSolid: boolean = false;
-
-    makeColliding(): void {
-        this.m_isSolid = true;
-    }
-
-    makeNotColliding(): void {
-        this.m_isSolid = false;
-    }
-
-    isColliding(): boolean {
-        return this.m_isSolid;
-    }
-
-    toString(): string {
-        if (this.isColliding()) {
-            return '▓';
-        } else {
-            return '·';
-        }
-    }
-
-    clone() {
-        const clone = structuredClone(this);
-        return clone;
-    }
-}
+import { MazeNode } from './MazeNode';
 
 export class Maze<T extends MazeNode> {
     protected m_matrix: T[][] = [[]];
@@ -41,7 +11,6 @@ export class Maze<T extends MazeNode> {
     }
 
     /**
-     *
      * @param pos Postion to validate
      * @throws RangeError
      */
@@ -83,39 +52,46 @@ export class Maze<T extends MazeNode> {
      */
     public constructor({
         size,
-        solidityGenerator,
+        collsionState,
         nodeFactory
     }: {
         size?: Vec2d;
         nodeFactory: () => T;
-        solidityGenerator?: boolean[][]; //YX
+        collsionState?: boolean[][]; //YX
     }) {
-        console.debug('Maze::Maze');
+        // console.debug('Maze::Maze');
 
-        if (size.x && size.y && !solidityGenerator) {
-            console.debug('Maze::Maze intializing by size');
+        if (size.x && size.y && !collsionState) {
+            // console.debug('Maze::Maze intializing by size');
             this.initMatrix(size, nodeFactory);
             return;
         }
-        if (!size.x && !size.y && solidityGenerator) {
-            solidityGenerator.forEach(row => {
+        if (!size.x && !size.y && collsionState) {
+            collsionState.forEach(row => {
                 row.forEach(e => {
-                    console.log('x');
+                    console.log(e ? 'x' : 'o');
                 });
             });
         }
     }
 
     /**
-     *
      * @param x horizontal postion of node
      * @param y vertical postion of node
      * @returns node at given postion
      */
-    protected getNode(pos: Vec2d): T {
-        console.debug('Maze::getNode()', pos);
+    public getNode(pos: Vec2d): T {
+        // console.debug('Maze::getNode()', pos);
         this.validateNodePosition(pos);
         return this.m_matrix[pos.y][pos.x];
+    }
+
+    /**
+     * perfrom operations on every node
+     * @param transform @see transformNode
+     */
+    public forEachNode(transform: (node: T) => void): void {
+        this.m_matrix.forEach(row => row.forEach(e => transform(e)));
     }
 
     public toString(): string {
@@ -128,30 +104,5 @@ export class Maze<T extends MazeNode> {
             str += '\n';
         });
         return str;
-    }
-
-    /**
-     * @param x horizontal postion of node
-     * @param y vertical postion of node
-     * @param transform lambda function that takes current state of node and returns modfied one
-     */
-    public transformNode(pos: Vec2d, transform: (node: T) => T): void {
-        console.debug('Maze::transformNode');
-        this.validateNodePosition(pos);
-        const { x, y } = pos;
-        const oldNode: T = this.m_matrix[y][x];
-
-        const node: T = transform(oldNode);
-
-        this.m_matrix[y][x] = node;
-        // console.debug('transformed', node);
-    }
-
-    /**
-     * perfroms transformation on all nodes
-     * @param transform @see transformNode
-     */
-    public transformEachNode(transform: (node: T) => T): void {
-        this.m_matrix.forEach(row => row.forEach(e => transform(e)));
     }
 }

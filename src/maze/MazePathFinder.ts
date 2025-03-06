@@ -1,6 +1,7 @@
 import { MazePathFindStrategy } from '../strategies/MazePathFindStrategy/MazePathFindStrategy';
 import { MazePath, Vec2d } from '../types';
-import { Maze, MazeNode } from './Maze';
+import { Maze } from './Maze';
+import { MazeNode } from './MazeNode';
 
 /**
  * Node states
@@ -75,10 +76,7 @@ export default class MazePathFinder<T extends MazePathFinderNode> extends Maze<T
         if (!this.m_pathfindStrategy) {
             throw new Error('MazePathFinder::findPath strategy is not set');
         }
-        this.transformNode(start, e => {
-            e.addLabels(['start']);
-            return e;
-        });
+        this.getNode(start).addLabels(['start']);
         this.getNode(end).addLabels(['finish']);
         return this.m_pathfindStrategy.findPath(this, start, end);
     }

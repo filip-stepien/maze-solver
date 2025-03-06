@@ -1,6 +1,7 @@
 import { transform } from 'typescript';
 import './maze/Maze';
-import { Maze, MazeNode } from './maze/Maze';
+import { Maze } from './maze/Maze';
+import { MazeNode } from './maze/MazeNode';
 import { Vec2d } from './types';
 import MazePathFinder, { MazePathFinderNode } from './maze/MazePathFinder';
 import { BFSStrategy } from './strategies/MazePathFindStrategy/BFSStrategy';
@@ -17,7 +18,7 @@ const setupMaze = () => {
     });
 
     console.info('making every maze node solid');
-    maze.transformEachNode(e => {
+    maze.forEachNode(e => {
         e.makeColliding();
         return e;
     });
