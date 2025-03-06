@@ -1,5 +1,5 @@
 import { Random } from '../utils/Random';
-import { Vec2 } from '../types';
+import { Vec2d as Vec2d } from '../types';
 import { GenerationStrategy } from './GenerationStrategy';
 
 /**
@@ -7,13 +7,13 @@ import { GenerationStrategy } from './GenerationStrategy';
  * for now 1 = wall, 0 = path
  */
 export class PrimsStrategy implements GenerationStrategy {
-    private getNeighbors(coords: Vec2, cols: number, rows: number): Vec2[] {
-        const neighbors: Vec2[] = [];
-        const directions: Vec2[] = [
-            { x: 2, y: 0 },
-            { x: -2, y: 0 },
-            { x: 0, y: 2 },
-            { x: 0, y: -2 }
+    private getNeighbors(coords: Vec2d, cols: number, rows: number): Vec2d[] {
+        const neighbors: Vec2d[] = [];
+        const directions: Vec2d[] = [
+            new Vec2d({ x: 2, y: 0 }),
+            new Vec2d({ x: -2, y: 0 }),
+            new Vec2d({ x: 0, y: 2 }),
+            new Vec2d({ x: 0, y: -2 })
         ];
 
         for (const { x, y } of directions) {
@@ -21,7 +21,7 @@ export class PrimsStrategy implements GenerationStrategy {
             const neighborY = coords.y + y;
 
             if (neighborX >= 0 && neighborX < cols && neighborY >= 0 && neighborY < rows) {
-                neighbors.push({ x: neighborX, y: neighborY });
+                neighbors.push(new Vec2d({ x: neighborX, y: neighborY }));
             }
         }
 
@@ -30,12 +30,12 @@ export class PrimsStrategy implements GenerationStrategy {
 
     public generateMaze(cols: number, rows: number): void {
         const maze: number[][] = Array.from({ length: rows }, () => Array(cols).fill(1));
-        const edges: { from: Vec2; to: Vec2 }[] = [];
+        const edges: { from: Vec2d; to: Vec2d }[] = [];
 
-        const startNode: Vec2 = {
+        const startNode: Vec2d = new Vec2d({
             x: Random.randomInt(0, cols - 1),
             y: Random.randomInt(0, rows - 1)
-        };
+        });
 
         maze[startNode.y][startNode.x] = 0;
 
@@ -51,10 +51,10 @@ export class PrimsStrategy implements GenerationStrategy {
             const { from, to } = edges.splice(randomIndex, 1)[0];
 
             if (maze[to.y][to.x] === 1) {
-                const path: Vec2 = {
+                const path: Vec2d = new Vec2d({
                     x: (from.x + to.x) / 2,
                     y: (from.y + to.y) / 2
-                };
+                });
 
                 maze[to.y][to.x] = 0;
                 maze[path.y][path.x] = 0;
