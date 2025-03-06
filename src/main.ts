@@ -40,7 +40,10 @@ const setupMaze = () => {
         [2, 4],
         [3, 4],
         [4, 4],
-        [3, 3]
+        [3, 3],
+        [0, 5],
+        [1, 5],
+        [2, 5]
     ].forEach(e => {
         const pos = new Vec2d({
             x: e[0],

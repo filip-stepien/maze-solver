@@ -87,7 +87,7 @@ export class Maze<T extends MazeNode> {
     }: {
         size?: Vec2d;
         solididtyData?: boolean[][];
-        nodeFactory: () => T;
+        nodeFactory?: () => T;
     }) {
         console.debug('Maze::Maze');
         if (solididtyData) {
@@ -104,7 +104,7 @@ export class Maze<T extends MazeNode> {
             }
         }
 
-        if (size.x && size.y) {
+        if (size.x && size.y && nodeFactory) {
             console.debug('Maze::Maze intializing ');
             this.initMatrix(size, nodeFactory);
             return;
