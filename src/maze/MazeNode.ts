@@ -17,12 +17,16 @@ export class MazeNode {
         return this.m_isSolid;
     }
 
-    toString(): string {
+    protected getCharacter(): string {
         if (this.isColliding()) {
-            return chalk.grey('▓');
+            return '▓';
         } else {
-            return chalk.grey('·');
+            return '·';
         }
+    }
+
+    toString(): string {
+        return this.getCharacter();
     }
 
     clone() {

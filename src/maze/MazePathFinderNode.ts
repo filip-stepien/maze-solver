@@ -1,14 +1,20 @@
-import chalk from 'chalk';
+import chalk, { colorNames, foregroundColorNames } from 'chalk';
 import { MazeNode } from './MazeNode';
+import { Color } from 'three';
 
 /**
  * Node states
  * - candidate -- algorithm might use this node for finall path
+ * - finish -- required end node of path
+ * - queued -- node is queued and might become candiate
  * - selected -- algorithm has chosen node for finall path
  * - start -- required start node of path
- * - finsih -- required end node of path
+ *
+ * state flow
+ * queued -> candiate -> selected
  */
-type MazePathFinderNodeStateLabel = 'start' | 'finish' | 'candidate' | 'selected';
+type MazePathFinderNodeStateLabel = 'start' | 'finish' | 'candidate' | 'selected' | 'queued';
+
 /**
  * On top of representing node,
  * it also represents it's "state" from pathfinding algirthm perspective.
@@ -55,20 +61,39 @@ export class MazePathFinderNode extends MazeNode {
         return this.m_labels.has(label);
     }
 
-    toString(): string {
+    protected getCharacter() {
         if (this.hasLabel('finish')) {
-            return chalk.green('');
+            return '';
         }
         if (this.hasLabel('start')) {
             return '';
         }
         if (this.hasLabel('selected')) {
-            return chalk.green(super.toString());
+            return '󰸞';
         }
         if (this.hasLabel('candidate')) {
-            return chalk.yellow(super.toString());
+            return '󰁁';
+        }
+        if (this.hasLabel('queued')) {
+            return '󰒲';
+        }
+        return super.getCharacter();
+    }
+
+    toString(): string {
+        let colorFunc = chalk.gray;
+        if (this.hasLabel('finish')) {
+            colorFunc = chalk.greenBright;
+        } else if (this.hasLabel('start')) {
+            colorFunc = chalk.redBright;
+        } else if (this.hasLabel('selected')) {
+            colorFunc = chalk.green;
+        } else if (this.hasLabel('candidate')) {
+            colorFunc = chalk.yellow;
+        } else if (this.hasLabel('queued')) {
+            colorFunc = chalk.grey;
         }
 
-        return super.toString();
+        return colorFunc(this.getCharacter());
     }
 }
