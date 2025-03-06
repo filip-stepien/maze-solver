@@ -19,9 +19,8 @@ const setupMaze = () => {
     });
 
     console.info('making every maze node solid');
-    maze.forEachNode(e => {
-        e.makeColliding();
-        return e;
+    maze.forEachNode(({ node }) => {
+        node.makeColliding();
     });
 
     console.info('setting some maze nodes to not solid');
