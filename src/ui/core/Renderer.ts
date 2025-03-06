@@ -2,12 +2,40 @@ import { WebGLRenderer, Scene as ThreeScene, Clock } from 'three';
 import { Scene } from './Scene';
 import { Camera3D } from './Camera3D';
 
+/**
+ * Abstraction layer for `three.js` WebGL renderer.
+ * This class encapsulates the WebGL rendering logic, providing a simplified interface for rendering scenes.
+ */
 export class Renderer {
+    /**
+     * Renderer singleton instance.
+     */
     private static _instance: Renderer;
+
+    /**
+     * Actual `three.js` renderer.
+     */
     private _renderer: WebGLRenderer;
+
+    /**
+     * Camera that views the rendered scene.
+     */
     private _camera: Camera3D;
+
+    /**
+     * Scenes to render.
+     */
     private _scenes: Scene[];
+
+    /**
+     * The actual `three.js` canvas where objects are rendered.
+     * All objects from the provided scenes will be displayed on this canvas.
+     */
     private _threeScene: ThreeScene;
+
+    /**
+     * Clock for measuring time between frames.
+     */
     private _clock: Clock;
 
     private constructor() {
@@ -17,6 +45,9 @@ export class Renderer {
         this._scenes = [];
     }
 
+    /**
+     * Retrieve a singleton renderer instance.
+     */
     public static get instance(): Renderer {
         if (!Renderer._instance) {
             Renderer._instance = new Renderer();
@@ -25,6 +56,9 @@ export class Renderer {
         return Renderer._instance;
     }
 
+    /**
+     * Sets size of renderer window, sets animations loop and appends canvas tag to the HTML.
+     */
     private initializeRenderer() {
         this._renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -43,6 +77,10 @@ export class Renderer {
         document.body.appendChild(this._renderer.domElement);
     }
 
+    /**
+     * Adds scenes to be handled and rendered by the renderer.
+     * @param scenes The scenes to be added to the renderer.
+     */
     public addScene(...scenes: Scene[]) {
         scenes.forEach(scene => {
             scene.start(this._camera.threeCamera);
@@ -53,10 +91,19 @@ export class Renderer {
         });
     }
 
+    /**
+     * Retrieve a camera that views the scene.
+     */
     public set camera(camera: Camera3D) {
         this._camera = camera;
     }
 
+    /**
+     * Instantiates the renderer, which, due to the lack of a public constructor
+     * in the singleton, must be done after initializing crucial properties.
+     * Camera property and at least one Scene object must be specified,
+     * in order to successfully instatiate the render.
+     */
     public instatiate() {
         if (!this._camera || this._scenes.length === 0) {
             throw new Error(
