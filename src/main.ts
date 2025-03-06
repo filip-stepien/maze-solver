@@ -58,7 +58,7 @@ const findPath = (maze: MazePathFinder<MazePathFinderNode>) => {
     const strategy = new BFSStrategy();
     mpf.setPathFindStrategy(strategy);
     console.info(
-        `${Object.getPrototypeOf(mpf).constructor.name} strategy set ${
+        `${Object.getPrototypeOf(mpf).constructor.name} strategy set to ${
             Object.getPrototypeOf(strategy).constructor.name
         }`
     );
