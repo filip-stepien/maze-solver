@@ -59,6 +59,10 @@ export class Maze<T extends MazeNode> {
     }) {
         // console.debug('Maze::Maze');
 
+        if (size != undefined && collsionState != undefined) {
+            throw Error('size and collsionState are mutually exclusive');
+        }
+
         if (size?.x && size?.y && !collsionState) {
             // console.debug('Maze::Maze intializing by size');
             this.initMatrix(size, nodeFactory);

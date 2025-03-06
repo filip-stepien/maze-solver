@@ -39,6 +39,18 @@ test('Maze initialization using collsionState constructor', () => {
     }
 });
 
+test('Maze size and collsionState matrix in constructor throws ', () => {
+    expect(() => {
+        new Maze({
+            size: new Vec2d({ x: 1, y: 2 }),
+            nodeFactory: () => {
+                return new MazeNode();
+            },
+            collsionState: [[true], [false]]
+        });
+    }).toThrow();
+});
+
 test('Maze forEachNode works', () => {
     const maze = new Maze({
         size: new Vec2d({ x: 2, y: 3 }),
