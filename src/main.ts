@@ -3,13 +3,21 @@ import './maze/Maze';
 import { Maze, MazeNode } from './maze/Maze';
 import { Vec2d } from './types';
 import MazePathFinder, { MazePathFinderNode } from './maze/MazePathFinder';
+import { BFSStrategy } from './strategies/MazePathFindStrategy/BFSStrategy';
 
 const setupMaze = () => {
     console.debug('initializer: ', MazeNode.initializer);
 
+    // initially make everything solid
     const maze = new Maze({
-        size: new Vec2d({ x: 5, y: 5 }),
+        size: new Vec2d({ x: 5, y: 6 }),
         initializer: MazeNode.initializer
+    });
+
+    // crave some maze
+    maze.transformEachNode(e => {
+        e.setIsSolid(true);
+        return e;
     });
 
     [
@@ -48,9 +56,13 @@ const setupMaze = () => {
 // console.dir(maze, { depth: null });
 
 const findPath = (maze: Maze<MazeNode>) => {
-    const mpf = new MazePathFinder(maze, MazePathFinderNode.initializer);
+    const mpf = new MazePathFinder(maze, MazePathFinderNode.s_initializer);
+    const strategy = new BFSStrategy();
+    mpf.setPathFindStrategy(strategy);
     // console.debug(mpf);
     console.dir(mpf, { depth: null });
+
+    mpf.findPath(new Vec2d([0, 0]), new Vec2d([3, 3]));
 };
 
 const main = () => {

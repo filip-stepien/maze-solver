@@ -43,7 +43,7 @@ export class Maze<T extends MazeNode> {
      * @param pos Postion to validate
      * @throws RangeError
      */
-    private validateNodePosition(pos: Vec2d) {
+    protected validateNodePosition(pos: Vec2d) {
         const x = pos.x;
         const y = pos.y;
         if (
@@ -82,6 +82,8 @@ export class Maze<T extends MazeNode> {
         console.debug('Maze::Maze');
         if (data) {
             console.debug('Maze::Maze intializing with data matrix');
+            this.m_size.y = data.length;
+            this.m_size.x = data[0].length;
             this.m_matrix = data;
             return;
         }
@@ -119,7 +121,9 @@ export class Maze<T extends MazeNode> {
      * @returns node at given postion
      */
     public getNode(pos: Vec2d): T {
-        return this.m_matrix[pos.x][pos.y];
+        this.validateNodePosition(pos);
+        console.debug('Maze::getNode()', pos);
+        return this.m_matrix[pos.y][pos.x];
     }
 
     public getNodeMatrix(): T[][] {
@@ -154,5 +158,13 @@ export class Maze<T extends MazeNode> {
 
         this.m_matrix[y][x] = node;
         // console.debug('transformed', node);
+    }
+
+    /**
+     * perfroms transformation on all nodes
+     * @param transform @see transformNode
+     */
+    public transformEachNode(transform: (node: T) => T): void {
+        this.m_matrix.forEach(row => row.forEach(e => transform(e)));
     }
 }

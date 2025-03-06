@@ -1,81 +1,89 @@
-import { MazePathFindStrategy } from '../strategies/MazePathFindStrategy';
+import { MazePathFindStrategy } from '../strategies/MazePathFindStrategy/MazePathFindStrategy';
 import { MazePath, Vec2d } from '../types';
 import { Maze, MazeNode } from './Maze';
 
 /**
  * Node states
- * - notproccesed -- algorithm did not touch that node
  * - candidate -- algorithm might use this node for finall path
  * - selected -- algorithm has chosen node for finall path
  */
-type MazePathFinderNodeState = 'notproceesed' | 'candidate' | 'selected';
+type MazePathFinderNodeStateLabel = 'candidate' | 'selected';
 
+/**
+ * On top of representing node,
+ * it also represents it's "state" from pathfinding algirthm perspective.
+ * pathfinding algorithm use this class methods to indicate state of node.
+ */
 export class MazePathFinderNode extends MazeNode {
-    static initializer: MazePathFinderNode = new this();
+    static s_initializer: MazePathFinderNode = new this();
 
     constructor() {
         super(undefined);
     }
 
-    state: MazePathFinderNodeState = 'notproceesed';
+    private m_labels: Set<MazePathFinderNodeStateLabel> = Object.seal(new Set([]));
 
     /**
-     * Indicates that node was considered by algorithm for finding path
+     * adds label to node
+     * @param labels labels to add
+     * @note duplicates are ignored
      */
-    private m_candidate: boolean = false;
+    addLabels(labels: MazePathFinderNodeStateLabel[]) {
+        // Add all elements from the 'labels' array to the 'm_labels' set
+        labels.forEach(label => this.m_labels.add(label));
+    }
+
+    // NOTE might be not needed
+    // removeLabels(label: MazePathFinderNodeStateLabel) {
+    //     this.m_labels.delete(label);
+    // }
 
     /**
-     * Indicates that node was chosen for path by algorithm
+     * Removes all labels from node
      */
-    private m_selected: boolean = false;
-
-    /**
-     * Inicate that this node is or was considered by algorithm
-     */
-    tagCandidate() {
-        this.m_candidate = true;
+    clearLabels() {
+        this.m_labels.clear();
     }
 
     /**
-     * Inicate that this node is/was selected for final path by algorithm
+     * @returns Set containg labels
      */
-    tagSelected() {
-        // can't select node that was not processed
-        this.tagCandidate();
-        this.m_selected = true;
+    getLabels() {
+        return structuredClone(this.m_labels);
     }
 
-    /**
-     * @returns current most important state of node
-     */
-    getState(): MazePathFinderNodeState {
-        if (this.m_selected) {
-            return 'selected';
-        }
-        if (this.m_candidate) {
-            return 'candidate';
-        }
-
-        return 'notproceesed';
+    hasLabel(label: MazePathFinderNodeStateLabel): boolean {
+        return this.m_labels.has(label);
     }
 }
 
+/**
+ *
+ */
 export default class MazePathFinder<T extends MazePathFinderNode> extends Maze<T> {
-    protected strategy: MazePathFindStrategy<T>;
+    protected m_pathfindStrategy: MazePathFindStrategy<T>;
 
     constructor(maze: Maze<MazeNode>, initializer: T) {
         const transformedMaze = maze.getNodeMatrix().map(row => {
             return row.map(e => {
-                return Object.assign({}, initializer, e);
+                const obj = Object.assign({}, initializer, e);
+                return Object.seal(obj);
             });
         });
         super({ data: transformedMaze });
     }
 
+    setPathFindStrategy(strategy: MazePathFindStrategy<T>): void {
+        this.m_pathfindStrategy = strategy;
+    }
+
     findPath(start: Vec2d, end: Vec2d): MazePath {
-        if (!this.strategy) {
+        console.debug('MazePathFinder::findPath()');
+        this.validateNodePosition(start);
+        this.validateNodePosition(end);
+        if (!this.m_pathfindStrategy) {
             throw new Error('MazePathFinder::findPath strategy is not set');
         }
-        return this.strategy.findPath(this, start, end);
+        return this.m_pathfindStrategy.findPath(this, start, end);
     }
 }
