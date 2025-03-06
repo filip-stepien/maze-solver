@@ -7,18 +7,26 @@ import { MazePathFindStrategy } from './MazePathFindStrategy';
  * TODO implement
  */
 export class BFSStrategy<T extends MazePathFinderNode> implements MazePathFindStrategy<T> {
+    private logVisialzation = true;
+
     findPath(maze: MazePathFinder<T>, start: Vec2d, end: Vec2d): MazePath {
         console.debug(`${BFSStrategy.name}::findPath()`);
 
         const state: Map<string, { cameToFrom: Vec2d }> = new Map();
 
-        let queue = [start];
+        const queue = [start];
 
-        while (queue.length != 0) {
-            const currentNodePos = queue.shift();
+        let currentNodePos: Vec2d;
+        do {
+            currentNodePos = queue.shift();
             // console.log(currentNodePos);
             // console.debug('Current node', currentNodePos);
             maze.getNode(currentNodePos).addLabels(['candidate']);
+
+            // end if current node is finish node
+            if (JSON.stringify(currentNodePos) === JSON.stringify(end)) {
+                break;
+            }
 
             maze.getAdjacentNodes(currentNodePos).forEach(
                 ({ node: adjacientNode, pos: adjacientNodePos }) => {
@@ -38,14 +46,36 @@ export class BFSStrategy<T extends MazePathFinderNode> implements MazePathFindSt
                     });
 
                     // add it to queue
-                    queue = queue.concat(adjacientNodePos);
+                    queue.push(adjacientNodePos);
                     adjacientNode.addLabels(['queued']);
                 }
             );
-            console.log('_____________\n' + maze.toString());
+
+            // NOTE this draws as algorithm goes
+            if (this.logVisialzation) {
+                console.log('_____________\n' + maze.toString());
+            }
+        } while (queue.length != 0);
+
+        // if last processed node is end node
+        if (state.has(JSON.stringify(currentNodePos))) {
+            const path: MazePath = [];
+            path.push(currentNodePos);
+            while (JSON.stringify(currentNodePos) !== JSON.stringify(start)) {
+                const prevNodePos = state.get(JSON.stringify(currentNodePos)).cameToFrom;
+                currentNodePos = prevNodePos;
+                path.push(currentNodePos);
+                maze.getNode(currentNodePos).addLabels(['selected']);
+
+                // NOTE this draws as algorithm goes
+                if (this.logVisialzation) {
+                    console.log('_____________\n' + maze.toString());
+                }
+            }
+            return path.reverse();
         }
 
-        console.debug(`${BFSStrategy.name}::findPath() done`);
+        // if not found path
         return [];
     }
 }
