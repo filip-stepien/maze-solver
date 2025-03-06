@@ -6,7 +6,7 @@ export class ExampleScene extends Scene {
     private _boxes: MazeBox[] = [];
     private _angle: number = 0;
 
-    start(): void {
+    override start(): void {
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
                 const box = new MazeBox(this);
@@ -17,7 +17,7 @@ export class ExampleScene extends Scene {
         }
     }
 
-    loop(camera: Camera, delta: number): void {
+    override loop(camera: Camera, delta: number): void {
         const radius = 2;
         const centerX = (3 * 0.25) / 2;
         const centerZ = (3 * 0.25) / 2;

@@ -1,4 +1,4 @@
-import { WebGLRenderer, Camera as ThreeCamera, Scene as ThreeScene, Clock } from 'three';
+import { WebGLRenderer, Scene as ThreeScene, Clock } from 'three';
 import { Camera } from './Camera';
 import { Scene } from './Scene';
 
@@ -6,12 +6,15 @@ export class Renderer {
     private static _instance: Renderer;
     private _renderer: WebGLRenderer;
     private _camera: Camera;
-    private _scene: Scene;
+    private _scenes: Scene[];
+    private _threeScene: ThreeScene;
     private _clock: Clock;
 
     private constructor() {
         this._renderer = new WebGLRenderer({ antialias: true });
         this._clock = new Clock();
+        this._threeScene = new ThreeScene();
+        this._scenes = [];
     }
 
     public static get instance(): Renderer {
@@ -26,8 +29,10 @@ export class Renderer {
         this._renderer.setSize(window.innerWidth, window.innerHeight);
 
         this._renderer.setAnimationLoop(time => {
-            this._scene.loop(this._camera.threeCamera, this._clock.getDelta(), time);
-            this._renderer.render(this._scene.threeScene, this._camera.threeCamera);
+            this._scenes.forEach(scene =>
+                scene.loop(this._camera.threeCamera, this._clock.getDelta(), time)
+            );
+            this._renderer.render(this._threeScene, this._camera.threeCamera);
         });
 
         window.addEventListener('resize', () => {
@@ -37,8 +42,14 @@ export class Renderer {
         document.body.appendChild(this._renderer.domElement);
     }
 
-    public set scene(scene: Scene) {
-        this._scene = scene;
+    public addScene(...scenes: Scene[]) {
+        this._scenes.push(...scenes);
+        scenes.forEach(scene => {
+            scene.start(this._camera.threeCamera);
+            scene.getMeshes().forEach(mesh => {
+                this._threeScene.add(mesh);
+            });
+        });
     }
 
     public set camera(camera: Camera) {
@@ -46,13 +57,13 @@ export class Renderer {
     }
 
     public instatiate() {
-        if (!this._camera || !this._scene) {
+        if (!this._camera || this._scenes.length === 0) {
             throw new Error(
-                'Unable to append partially initialized Renderer object. Make sure you are specifying Camera and Scene objects.'
+                'Unable to append partially initialized Renderer object. Make sure you are specifying Camera and at least one Scene object.'
             );
         }
 
         this.initializeRenderer();
-        this._scene.start(this._camera.threeCamera);
+        this._scenes.forEach(scene => scene.start(this._camera.threeCamera));
     }
 }
