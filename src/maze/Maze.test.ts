@@ -118,9 +118,15 @@ describe('getAdjacientNodes returns correct results', () => {
 
     function testPostions(origin: Vec2d, validPositions: Vec2d[]) {
         // get adjacent nodes
-        // console.log(origin);
+        // console.debug('origin ', origin);
         const nodes = maze.getAdjacentNodes(origin);
-        // console.log(nodes);
+
+        expect(
+            nodes.length,
+            'adjecent nodes count returned to be same as number of valid postions'
+        ).toStrictEqual(validPositions.length);
+
+        // console.log('nodes', nodes);
 
         // Assert that each returned node postion is one of correct ones
         nodes.forEach(mazeNodeIterator => {
@@ -138,6 +144,7 @@ describe('getAdjacientNodes returns correct results', () => {
                 return new MazeNode();
             }
         });
+        // console.log(maze);
     });
 
     test('top left', () => {
