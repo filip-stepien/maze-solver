@@ -101,10 +101,16 @@ export class Maze<T extends MazeNode> {
 
     /**
      * perfrom operations on every node
-     * @param transform @see transformNode
+     * @param callback
      */
-    public forEachNode(transform: (node: T) => void): void {
-        this.m_matrix.forEach(row => row.forEach(e => transform(e)));
+    public forEachNode(callback: ({ pos, node }: { pos: Vec2d; node: T }) => void): void {
+        for (let y = 0; y < this.m_size.y; ++y) {
+            for (let x = 0; x < this.m_size.x; ++x) {
+                const pos: Vec2d = { x, y };
+                const node = this.getNode(pos);
+                callback({ pos, node });
+            }
+        }
     }
 
     public toString(): string {

@@ -2,6 +2,7 @@ import { node } from 'globals';
 import { Vec2d } from '../types';
 import { Maze } from './Maze';
 import { MazeNode } from './MazeNode';
+import { getNameOfDeclaration } from 'typescript';
 
 test('Maze size and factory constructor', () => {
     const maze = new Maze({
@@ -53,4 +54,34 @@ test('Maze trasform node to be colliding', () => {
     expect(maze.getNode(pos).isColliding()).toBeTruthy();
 });
 
-test.todo('Maze transformEachNode');
+test('Maze forEachNode works', () => {
+    const maze = new Maze({
+        size: new Vec2d({ x: 2, y: 3 }),
+        nodeFactory: () => {
+            return new MazeNode();
+        }
+    });
+
+    const nodeList = Array.from([
+        // first
+        [0, 0],
+        //last
+        [1, 2],
+        //somewhere in middle
+        [0, 1]
+    ]);
+
+    nodeList
+        .map(e => new Vec2d(e))
+        .forEach(pos => {
+            maze.getNode(pos).makeColliding();
+        });
+
+    maze.forEachNode(({ pos, node }) => {
+        const shouldBeColliding = nodeList.some(e => {
+            return e[0] == pos.x && e[1] == pos.y;
+        });
+
+        expect(node.isColliding() == shouldBeColliding).toBeTruthy();
+    });
+});
