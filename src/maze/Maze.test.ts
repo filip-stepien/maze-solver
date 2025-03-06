@@ -39,21 +39,6 @@ test('Maze initialization using collsionState constructor', () => {
     }
 });
 
-test('Maze trasform node to be colliding', () => {
-    const maze = new Maze({
-        size: new Vec2d({ x: 1, y: 2 }),
-        nodeFactory: () => {
-            return new MazeNode();
-        }
-    });
-
-    const pos: Vec2d = { x: 0, y: 1 };
-
-    maze.getNode(pos).makeColliding();
-
-    expect(maze.getNode(pos).isColliding()).toBeTruthy();
-});
-
 test('Maze forEachNode works', () => {
     const maze = new Maze({
         size: new Vec2d({ x: 2, y: 3 }),
@@ -83,5 +68,36 @@ test('Maze forEachNode works', () => {
         });
 
         expect(node.isColliding() == shouldBeColliding).toBeTruthy();
+    });
+});
+
+describe('Maze methods', () => {
+    let size: Vec2d;
+    let maze: Maze<MazeNode>;
+
+    beforeEach(() => {
+        size = new Vec2d([2, 3]);
+        maze = new Maze({
+            size,
+            nodeFactory: () => {
+                return new MazeNode();
+            }
+        });
+    });
+
+    test('Maze trasform node to be colliding', () => {
+        const pos: Vec2d = { x: 1, y: 2 };
+        maze.getNode(pos).makeColliding();
+        expect(maze.getNode(pos).isColliding()).toBeTruthy();
+    });
+
+    test('Maze getSize returns correct value', () => {
+        expect(JSON.stringify(maze.getSize()) === JSON.stringify(size)).toBeTruthy();
+    });
+
+    test("Maze getSize owns it's size", () => {
+        size.x = 69;
+
+        expect(JSON.stringify(maze.getSize()) !== JSON.stringify(size)).toBeTruthy();
     });
 });
