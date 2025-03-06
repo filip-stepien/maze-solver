@@ -75,16 +75,13 @@ export class Maze<T extends MazeNode> {
 
             this.initMatrix(size, nodeFactory);
 
-            for (let y = 0; y < this.m_size.y; ++y) {
-                for (let x = 0; x < this.m_size.x; ++x) {
-                    const node = this.getNode({ x, y });
-                    if (collsionState[y][x] == true) {
-                        node.makeColliding();
-                    } else {
-                        node.makeNotColliding();
-                    }
+            this.forEachNode(({ pos, node }) => {
+                if (collsionState[pos.y][pos.x] == true) {
+                    node.makeColliding();
+                } else if (collsionState[pos.y][pos.x] == false) {
+                    node.makeNotColliding();
                 }
-            }
+            });
         }
     }
 
@@ -101,7 +98,7 @@ export class Maze<T extends MazeNode> {
 
     /**
      * perfrom operations on every node
-     * @param callback
+     * @param callback that takes postion and node
      */
     public forEachNode(callback: ({ pos, node }: { pos: Vec2d; node: T }) => void): void {
         for (let y = 0; y < this.m_size.y; ++y) {
