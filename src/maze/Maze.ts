@@ -20,12 +20,17 @@ export class Maze<T extends MazeNode> {
         if (
             // check x bound
             x < 0 ||
-            x > this.m_size.x ||
+            x >= this.m_size.x ||
             // check y bound
             y < 0 ||
-            y > this.m_size.y
+            y >= this.m_size.y
         ) {
-            const mess = 'Postion ${pos.toString()} is out of bounds';
+            const mess =
+                'Postion ' +
+                JSON.stringify(pos) +
+                ' is out of bounds, size is ' +
+                JSON.stringify(this.getSize());
+
             throw RangeError(mess);
         }
     }
@@ -123,7 +128,7 @@ export class Maze<T extends MazeNode> {
             [0, 1],
             // up
             [0, -1]
-        ].map(e => new Vec2d(e));
+        ].map(e => pos.move(new Vec2d(e)));
 
         let result: { node: T; pos: Vec2d }[] = [];
 
