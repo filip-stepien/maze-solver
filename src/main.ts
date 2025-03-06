@@ -3,7 +3,8 @@ import './maze/Maze';
 import { Maze } from './maze/Maze';
 import { MazeNode } from './maze/MazeNode';
 import { Vec2d } from './types';
-import MazePathFinder, { MazePathFinderNode } from './maze/MazePathFinder';
+import MazePathFinder from './maze/MazePathFinder';
+import { MazePathFinderNode } from './maze/MazePathFinderNode';
 import { BFSStrategy } from './strategies/MazePathFindStrategy/BFSStrategy';
 
 const setupMaze = () => {
@@ -46,15 +47,8 @@ const setupMaze = () => {
         [1, 5],
         [2, 5]
     ].forEach(e => {
-        const pos = new Vec2d({
-            x: e[0],
-            y: e[1]
-        });
-
-        maze.transformNode(pos, node => {
-            node.makeNotColliding();
-            return node;
-        });
+        const pos = new Vec2d(e);
+        maze.getNode(pos).makeNotColliding();
     });
     return maze;
 };
