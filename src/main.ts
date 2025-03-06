@@ -44,7 +44,8 @@ const setupMaze = () => {
         [3, 3],
         [0, 5],
         [1, 5],
-        [2, 5]
+        [2, 5],
+        [4, 5]
     ].forEach(e => {
         const pos = new Vec2d(e);
         maze.getNode(pos).makeNotColliding();
