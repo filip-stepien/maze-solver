@@ -5,7 +5,8 @@
     "start": "webpack",
     "dev": "webpack --watch",
     "lint": "eslint",
-    "main": "tsx --watch src/main.ts",
+    "main-watch": "tsx --watch src/main.ts",
+    "main": "tsx src/main.ts",
     "test": "vitest"
   },
   "keywords": [],
