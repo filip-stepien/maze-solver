@@ -91,7 +91,7 @@ export class MazePathFinderNode extends MazeNode {
         } else if (this.hasLabel('candidate')) {
             colorFunc = chalk.yellow;
         } else if (this.hasLabel('queued')) {
-            colorFunc = chalk.grey;
+            colorFunc = chalk.magenta;
         }
 
         return colorFunc(this.getCharacter());
