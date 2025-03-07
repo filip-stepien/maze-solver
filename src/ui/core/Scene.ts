@@ -4,7 +4,7 @@ import { Object3D } from './Object3D';
 /**
  * Scene, which manages rendered objects.
  */
-export abstract class Scene {
+export class Scene {
     /**
      * Objects rendered on this scene.
      */
@@ -20,7 +20,7 @@ export abstract class Scene {
      * initialization or logic that needs to be executed only once.
      * @param camera Object that be used to manipulate the camera that views the scene.
      */
-    abstract start(camera: Camera): void;
+    start(camera: Camera): void {}
 
     /**
      * Method for the main loop, called every frame.
@@ -29,7 +29,7 @@ export abstract class Scene {
      * @param delta Time difference between the current and previous frame (in seconds).
      * @param time Elapsed time since the start of the loop (in milliseconds).
      */
-    abstract loop(camera: Camera, delta: number, time: number): void;
+    loop(camera: Camera, delta: number, time: number): void {}
 
     /**
      * Retrieve all objects that belong to this scene.
