@@ -57,7 +57,7 @@ const setupMaze = () => {
 };
 
 const generateMaze = () => {
-    const generator = new MazeGenerator(33, 11);
+    const generator = new MazeGenerator(66, 17);
     const strategy = new PrimsStrategy();
     generator.setGenerationStrategy(strategy);
     const colsate = generator.generateMaze().map(row => {
@@ -109,7 +109,7 @@ const findPath = (maze: MazePathFinder<MazePathFinderNode>) => {
 
     const { start, end } = randomizeStartEndPositions(mpf);
 
-mpf.findPath(start, end);
+    mpf.findPath(start, end);
     console.log(`${mpf}`);
     // console.dir(mpf, { depth: null });
 };
