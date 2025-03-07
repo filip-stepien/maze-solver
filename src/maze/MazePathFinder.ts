@@ -18,9 +18,12 @@ export default class MazePathFinder<T extends MazePathFinderNode> extends Maze<T
         if (!this.m_pathfindStrategy) {
             throw new Error('MazePathFinder::findPath strategy is not set');
         }
-        
+
         this.validateNodePosition(start);
         this.validateNodePosition(end);
+        if (this.getNode(start).isColliding() || this.getNode(end).isColliding()) {
+            throw Error('Can not start/finish path in wall');
+        }
 
         this.getNode(start).addLabels(['start']);
         this.getNode(end).addLabels(['finish']);
