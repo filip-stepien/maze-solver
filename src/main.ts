@@ -8,6 +8,7 @@ import { MazePathFinderNode } from './maze/MazePathFinderNode';
 import { BFSStrategy } from './strategies/MazePathFindStrategy/BFSStrategy';
 import { PrimsStrategy } from './strategies/PrimsStrategy';
 import { MazeGenerator } from './maze/MazeGenerator';
+import { Random } from './utils/Random';
 
 const setupMaze = () => {
     console.debug('initializer: ', MazeNode.initializer);
@@ -73,6 +74,28 @@ const generateMaze = () => {
     return maze;
 };
 
+const randomizeStartEndPositions = (maze: Maze<MazeNode>): { start: Vec2d; end: Vec2d } => {
+    const nonColliding: Vec2d[] = [];
+
+    maze.forEachNode(({ pos, node }) => {
+        if (!node.isColliding()) {
+            nonColliding.push(pos);
+        }
+    });
+
+    const start = nonColliding[Random.randomIndex(nonColliding)];
+
+    let end: Vec2d;
+    do {
+        end = nonColliding[Random.randomIndex(nonColliding)];
+    } while (JSON.stringify(start) === JSON.stringify(end));
+
+    return {
+        start,
+        end
+    };
+};
+
 const findPath = (maze: MazePathFinder<MazePathFinderNode>) => {
     const mpf = maze;
     console.info(`initialzied ${Object.getPrototypeOf(mpf).constructor.name}`);
@@ -84,7 +107,9 @@ const findPath = (maze: MazePathFinder<MazePathFinderNode>) => {
         }`
     );
 
-    mpf.findPath(new Vec2d([0, 0]), new Vec2d([3, 3]));
+    const { start, end } = randomizeStartEndPositions(mpf);
+
+mpf.findPath(start, end);
     console.log(`${mpf}`);
     // console.dir(mpf, { depth: null });
 };
