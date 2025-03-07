@@ -1,5 +1,9 @@
 # 🔍 Labirynth solver 🔍
 
+## Demo
+
+[![asciicast](https://asciinema.org/a/095QRDeokwAO7BPwFezvTCF7R.svg)](https://asciinema.org/a/095QRDeokwAO7BPwFezvTCF7R)
+
 ## Usage
 
 ```bash
