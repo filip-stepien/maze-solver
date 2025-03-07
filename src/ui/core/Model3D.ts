@@ -1,11 +1,11 @@
 import { Mesh, BufferGeometry, Material } from 'three';
 import { Scene } from './Scene';
-import { ObjectSceneRenderable } from './ObjectSceneRenderable';
+import { Renderable } from './Renderable';
 
 /**
  * Renderable mesh with geometry and material.
  */
-export abstract class Model3D extends ObjectSceneRenderable {
+export abstract class Model3D extends Renderable {
     /**
      * Geometry that defines the shape of the model.
      */
