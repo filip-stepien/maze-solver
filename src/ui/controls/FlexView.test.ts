@@ -3,10 +3,14 @@
 import { expect, test } from 'vitest';
 import { FlexView } from './FlexView';
 
-test('Setting flex properties in runtime', () => {
-    const flexView = new FlexView();
-    const flexElement = document.body.firstChild as HTMLElement;
+const flexView = new FlexView();
+const flexElement = document.body.firstChild as HTMLElement;
 
+test('Flex display property initialization', () => {
+    expect(flexElement.style.display).toEqual('flex');
+});
+
+test('Setting flex properties in runtime', () => {
     expect(flexElement.style.direction).toBeFalsy();
     expect(flexElement.style.justifyContent).toBeFalsy();
     expect(flexElement.style.alignItems).toBeFalsy();
@@ -19,7 +23,7 @@ test('Setting flex properties in runtime', () => {
     flexView.justifyContent = justifyContent;
     flexView.alignItems = alignItems;
 
-    expect(flexElement.style.direction).toEqual(direction);
+    expect(flexElement.style.flexDirection).toEqual(direction);
     expect(flexElement.style.justifyContent).toEqual(justifyContent);
     expect(flexElement.style.alignItems).toEqual(alignItems);
 });

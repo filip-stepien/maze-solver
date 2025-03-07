@@ -1,12 +1,23 @@
 // @vitest-environment jsdom
 
-import { test, describe, beforeAll, expect } from 'vitest';
+import { test, describe, expect } from 'vitest';
 import { View } from './View';
 
 describe('Adding children to DOM', () => {
-    beforeAll(() => {
-        const view = new View();
-        view.addChild(new View(), new View(), new View());
+    const view = new View();
+    const viewElement = document.body.firstElementChild as HTMLElement;
+    view.addChild(new View(), new View(), new View());
+
+    describe('Setting property in runtime', () => {
+        test('Converting number dimensions to px', () => {
+            view.gap = 10;
+            expect(viewElement.style.gap).toEqual('10px');
+        });
+
+        test('Handling string value', () => {
+            view.gap = '5%';
+            expect(viewElement.style.gap).toEqual('5%');
+        });
     });
 
     test('Appending children to document body', () => {

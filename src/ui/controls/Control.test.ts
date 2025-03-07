@@ -1,16 +1,10 @@
 // @vitest-environment jsdom
 
-import { describe, expect, test, beforeEach } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { Control } from './Control';
 
-let control: Control;
-let controlElement: HTMLElement;
-
-beforeEach(() => {
-    document.body.innerHTML = '';
-    control = new Control();
-    controlElement = document.body.firstElementChild as HTMLElement;
-});
+const control = new Control();
+const controlElement = document.body.firstElementChild as HTMLElement;
 
 describe('Adding element to DOM', () => {
     test('Appending element to document body', () => {
@@ -22,20 +16,24 @@ describe('Adding element to DOM', () => {
     });
 });
 
-describe('Changing properties in runtime', () => {
+describe('Setting properties in runtime', () => {
     test('Converting number dimensions to px', () => {
         control.width = 100;
         control.height = 100;
+        control.padding = 10;
 
         expect(controlElement.style.width).toEqual('100px');
         expect(controlElement.style.height).toEqual('100px');
+        expect(controlElement.style.padding).toEqual('10px');
     });
 
-    test('Handling string dimensions', () => {
+    test('Handling string values', () => {
         control.width = '100%';
         control.height = '100%';
+        control.padding = '1%';
 
         expect(controlElement.style.width).toEqual('100%');
         expect(controlElement.style.height).toEqual('100%');
+        expect(controlElement.style.padding).toEqual('1%');
     });
 });
