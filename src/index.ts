@@ -27,6 +27,8 @@ view2.height = 100;
 view3.height = 100;
 
 grid.columns = [1, 1];
+grid.gap = 10;
+grid.padding = 10;
 grid.rows = ['200px', '200px'];
 grid.itemPlacement = 'center';
 grid.addChild(view1, view2, view3);

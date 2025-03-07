@@ -22,14 +22,15 @@ export class Control {
      * @param num The value to be formatted.
      * @returns Formatted CSS pixel string or the input string if it was already a string.
      */
-    private ensurePx(num: number | string): string {
+    protected ensurePx(num: number | string): string {
         return typeof num === 'number' ? num.toString() + 'px' : num;
     }
 
     /**
      * Sets the width of the HTML element.
+     * Number is treated as `px` unit.
      *
-     * @param width Number which will be converted to a pixel string or a different unit as a string.
+     * @param width Number or value with CSS unit as a string.
      */
     public set width(width: number | string) {
         this._htmlElement.style.width = this.ensurePx(width);
@@ -37,11 +38,22 @@ export class Control {
 
     /**
      * Sets the height of the HTML element.
+     * Number is treated as `px` unit.
      *
-     * @param width Number which will be converted to a pixel string or a different unit as a string.
+     * @param width Number or value with CSS unit as a string.
      */
     public set height(height: number | string) {
         this._htmlElement.style.height = this.ensurePx(height);
+    }
+
+    /**
+     * Sets the padding of the HTML element.
+     * Number is treated as `px` unit.
+     *
+     * @param padding Number or value with CSS unit as a string.
+     */
+    public set padding(padding: number | string) {
+        this._htmlElement.style.padding = this.ensurePx(padding);
     }
 
     /**
