@@ -6,6 +6,8 @@ import { Vec2d } from './types';
 import MazePathFinder from './maze/MazePathFinder';
 import { MazePathFinderNode } from './maze/MazePathFinderNode';
 import { BFSStrategy } from './strategies/MazePathFindStrategy/BFSStrategy';
+import { PrimsStrategy } from './strategies/PrimsStrategy';
+import { MazeGenerator } from './maze/MazeGenerator';
 
 const setupMaze = () => {
     console.debug('initializer: ', MazeNode.initializer);
@@ -53,6 +55,24 @@ const setupMaze = () => {
     return maze;
 };
 
+const generateMaze = () => {
+    const generator = new MazeGenerator(33, 11);
+    const strategy = new PrimsStrategy();
+    generator.setGenerationStrategy(strategy);
+    const colsate = generator.generateMaze().map(row => {
+        return row.map(e => e != 0);
+    });
+
+    const maze = new MazePathFinder({
+        collsionState: colsate,
+        nodeFactory: () => {
+            return new MazePathFinderNode();
+        }
+    });
+
+    return maze;
+};
+
 const findPath = (maze: MazePathFinder<MazePathFinderNode>) => {
     const mpf = maze;
     console.info(`initialzied ${Object.getPrototypeOf(mpf).constructor.name}`);
@@ -70,7 +90,8 @@ const findPath = (maze: MazePathFinder<MazePathFinderNode>) => {
 };
 
 const main = () => {
-    const maze = setupMaze();
+    // const maze = setupMaze();
+    const maze = generateMaze();
     console.log('-----------------------------');
     console.info('drawing maze using toString');
     console.log(`${maze}`);

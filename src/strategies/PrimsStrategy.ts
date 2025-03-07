@@ -28,7 +28,7 @@ export class PrimsStrategy implements GenerationStrategy {
         return neighbors;
     }
 
-    public generateMaze(cols: number, rows: number): void {
+    public generateMaze(cols: number, rows: number) {
         const maze: number[][] = Array.from({ length: rows }, () => Array(cols).fill(1));
         const edges: { from: Vec2d; to: Vec2d }[] = [];
 
@@ -68,7 +68,7 @@ export class PrimsStrategy implements GenerationStrategy {
             }
         }
 
-        //return maze;
-        console.table(maze);
+        return maze;
+        // console.table(maze);
     }
 }

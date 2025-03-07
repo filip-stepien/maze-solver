@@ -1,3 +1,3 @@
 export interface GenerationStrategy {
-    generateMaze(cols: number, rows: number): void;
+    generateMaze(cols: number, rows: number): number[][];
 }

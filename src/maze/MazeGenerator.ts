@@ -16,7 +16,7 @@ export class MazeGenerator<T extends GenerationStrategy> {
     }
 
     public generateMaze() {
-        this.generationStrategy.generateMaze(this.cols, this.rows);
+        return this.generationStrategy.generateMaze(this.cols, this.rows);
     }
 }
 
