@@ -7,7 +7,8 @@
     "lint": "eslint",
     "main-watch": "tsx --watch src/main.ts",
     "main": "tsx src/main.ts",
-    "test": "vitest"
+    "test": "vitest",
+    "coverage": "vitest run --coverage --coverage.reporter='text-summary'"
   },
   "keywords": [],
   "author": "",
@@ -16,9 +17,11 @@
   "devDependencies": {
     "@eslint/js": "^9.21.0",
     "@types/three": "^0.174.0",
+    "@vitest/coverage-v8": "^3.0.8",
     "eslint": "^9.21.0",
     "globals": "^16.0.0",
     "html-webpack-plugin": "^5.6.3",
+    "jsdom": "^26.0.0",
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.3",
