@@ -40,10 +40,12 @@ export class MazePathFinderNode extends MazeNode {
     }
 
     /**
-     * Removes all labels from node
+     * removes labels from node
+     * @param labels labels to remove
      */
-    clearLabels() {
-        this.m_labels.clear();
+    deleteLabels(labels: MazePathFinderNodeStateLabel[]) {
+        // Add all elements from the 'labels' array to the 'm_labels' set
+        labels.forEach(label => this.m_labels.delete(label));
     }
 
     /**
