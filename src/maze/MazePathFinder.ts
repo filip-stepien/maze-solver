@@ -56,7 +56,7 @@ export default class MazePathFinder<T extends MazePathFinderNode>
         function msleep(n: number) {
             Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, n);
         }
-        msleep(250);
+        msleep(50);
     }
 
     setPathFindStrategy(strategy: MazePathFindStrategy<T>): void {
