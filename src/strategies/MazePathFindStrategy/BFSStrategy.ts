@@ -1,10 +1,10 @@
 import MazePathFinder from '../../maze/MazePathFinder';
-import { MazePathFinderNode } from '../../maze/MazePathFinderNode';
+import { MazePathFinderNode, MazePathFinderNodeLabel } from '../../maze/MazePathFinderNode';
 import { Vec2d, MazePath } from '../../types';
 import { MazePathFindStrategy } from './MazePathFindStrategy';
 
 /**
- * TODO implement
+ * Finds path using Breadth-first search
  */
 export class BFSStrategy<T extends MazePathFinderNode> implements MazePathFindStrategy<T> {
     private logVisialzation = true;
@@ -15,13 +15,15 @@ export class BFSStrategy<T extends MazePathFinderNode> implements MazePathFindSt
         const state: Map<string, { cameToFrom: Vec2d }> = new Map();
 
         const queue = [start];
+        maze.getNode(start).makeQueued();
 
         let currentNodePos: Vec2d;
         do {
             currentNodePos = queue.shift();
             // console.log(currentNodePos);
             // console.debug('Current node', currentNodePos);
-            maze.getNode(currentNodePos).addLabels(['candidate']);
+            const node = maze.getNode(currentNodePos);
+            node.makeCandidate();
 
             // end if current node is finish node
             if (JSON.stringify(currentNodePos) === JSON.stringify(end)) {
@@ -47,30 +49,27 @@ export class BFSStrategy<T extends MazePathFinderNode> implements MazePathFindSt
 
                     // add it to queue
                     queue.push(adjacientNodePos);
-                    adjacientNode.addLabels(['queued']);
+                    adjacientNode.makeQueued();
                 }
             );
-
-            // NOTE this draws as algorithm goes
-            if (this.logVisialzation) {
-                console.log('_____________\n' + maze.toString());
-            }
         } while (queue.length != 0);
 
         // if last processed node is end node
         if (state.has(JSON.stringify(currentNodePos))) {
             const path: MazePath = [];
-            path.push(currentNodePos);
+            // bactrack nodes till to start
             while (JSON.stringify(currentNodePos) !== JSON.stringify(start)) {
-                const prevNodePos = state.get(JSON.stringify(currentNodePos)).cameToFrom;
-                currentNodePos = prevNodePos;
-                path.push(currentNodePos);
-                maze.getNode(currentNodePos).addLabels(['selected']);
+                // make current node selected
+                maze.getNode(currentNodePos).makeSelected();
 
-                // NOTE this draws as algorithm goes
-                if (this.logVisialzation) {
-                    console.log('_____________\n' + maze.toString());
-                }
+                // add current node to path
+                path.push(currentNodePos);
+
+                // find where is previous node
+                const prevNodePos = state.get(JSON.stringify(currentNodePos)).cameToFrom;
+
+                // make previous current
+                currentNodePos = prevNodePos;
             }
             return path.reverse();
         }
