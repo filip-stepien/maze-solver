@@ -8,6 +8,19 @@ import { error } from 'console';
  */
 export type MazePathFinderNodeLabel = 'start' | 'finish' | 'candidate' | 'selected' | 'queued';
 
+export interface MPFNodeLabelChangeObserver {
+    /**
+     * @param node node that had state changed
+     */
+    onMPFNodeLabelChange({
+        node,
+        labelChanged
+    }: {
+        node: MazePathFinderNode;
+        labelChanged: MazePathFinderNodeLabel;
+    }): void;
+}
+
 /**
  * On top of representing node,
  * it also represents it's "state" from pathfinding algirthm perspective.
@@ -33,7 +46,6 @@ export type MazePathFinderNodeLabel = 'start' | 'finish' | 'candidate' | 'select
  * - selected -- algorithm has chosen node for final path
  *
  */
-
 export class MazePathFinderNode extends MazeNode {
     /**
      * nodeRole labels
@@ -49,10 +61,21 @@ export class MazePathFinderNode extends MazeNode {
     ];
 
     private m_labels: Set<MazePathFinderNodeLabel> = new Set([]);
+    private m_MPFNodeLabelChangeObserver: MPFNodeLabelChangeObserver[] = [];
 
     constructor() {
         super();
         this.m_labels = new Set([]);
+    }
+
+    addLabelChangeObserver(observer: MPFNodeLabelChangeObserver) {
+        this.m_MPFNodeLabelChangeObserver.push(observer);
+    }
+
+    protected invokeLabelChangeObservers(label: MazePathFinderNodeLabel) {
+        this.m_MPFNodeLabelChangeObserver.forEach(listener => {
+            listener.onMPFNodeLabelChange({ node: this, labelChanged: label });
+        });
     }
 
     /**
@@ -109,7 +132,10 @@ export class MazePathFinderNode extends MazeNode {
      */
     protected addLabels(labels: MazePathFinderNodeLabel[]) {
         // Add all elements from the 'labels' array to the 'm_labels' set
-        labels.forEach(label => this.m_labels.add(label));
+        labels.forEach(label => {
+            this.m_labels.add(label);
+            this.invokeLabelChangeObservers(label);
+        });
     }
 
     /**
@@ -118,7 +144,10 @@ export class MazePathFinderNode extends MazeNode {
      */
     protected deleteLabels(labels: MazePathFinderNodeLabel[]) {
         // Add all elements from the 'labels' array to the 'm_labels' set
-        labels.forEach(label => this.m_labels.delete(label));
+        labels.forEach(label => {
+            this.m_labels.delete(label);
+            this.invokeLabelChangeObservers(label);
+        });
     }
 
     /**
