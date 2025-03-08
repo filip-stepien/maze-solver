@@ -44,14 +44,19 @@ export default class MazePathFinder<T extends MazePathFinderNode>
             }
         });
 
+        console.clear();
         console.log(
             `Changed node at ${JSON.stringify(changedNodePos)}, ${
                 node.hasLabel(labelChanged)
                     ? chalk.green(`+ ${labelChanged}`)
                     : chalk.red(`- ${labelChanged}`)
-            }\n`,
-            this.toString()
+            }\n${this.toString()}`
         );
+
+        function msleep(n: number) {
+            Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, n);
+        }
+        msleep(250);
     }
 
     setPathFindStrategy(strategy: MazePathFindStrategy<T>): void {
