@@ -145,8 +145,9 @@ export class MazePathFinderNode extends MazeNode {
     protected deleteLabels(labels: MazePathFinderNodeLabel[]) {
         // Add all elements from the 'labels' array to the 'm_labels' set
         labels.forEach(label => {
-            this.m_labels.delete(label);
-            this.invokeLabelChangeObservers(label);
+            if (this.m_labels.delete(label)) {
+                this.invokeLabelChangeObservers(label);
+            }
         });
     }
 
