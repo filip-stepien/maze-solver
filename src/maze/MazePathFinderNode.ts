@@ -50,6 +50,8 @@ export class MazePathFinderNode extends MazeNode {
      * Get set of labels that node has
      * @returns Set containg labels
      * @see hasLabel
+     *
+     * returns clone
      */
     getLabels() {
         return structuredClone(this.m_labels);
