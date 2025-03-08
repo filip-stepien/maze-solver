@@ -25,8 +25,8 @@ export default class MazePathFinder<T extends MazePathFinderNode> extends Maze<T
             throw Error('Can not start/finish path in wall');
         }
 
-        this.getNode(start).addLabels(['start']);
-        this.getNode(end).addLabels(['finish']);
+        this.getNode(start).makeStart();
+        this.getNode(end).makeFinish();
         return this.m_pathfindStrategy.findPath(this, start, end);
     }
 }

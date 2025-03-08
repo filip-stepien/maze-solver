@@ -1,40 +1,113 @@
 import chalk, { colorNames, foregroundColorNames } from 'chalk';
 import { MazeNode } from './MazeNode';
 import { Color } from 'three';
+import { error } from 'console';
 
 /**
- * Node states
- * - candidate -- algorithm might use this node for finall path
- * - finish -- required end node of path
- * - queued -- node is queued and might become candiate
- * - selected -- algorithm has chosen node for finall path
- * - start -- required start node of path
- *
- * state flow
- * queued <-> candiate -> selected
+ * Valid labels of MazePathFinderNode
  */
-export type MazePathFinderNodeStateLabel = 'start' | 'finish' | 'candidate' | 'selected' | 'queued';
+export type MazePathFinderNodeLabel = 'start' | 'finish' | 'candidate' | 'selected' | 'queued';
 
 /**
  * On top of representing node,
  * it also represents it's "state" from pathfinding algirthm perspective.
  * pathfinding algorithm use this class methods to indicate state of node.
+ *
+ * Node label changes are required to be done in *"Add higher priorty first, remove lower after"* order.
+ * - eg. queued node becomes candidate. It should first recive candidate label and then have queued removed.
+ *
+ * Node states shown as labels and manipulated by make* methods, some of labels are mutually exclusive
+ * (and have strict change order) as shonw below:
+ *
+ * ### Node role
+ *
+ * Regural nodes don't have any of those labels, those two labels are mututaly exclusive
+ *
+ * - finish -- end node of path
+ * - start -- required start node of path
+ *
+ * ### Node state
+ *
+ * - queued -- node is queued and will become candidate (or algorithm stops before it does)
+ * - candidate -- algorithm might use this node for final path
+ * - selected -- algorithm has chosen node for final path
+ *
  */
 
 export class MazePathFinderNode extends MazeNode {
+    /**
+     * nodeRole labels
+     *
+     * it's only here beacause class instance can not access static members without explicitly stating classname
+     */
+    m_mazePathFinderNodeRoleLabels: MazePathFinderNodeLabel[] = ['start', 'finish'];
+
+    m_mazePathFinderNodeStateLabels: MazePathFinderNodeLabel[] = [
+        'queued',
+        'candidate',
+        'selected'
+    ];
+
+    private m_labels: Set<MazePathFinderNodeLabel> = new Set([]);
+
     constructor() {
         super();
         this.m_labels = new Set([]);
     }
 
-    private m_labels: Set<MazePathFinderNodeStateLabel> = new Set([]);
+    /**
+     * Labels node as finish node
+     */
+    makeFinish() {
+        this.deleteLabels(['start']);
+        this.addLabels(['finish']);
+    }
+
+    /**
+     * Labels node as start node
+     */
+    makeStart() {
+        this.deleteLabels(['finish']);
+        this.addLabels(['start']);
+    }
+
+    makeRegural() {
+        this.deleteLabels(this.m_mazePathFinderNodeRoleLabels);
+    }
+
+    makeQueued() {
+        this.addLabels(['queued']);
+    }
+
+    makeCandidate() {
+        this.promoteLabel('queued', 'candidate');
+    }
+
+    makeSelected() {
+        this.promoteLabel('candidate', 'selected');
+    }
+
+    /**
+     *
+     * @param oldLabel label to remove, node **has to** have that label
+     * @param newLabel label to promote to
+     *
+     * @throws When node doesn't have oldLabel
+     */
+    protected promoteLabel(oldLabel: MazePathFinderNodeLabel, newLabel: MazePathFinderNodeLabel) {
+        if (!this.hasLabel(oldLabel)) {
+            throw new Error(`Can not protmote to ${newLabel}, without being ${oldLabel} first`);
+        }
+        this.addLabels([newLabel]);
+        this.deleteLabels([oldLabel]);
+    }
 
     /**
      * adds label to node
      * @param labels labels to add
      * @note duplicates are ignored
      */
-    addLabels(labels: MazePathFinderNodeStateLabel[]) {
+    protected addLabels(labels: MazePathFinderNodeLabel[]) {
         // Add all elements from the 'labels' array to the 'm_labels' set
         labels.forEach(label => this.m_labels.add(label));
     }
@@ -43,7 +116,7 @@ export class MazePathFinderNode extends MazeNode {
      * removes labels from node
      * @param labels labels to remove
      */
-    deleteLabels(labels: MazePathFinderNodeStateLabel[]) {
+    protected deleteLabels(labels: MazePathFinderNodeLabel[]) {
         // Add all elements from the 'labels' array to the 'm_labels' set
         labels.forEach(label => this.m_labels.delete(label));
     }
@@ -65,7 +138,7 @@ export class MazePathFinderNode extends MazeNode {
      * @returns true / false
      * @see getLabels
      */
-    hasLabel(label: MazePathFinderNodeStateLabel): boolean {
+    hasLabel(label: MazePathFinderNodeLabel): boolean {
         return this.m_labels.has(label);
     }
 
