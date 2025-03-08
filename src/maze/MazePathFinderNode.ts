@@ -39,10 +39,6 @@ export class MazePathFinderNode extends MazeNode {
         labels.forEach(label => this.m_labels.add(label));
     }
 
-    // NOTE might be not needed
-    // removeLabels(label: MazePathFinderNodeStateLabel) {
-    //     this.m_labels.delete(label);
-    // }
     /**
      * Removes all labels from node
      */
@@ -51,12 +47,20 @@ export class MazePathFinderNode extends MazeNode {
     }
 
     /**
+     * Get set of labels that node has
      * @returns Set containg labels
+     * @see hasLabel
      */
     getLabels() {
         return structuredClone(this.m_labels);
     }
 
+    /**
+     * check weather node has label
+     * @param label
+     * @returns true / false
+     * @see getLabels
+     */
     hasLabel(label: MazePathFinderNodeStateLabel): boolean {
         return this.m_labels.has(label);
     }
