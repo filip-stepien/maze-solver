@@ -1,13 +1,58 @@
+import chalk from 'chalk';
 import { MazePathFindStrategy } from '../strategies/MazePathFindStrategy/MazePathFindStrategy';
 import { MazePath, Vec2d } from '../types';
 import { Maze } from './Maze';
-import { MazePathFinderNode } from './MazePathFinderNode';
+import {
+    MazePathFinderNode,
+    MazePathFinderNodeLabel,
+    MPFNodeLabelChangeObserver
+} from './MazePathFinderNode';
 
 /**
  *
  */
-export default class MazePathFinder<T extends MazePathFinderNode> extends Maze<T> {
+export default class MazePathFinder<T extends MazePathFinderNode>
+    extends Maze<T>
+    implements MPFNodeLabelChangeObserver
+{
     protected m_pathfindStrategy: MazePathFindStrategy<T>;
+
+    public constructor({
+        size,
+        collsionState,
+        nodeFactory
+    }: {
+        size?: Vec2d;
+        nodeFactory: () => T;
+        collsionState?: boolean[][]; //YX
+    }) {
+        super({ size, collsionState, nodeFactory });
+
+        this.forEachNode(({ node }) => node.addLabelChangeObserver(this));
+    }
+    onMPFNodeLabelChange({
+        node,
+        labelChanged
+    }: {
+        node: MazePathFinderNode;
+        labelChanged: MazePathFinderNodeLabel;
+    }): void {
+        let changedNodePos: Vec2d;
+        this.forEachNode(({ node, pos }) => {
+            if (node === node) {
+                changedNodePos = pos;
+            }
+        });
+
+        console.log(
+            `Changed node at ${JSON.stringify(changedNodePos)}, ${
+                node.hasLabel(labelChanged)
+                    ? chalk.green(`+ ${labelChanged}`)
+                    : chalk.red(`- ${labelChanged}`)
+            }\n`,
+            this.toString()
+        );
+    }
 
     setPathFindStrategy(strategy: MazePathFindStrategy<T>): void {
         this.m_pathfindStrategy = strategy;
