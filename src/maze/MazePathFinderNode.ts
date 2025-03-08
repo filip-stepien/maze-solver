@@ -13,7 +13,7 @@ import { Color } from 'three';
  * state flow
  * queued -> candiate -> selected
  */
-type MazePathFinderNodeStateLabel = 'start' | 'finish' | 'candidate' | 'selected' | 'queued';
+export type MazePathFinderNodeStateLabel = 'start' | 'finish' | 'candidate' | 'selected' | 'queued';
 
 /**
  * On top of representing node,
