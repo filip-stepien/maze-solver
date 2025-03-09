@@ -101,12 +101,19 @@ const randomizeStartEndPositions = (maze: Maze<MazeNode>): { start: Vec2d; end: 
 
 const main = () => {
     // const maze = setupMaze();
-    const maze = generateMaze(new Vec2d([5, 5]));
+    const maze = generateMaze(new Vec2d([50, 15]));
     console.log('-----------------------------');
     console.info('drawing maze using toString');
     console.log(`${maze}`);
 
-    const doDrawProgress = false;
+    const strategies = [
+        //
+        // new BFSStrategy(),
+        //
+        new DFSStrategy()
+    ];
+    const doDrawProgress = strategies.length <= 1;
+
     if (doDrawProgress)
         // Drawing on each label change
         maze.addNodeLabelChangeObserver(({ node, pos, labelChanged }) => {
@@ -126,7 +133,7 @@ const main = () => {
 
     const { start, end } = randomizeStartEndPositions(maze);
 
-    for (const strategy of [new BFSStrategy(), new DFSStrategy()]) {
+    for (const strategy of strategies) {
         console.log('-----------------------------');
         console.log('Using strategy', Object.getPrototypeOf(strategy).constructor.name);
         maze.setPathFindStrategy(strategy);
