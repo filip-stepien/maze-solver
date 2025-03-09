@@ -38,8 +38,9 @@ export default class MazePathFinder<T extends MazePathFinderNode>
         labelChanged: MazePathFinderNodeLabel;
     }): void {
         let changedNodePos: Vec2d;
-        this.forEachNode(({ node, pos }) => {
-            if (node === node) {
+        this.forEachNode(({ node: nodeNow, pos }) => {
+            if (nodeNow === node) {
+                // Corrected parentheses
                 changedNodePos = pos;
             }
         });
