@@ -1,4 +1,5 @@
 import { Vec2d } from '../types';
+import { Random } from '../utils/Random';
 import { logFunctionCall } from './Debug';
 import { MazeNode } from './MazeNode';
 
@@ -140,6 +141,8 @@ export class Maze<T extends MazeNode> {
             result = result.concat([{ pos, node: this.getNode(pos) }]);
         });
 
+        // Randomize order so that it's not biased
+        Random.shuffle(result);
         return result;
     }
 
