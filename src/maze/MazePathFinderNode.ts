@@ -3,18 +3,23 @@ import { MazeNode } from './MazeNode';
 import { Color } from 'three';
 import { error } from 'console';
 
+
+/**
+ * Type of label change observer of MazePathFinderNode
+ */
+
 /**
  * Valid labels of MazePathFinderNode
+ *
+ * @see MazePathFinderNode
  */
-export type MazePathFinderNodeLabel = 'start' | 'finish' | 'candidate' | 'selected' | 'queued';
-
-type MPFNodeLabelChangeCallback = ({
-    node,
-    labelChanged
-}: {
-    node: MazePathFinderNode;
-    labelChanged: MazePathFinderNodeLabel;
-}) => void;
+export type MazePathFinderNodeLabel =
+    | 'start'
+    | 'finish'
+    | 'candidate'
+    | 'forsaken'
+    | 'selected'
+    | 'queued';
 
 /**
  * On top of representing node,
@@ -24,8 +29,11 @@ type MPFNodeLabelChangeCallback = ({
  * Node label changes are required to be done in *"Add higher priorty first, remove lower after"* order.
  * - eg. queued node becomes candidate. It should first recive candidate label and then have queued removed.
  *
- * Node states shown as labels and manipulated by make* methods, some of labels are mutually exclusive
- * (and have strict change order) as shonw below:
+ * Node states shown as labels and manipulated by make* methods,
+ * when they can be used depends on label category and what label is see below
+ *
+ * - some labels are mutually exclusive
+ * - some labels may have strict change order) as shonw below:
  *
  * ### Node role
  *
@@ -33,17 +41,25 @@ type MPFNodeLabelChangeCallback = ({
  *
  * - finish -- end node of path
  * - start -- required start node of path
- *
+ * ```
+ * none <--> start | finish
+ * ```
  * ### Node state
  *
  * - queued -- node is queued and will become candidate (or algorithm stops before it does)
  * - candidate -- algorithm might use this node for final path
  * - selected -- algorithm has chosen node for final path
+ * - forsaken -- algorithm consiedered node as candidate but doesn't anymore
  *
+ * ```
+ * none --> queued <--> candidate --> selected
+ *                              _/
+ *               forsaken <----/
+ * ```
  */
 export class MazePathFinderNode extends MazeNode {
     /**
-     * nodeRole labels
+     * nodeRole label categories
      *
      * it's only here beacause class instance can not access static members without explicitly stating classname
      */
@@ -52,7 +68,8 @@ export class MazePathFinderNode extends MazeNode {
     m_mazePathFinderNodeStateLabels: MazePathFinderNodeLabel[] = [
         'queued',
         'candidate',
-        'selected'
+        'selected',
+        'forsaken'
     ];
 
     private m_labels: Set<MazePathFinderNodeLabel> = new Set([]);
@@ -103,6 +120,10 @@ export class MazePathFinderNode extends MazeNode {
 
     makeSelected() {
         this.promoteLabel('candidate', 'selected');
+    }
+
+    makeForesaken() {
+        this.promoteLabel('candidate', 'forsaken');
     }
 
     /**
@@ -183,6 +204,9 @@ export class MazePathFinderNode extends MazeNode {
         if (this.hasLabel('queued')) {
             return '󰒲';
         }
+        if (this.hasLabel('forsaken')) {
+            return '󰚌';
+        }
         return super.getCharacter();
     }
 
@@ -198,8 +222,9 @@ export class MazePathFinderNode extends MazeNode {
             colorFunc = chalk.yellow;
         } else if (this.hasLabel('queued')) {
             colorFunc = chalk.magenta;
+        } else if (this.hasLabel('forsaken')) {
+            colorFunc = chalk.cyan;
         }
-
         return colorFunc(this.getCharacter());
     }
 }
