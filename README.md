@@ -2,7 +2,11 @@
 
 ## Demo
 
+### BFS strategy
 [![asciicast](https://asciinema.org/a/MBJse0IVylLsavIFr5d3qvjL2.svg)](https://asciinema.org/a/MBJse0IVylLsavIFr5d3qvjL2)
+
+### DFS strategy
+[![asciicast](https://asciinema.org/a/p0WNnPXXmcyK4H8n6rHa3e4OX.svg)](https://asciinema.org/a/p0WNnPXXmcyK4H8n6rHa3e4OX)
 
 ## Usage
 
