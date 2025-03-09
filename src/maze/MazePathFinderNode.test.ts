@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { test, expect, describe, assert, beforeAll } from 'vitest';
 import { MazePathFinderNode, MazePathFinderNodeLabel } from './MazePathFinderNode';
 
@@ -16,6 +17,7 @@ describe('MazePathFinderNode labels', () => {
 
     test('Adding labels works', () => {
         const labels: MazePathFinderNodeLabel[] = ['start', 'queued'];
+        // @ts-ignore
         node.addLabels(labels);
         labels.forEach(label => {
             expect(node.hasLabel(label)).toBeTruthy();
@@ -24,6 +26,7 @@ describe('MazePathFinderNode labels', () => {
 
     test('labels getter', () => {
         const labels: MazePathFinderNodeLabel[] = ['start', 'queued'];
+        // @ts-ignore
         node.addLabels(labels);
         expect(node.getLabels().size, 'label count to be correct').toEqual(2);
         node.getLabels().forEach(label => {
@@ -37,7 +40,9 @@ describe('MazePathFinderNode labels', () => {
 
     test('Deleting label', () => {
         const labels: MazePathFinderNodeLabel[] = ['start', 'queued'];
+        // @ts-ignore
         node.addLabels(labels);
+        // @ts-ignore
         node.deleteLabels(['queued']);
         expect(node.hasLabel('queued'), 'label to be deleted').toBeFalsy();
         expect(node.getLabels().size, 'other labels to remain').toEqual(labels.length - 1);
@@ -45,7 +50,9 @@ describe('MazePathFinderNode labels', () => {
 
     test('Deleting labels', () => {
         const labels: MazePathFinderNodeLabel[] = ['start', 'queued', 'candidate'];
+        // @ts-ignore
         node.addLabels(labels);
+        // @ts-ignore
         node.deleteLabels(labels);
         expect(node.getLabels().size, 'all labels to be removed').toEqual(0);
     });
