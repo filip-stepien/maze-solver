@@ -28,18 +28,18 @@ export class BFSStrategy<T extends MazePathFinderNode> implements MazePathFindSt
                 break;
             }
 
-            maze.getAdjacentNodes(currentNodePos).forEach(
-                ({ node: adjacientNode, pos: adjacientNodePos }) => {
-                    // console.debug('processing adjacient ', adjacientNodePos);
-                    if (
+            maze.getAdjacentNodes(currentNodePos)
+                // filter not needed things
+                .filter(
+                    ({ node, pos }) =>
                         // if node was already prcessed ignore it
-                        state.has(JSON.stringify(adjacientNodePos)) ||
-                        // or is colliding
-                        adjacientNode.isColliding()
-                    ) {
-                        return;
-                    }
-
+                        !(
+                            state.has(JSON.stringify(pos)) ||
+                            // or is colliding
+                            node.isColliding()
+                        )
+                )
+                .forEach(({ node: adjacientNode, pos: adjacientNodePos }) => {
                     // save from where that node was reached
                     state.set(JSON.stringify(adjacientNodePos), {
                         cameToFrom: currentNodePos
@@ -48,8 +48,7 @@ export class BFSStrategy<T extends MazePathFinderNode> implements MazePathFindSt
                     // add it to queue
                     queue.push(adjacientNodePos);
                     adjacientNode.makeQueued();
-                }
-            );
+                });
         } while (queue.length != 0);
 
         // if last processed node is end node
