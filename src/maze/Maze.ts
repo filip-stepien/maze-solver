@@ -2,6 +2,12 @@ import { Vec2d } from '../types';
 import { logFunctionCall } from './Debug';
 import { MazeNode } from './MazeNode';
 
+export type MazeConstructorArgs<T> = {
+    size?: Vec2d;
+    nodeFactory: () => T;
+    collsionState?: boolean[][]; //YX
+};
+
 export class Maze<T extends MazeNode> {
     protected m_matrix: T[][] = [[]];
     protected m_size: Vec2d = new Vec2d([0, 0]);
@@ -53,15 +59,7 @@ export class Maze<T extends MazeNode> {
      * @warn collsionState and size are mutualy exclusive
      *
      */
-    public constructor({
-        size,
-        collsionState,
-        nodeFactory
-    }: {
-        size?: Vec2d;
-        nodeFactory: () => T;
-        collsionState?: boolean[][]; //YX
-    }) {
+    public constructor({ size, collsionState, nodeFactory }: MazeConstructorArgs<T>) {
         // console.debug('Maze::Maze');
 
         if (size != undefined && collsionState != undefined) {
