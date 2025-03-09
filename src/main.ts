@@ -1,16 +1,14 @@
-import { transform } from 'typescript';
 import './maze/Maze';
 import { Maze } from './maze/Maze';
 import { MazeNode } from './maze/MazeNode';
 import { MazePath, Vec2d } from './types';
 import MazePathFinder from './maze/MazePathFinder';
-import { MazePathFinderNode } from './maze/MazePathFinderNode';
+import { MazePathFinderNode, MazePathFinderNodeLabel } from './maze/MazePathFinderNode';
 import { BFSStrategy } from './strategies/MazePathFindStrategy/BFSStrategy';
 import { PrimsStrategy } from './strategies/PrimsStrategy';
 import { MazeGenerator } from './maze/MazeGenerator';
 import { Random } from './utils/Random';
 import { DFSStrategy } from './strategies/MazePathFindStrategy/DFSStrategy';
-import { node } from 'globals';
 import chalk from 'chalk';
 
 const setupMaze = () => {
@@ -114,6 +112,27 @@ const main = () => {
     ];
     const doDrawProgress = strategies.length <= 1;
 
+    const printStats = () => {
+        const countLabeled = (label: MazePathFinderNodeLabel) => {
+            let counter = 0;
+            maze.forEachNode(({ node }) => {
+                if (node.hasLabel(label)) {
+                    ++counter;
+                }
+            });
+            return counter;
+        };
+
+        const stats = {
+            // How many times candidates are there
+            candidated: countLabeled('candidate'),
+            forsaken: countLabeled('forsaken'),
+            queued: countLabeled('queued'),
+            selected: countLabeled('selected')
+        };
+        console.table(stats);
+    };
+
     if (doDrawProgress)
         // Drawing on each label change
         maze.addNodeLabelChangeObserver(({ node, pos, labelChanged }) => {
@@ -128,6 +147,7 @@ const main = () => {
             }\n${maze.toString()}`;
             console.clear();
             console.log(string);
+            printStats();
             msleep(50);
         });
 
@@ -135,12 +155,17 @@ const main = () => {
 
     for (const strategy of strategies) {
         console.log('-----------------------------');
+
         console.log('Using strategy', Object.getPrototypeOf(strategy).constructor.name);
+
         maze.setPathFindStrategy(strategy);
         const path = maze.findPath(start, end);
+        // clear last frame if prgoress is drawn
+        if (doDrawProgress) {
+            console.clear();
+        }
         console.log(`\n${maze.toString()}`);
-        console.log('path length:', path.length);
-        // path.forEach(pos => console.log(maze.getNode(pos)));
+        printStats();
     }
 };
 export default main;
