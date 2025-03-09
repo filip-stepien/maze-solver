@@ -52,7 +52,10 @@ export class BFSStrategy<T extends MazePathFinderNode> implements MazePathFindSt
         } while (queue.length != 0);
 
         // if last processed node is end node
-        if (state.has(JSON.stringify(currentNodePos))) {
+        if (
+            JSON.stringify(currentNodePos) == JSON.stringify(end) &&
+            state.has(JSON.stringify(currentNodePos))
+        ) {
             const path: MazePath = [];
             // bactrack nodes till to start
             while (JSON.stringify(currentNodePos) !== JSON.stringify(start)) {
