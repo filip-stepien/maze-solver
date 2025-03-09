@@ -1,11 +1,12 @@
 import { Control } from './Control';
+import { ControlObservable } from './ControlObservable';
 
-export class Input extends Control {
+export class Input extends Control implements ControlObservable {
     constructor() {
         super();
 
-        const type = this.inputType();
-        if (type) this.setAttribute('type', type);
+        const inputType = this.inputType();
+        if (inputType) this.setAttribute('type', inputType);
     }
 
     public set value(value: string) {
@@ -16,7 +17,21 @@ export class Input extends Control {
         this.setAttribute('placeholder', placeholder);
     }
 
+    public set onChange(handler: (value: string) => void) {
+        const eventType = this.eventType();
+        if (eventType) {
+            this.addEventListener(eventType, event => {
+                const input = event.target as HTMLInputElement;
+                handler(input.value);
+            });
+        }
+    }
+
     protected inputType(): string | null {
+        return null;
+    }
+
+    protected eventType(): keyof HTMLElementEventMap | null {
         return null;
     }
 

@@ -52,6 +52,15 @@ export class Control {
     }
 
     /**
+     * Adds event listener to the HTML element.
+     * @param property Name of HTML event.
+     * @param value Event handler function.
+     */
+    protected addEventListener(eventName: string, handler: (event: Event) => void) {
+        this._htmlElement.addEventListener(eventName, handler);
+    }
+
+    /**
      * Nests controls' HTML tags inside tag of this control.
      * @param control Controls to be nested.
      */

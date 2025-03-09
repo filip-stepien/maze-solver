@@ -5,6 +5,10 @@ export class Button extends Input {
         return 'button';
     }
 
+    protected override eventType(): keyof HTMLElementEventMap {
+        return 'click';
+    }
+
     protected override style(): Partial<CSSStyleDeclaration> {
         return {
             background: 'red'
