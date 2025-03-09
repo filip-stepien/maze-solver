@@ -1,5 +1,5 @@
 import { test, expect, describe, assert, beforeAll } from 'vitest';
-import { MazePathFinderNode, MazePathFinderNodeStateLabel } from './MazePathFinderNode';
+import { MazePathFinderNode, MazePathFinderNodeLabel } from './MazePathFinderNode';
 
 test('MazePathFinderNode has working no args constuctor', () => {
     assert.doesNotThrow(() => {
@@ -15,7 +15,7 @@ describe('MazePathFinderNode labels', () => {
     });
 
     test('Adding labels works', () => {
-        const labels: MazePathFinderNodeStateLabel[] = ['start', 'queued'];
+        const labels: MazePathFinderNodeLabel[] = ['start', 'queued'];
         node.addLabels(labels);
         labels.forEach(label => {
             expect(node.hasLabel(label)).toBeTruthy();
@@ -23,7 +23,7 @@ describe('MazePathFinderNode labels', () => {
     });
 
     test('labels getter', () => {
-        const labels: MazePathFinderNodeStateLabel[] = ['start', 'queued'];
+        const labels: MazePathFinderNodeLabel[] = ['start', 'queued'];
         node.addLabels(labels);
         expect(node.getLabels().size, 'label count to be correct').toEqual(2);
         node.getLabels().forEach(label => {
@@ -36,7 +36,7 @@ describe('MazePathFinderNode labels', () => {
     });
 
     test('Deleting label', () => {
-        const labels: MazePathFinderNodeStateLabel[] = ['start', 'queued'];
+        const labels: MazePathFinderNodeLabel[] = ['start', 'queued'];
         node.addLabels(labels);
         node.deleteLabels(['queued']);
         expect(node.hasLabel('queued'), 'label to be deleted').toBeFalsy();
@@ -44,7 +44,7 @@ describe('MazePathFinderNode labels', () => {
     });
 
     test('Deleting labels', () => {
-        const labels: MazePathFinderNodeStateLabel[] = ['start', 'queued', 'candidate'];
+        const labels: MazePathFinderNodeLabel[] = ['start', 'queued', 'candidate'];
         node.addLabels(labels);
         node.deleteLabels(labels);
         expect(node.getLabels().size, 'all labels to be removed').toEqual(0);
