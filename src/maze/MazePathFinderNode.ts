@@ -173,6 +173,14 @@ export class MazePathFinderNode extends MazeNode {
     }
 
     /**
+     * removes all labels from node.
+     * Should be used when you don't care about them
+     */
+    resetLabels() {
+        this.m_labels.clear();
+    }
+
+    /**
      * Get set of labels that node has
      * @returns Set containg labels
      * @see hasLabel

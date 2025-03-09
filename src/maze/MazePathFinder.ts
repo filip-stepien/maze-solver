@@ -48,7 +48,6 @@ export default class MazePathFinder<T extends MazePathFinderNode> extends Maze<T
      * - when *start* or *end* is colliding
      */
     findPath(start: Vec2d, end: Vec2d): MazePath {
-        console.debug('MazePathFinder::findPath()');
         if (!this.m_pathfindStrategy) {
             throw new Error('MazePathFinder::findPath strategy is not set');
         }
@@ -59,9 +58,15 @@ export default class MazePathFinder<T extends MazePathFinderNode> extends Maze<T
             throw Error('Can not start/finish path in wall');
         }
 
+        this.resetNodeLabels();
+
         this.getNode(start).makeStart();
         this.getNode(end).makeFinish();
         return this.m_pathfindStrategy.findPath(this, start, end);
+    }
+
+    public resetNodeLabels() {
+        this.forEachNode(({ node }) => node.resetLabels());
     }
 
     /**
