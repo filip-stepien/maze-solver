@@ -2,34 +2,14 @@ import chalk from 'chalk';
 import { MazePathFindStrategy } from '../strategies/MazePathFindStrategy/MazePathFindStrategy';
 import { MazePath, Vec2d } from '../types';
 import { Maze } from './Maze';
-import {
-    MazePathFinderNode,
-    MazePathFinderNodeLabel,
-    MPFNodeLabelChangeObserver
-} from './MazePathFinderNode';
+import { MazePathFinderNode, MazePathFinderNodeLabel } from './MazePathFinderNode';
 
 /**
  *
  */
-export default class MazePathFinder<T extends MazePathFinderNode>
-    extends Maze<T>
-    implements MPFNodeLabelChangeObserver
-{
+export default class MazePathFinder<T extends MazePathFinderNode> extends Maze<T> {
     protected m_pathfindStrategy: MazePathFindStrategy<T>;
 
-    public constructor({
-        size,
-        collsionState,
-        nodeFactory
-    }: {
-        size?: Vec2d;
-        nodeFactory: () => T;
-        collsionState?: boolean[][]; //YX
-    }) {
-        super({ size, collsionState, nodeFactory });
-
-        this.forEachNode(({ node }) => node.addLabelChangeObserver(this));
-    }
     onMPFNodeLabelChange({
         node,
         labelChanged
