@@ -215,7 +215,7 @@ export class MazePathFinderNode extends MazeNode {
             return '󰁁';
         }
         if (this.hasLabel('queued')) {
-            return '󰒲';
+            return '󰞌';
         }
         if (this.hasLabel('forsaken')) {
             return '󰚌';
