@@ -12,8 +12,6 @@ export class DFSStrategy<T extends MazePathFinderNode> implements MazePathFindSt
     private logVisialzation = true;
 
     findPath(maze: MazePathFinder<T>, start: Vec2d, end: Vec2d): MazePath {
-        console.debug(`${DFSStrategy.name}::findPath()`);
-
         const state: Map<string, { visitedAlready: boolean }> = new Map();
 
         maze.getNode(start).makeQueued();

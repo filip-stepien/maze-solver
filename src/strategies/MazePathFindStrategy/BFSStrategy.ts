@@ -10,8 +10,6 @@ export class BFSStrategy<T extends MazePathFinderNode> implements MazePathFindSt
     private logVisialzation = true;
 
     findPath(maze: MazePathFinder<T>, start: Vec2d, end: Vec2d): MazePath {
-        console.debug(`${BFSStrategy.name}::findPath()`);
-
         const state: Map<string, { cameToFrom: Vec2d }> = new Map();
 
         const queue = [start];
