@@ -203,7 +203,7 @@ export class MazePathFinderNode extends MazeNode {
 
     protected getCharacter() {
         if (this.hasLabel('finish')) {
-            return '';
+            return '';
         }
         if (this.hasLabel('start')) {
             return '';
@@ -226,17 +226,17 @@ export class MazePathFinderNode extends MazeNode {
     toString(): string {
         let colorFunc = chalk.gray;
         if (this.hasLabel('finish')) {
-            colorFunc = chalk.greenBright;
+            colorFunc = chalk.rgb(64, 64, 233).bgWhite;
         } else if (this.hasLabel('start')) {
-            colorFunc = chalk.redBright;
+            colorFunc = chalk.rgb(64, 64, 233).bgWhite;
         } else if (this.hasLabel('selected')) {
-            colorFunc = chalk.green;
+            colorFunc = chalk.bgGreen.black;
         } else if (this.hasLabel('candidate')) {
             colorFunc = chalk.yellow;
         } else if (this.hasLabel('queued')) {
             colorFunc = chalk.magenta;
         } else if (this.hasLabel('forsaken')) {
-            colorFunc = chalk.cyan;
+            colorFunc = chalk.red;
         }
         return colorFunc(this.getCharacter());
     }
