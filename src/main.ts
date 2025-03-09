@@ -99,14 +99,14 @@ const randomizeStartEndPositions = (maze: Maze<MazeNode>): { start: Vec2d; end: 
 
 const main = () => {
     // const maze = setupMaze();
-    const maze = generateMaze(new Vec2d([50, 15]));
+    const maze = generateMaze(new Vec2d([140, 10]));
     console.log('-----------------------------');
     console.info('drawing maze using toString');
     console.log(`${maze}`);
 
     const strategies = [
         //
-        // new BFSStrategy(),
+        new BFSStrategy(),
         //
         new DFSStrategy()
     ];
@@ -148,7 +148,7 @@ const main = () => {
             console.clear();
             console.log(string);
             printStats();
-            msleep(50);
+            msleep(10);
         });
 
     const { start, end } = randomizeStartEndPositions(maze);
