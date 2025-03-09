@@ -2,7 +2,7 @@ import { transform } from 'typescript';
 import './maze/Maze';
 import { Maze } from './maze/Maze';
 import { MazeNode } from './maze/MazeNode';
-import { Vec2d } from './types';
+import { MazePath, Vec2d } from './types';
 import MazePathFinder from './maze/MazePathFinder';
 import { MazePathFinderNode } from './maze/MazePathFinderNode';
 import { BFSStrategy } from './strategies/MazePathFindStrategy/BFSStrategy';
@@ -99,17 +99,8 @@ const randomizeStartEndPositions = (maze: Maze<MazeNode>): { start: Vec2d; end: 
     };
 };
 
-const findPath = (maze: MazePathFinder<MazePathFinderNode>) => {
+const findPath = (maze: MazePathFinder<MazePathFinderNode>): MazePath => {
     const mpf = maze;
-    console.info(`initialzied ${Object.getPrototypeOf(mpf).constructor.name}`);
-    const strategy = new BFSStrategy();
-    // const strategy = new DFSStrategy();
-    mpf.setPathFindStrategy(strategy);
-    console.info(
-        `${Object.getPrototypeOf(mpf).constructor.name} strategy set to ${
-            Object.getPrototypeOf(strategy).constructor.name
-        }`
-    );
 
     const { start, end } = randomizeStartEndPositions(mpf);
 
@@ -129,9 +120,9 @@ const findPath = (maze: MazePathFinder<MazePathFinderNode>) => {
         msleep(50);
     });
 
-    mpf.findPath(start, end);
+    const path = mpf.findPath(start, end);
     console.log(`${mpf}`);
-    // console.dir(mpf, { depth: null });
+    return path;
 };
 
 const main = () => {
@@ -141,8 +132,17 @@ const main = () => {
     console.info('drawing maze using toString');
     console.log(`${maze}`);
     console.log('-----------------------------');
+
+    console.log('setting strategy');
+    // const strategy = new BFSStrategy();
+    const strategy = new DFSStrategy();
+    maze.setPathFindStrategy(strategy);
     console.info('finding path');
-    findPath(maze);
+
+    const path = findPath(maze);
+    console.clear();
+    console.log(`\n${maze.toString()}`);
+    console.log('path length:', path.length);
 };
 export default main;
 
