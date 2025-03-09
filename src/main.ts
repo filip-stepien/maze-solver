@@ -59,8 +59,8 @@ const setupMaze = () => {
     return maze;
 };
 
-const generateMaze = () => {
-    const generator = new MazeGenerator(12, 11);
+const generateMaze = (size: Vec2d) => {
+    const generator = new MazeGenerator(size.x, size.y);
     const strategy = new PrimsStrategy();
     generator.setGenerationStrategy(strategy);
     const colsate = generator.generateMaze().map(row => {
@@ -99,50 +99,42 @@ const randomizeStartEndPositions = (maze: Maze<MazeNode>): { start: Vec2d; end: 
     };
 };
 
-const findPath = (maze: MazePathFinder<MazePathFinderNode>): MazePath => {
-    const mpf = maze;
-
-    const { start, end } = randomizeStartEndPositions(mpf);
-
-    // Drawing
-    mpf.addNodeLabelChangeObserver(({ node, pos, labelChanged }) => {
-        function msleep(n: number) {
-            Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, n);
-        }
-
-        const string = `Changed node at ${JSON.stringify(pos)}, ${
-            node.hasLabel(labelChanged)
-                ? chalk.green(`+ ${labelChanged}`)
-                : chalk.red(`- ${labelChanged}`)
-        }\n${mpf.toString()}`;
-        console.clear();
-        console.log(string);
-        msleep(50);
-    });
-
-    const path = mpf.findPath(start, end);
-    console.log(`${mpf}`);
-    return path;
-};
-
 const main = () => {
     // const maze = setupMaze();
-    const maze = generateMaze();
+    const maze = generateMaze(new Vec2d([5, 5]));
     console.log('-----------------------------');
     console.info('drawing maze using toString');
     console.log(`${maze}`);
-    console.log('-----------------------------');
 
-    console.log('setting strategy');
-    // const strategy = new BFSStrategy();
-    const strategy = new DFSStrategy();
-    maze.setPathFindStrategy(strategy);
-    console.info('finding path');
+    const doDrawProgress = false;
+    if (doDrawProgress)
+        // Drawing on each label change
+        maze.addNodeLabelChangeObserver(({ node, pos, labelChanged }) => {
+            function msleep(n: number) {
+                Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, n);
+            }
 
-    const path = findPath(maze);
-    console.clear();
-    console.log(`\n${maze.toString()}`);
-    console.log('path length:', path.length);
+            const string = `Changed node at ${JSON.stringify(pos)}, ${
+                node.hasLabel(labelChanged)
+                    ? chalk.green(`+ ${labelChanged}`)
+                    : chalk.red(`- ${labelChanged}`)
+            }\n${maze.toString()}`;
+            console.clear();
+            console.log(string);
+            msleep(50);
+        });
+
+    const { start, end } = randomizeStartEndPositions(maze);
+
+    for (const strategy of [new BFSStrategy(), new DFSStrategy()]) {
+        console.log('-----------------------------');
+        console.log('Using strategy', Object.getPrototypeOf(strategy).constructor.name);
+        maze.setPathFindStrategy(strategy);
+        const path = maze.findPath(start, end);
+        console.log(`\n${maze.toString()}`);
+        console.log('path length:', path.length);
+        // path.forEach(pos => console.log(maze.getNode(pos)));
+    }
 };
 export default main;
 
