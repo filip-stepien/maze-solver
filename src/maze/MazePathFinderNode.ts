@@ -225,12 +225,16 @@ export class MazePathFinderNode extends MazeNode {
 
     toString(): string {
         let colorFunc = chalk.gray;
+        let bgFunc = chalk.black;
+
         if (this.hasLabel('finish')) {
-            colorFunc = chalk.rgb(64, 64, 233).bgWhite;
+            colorFunc = chalk.rgb(64, 64, 233);
+            bgFunc = chalk.bgWhite;
         } else if (this.hasLabel('start')) {
-            colorFunc = chalk.rgb(64, 64, 233).bgWhite;
+            colorFunc = chalk.rgb(64, 64, 233);
+            bgFunc = chalk.bgWhite;
         } else if (this.hasLabel('selected')) {
-            colorFunc = chalk.bgGreen.black;
+            colorFunc = chalk.black;
         } else if (this.hasLabel('candidate')) {
             colorFunc = chalk.yellow;
         } else if (this.hasLabel('queued')) {
@@ -238,6 +242,11 @@ export class MazePathFinderNode extends MazeNode {
         } else if (this.hasLabel('forsaken')) {
             colorFunc = chalk.red;
         }
-        return colorFunc(this.getCharacter());
+
+        if (this.hasLabel('selected')) {
+            bgFunc = chalk.bgGreen;
+        }
+
+        return bgFunc(colorFunc(this.getCharacter()));
     }
 }
