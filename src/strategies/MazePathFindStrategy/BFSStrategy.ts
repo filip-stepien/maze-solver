@@ -7,8 +7,6 @@ import { MazePathFindStrategy } from './MazePathFindStrategy';
  * Finds path using Breadth-first search
  */
 export class BFSStrategy<T extends MazePathFinderNode> implements MazePathFindStrategy<T> {
-    private logVisialzation = true;
-
     findPath(maze: MazePathFinder<T>, start: Vec2d, end: Vec2d): MazePath {
         const state: Map<string, { cameToFrom: Vec2d }> = new Map();
 
