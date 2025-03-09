@@ -12,7 +12,12 @@ export class Control {
      */
     constructor() {
         this._htmlElement = document.createElement(this.htmlTag());
+        this.applyStyles();
         this.appendDomElement();
+    }
+
+    private applyStyles() {
+        Object.assign(this._htmlElement.style, this.style());
     }
 
     /**
@@ -72,5 +77,9 @@ export class Control {
      */
     protected htmlTag(): keyof HTMLElementTagNameMap {
         return 'div';
+    }
+
+    protected style(): Partial<CSSStyleDeclaration> {
+        return {};
     }
 }
