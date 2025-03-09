@@ -71,8 +71,9 @@ export class BFSStrategy<T extends MazePathFinderNode> implements MazePathFindSt
                 // make previous current
                 currentNodePos = prevNodePos;
             }
-            // add start node
-            path.push(currentNodePos);
+
+            maze.getNode(currentNodePos).makeSelected();
+
             return path.reverse();
         }
 
