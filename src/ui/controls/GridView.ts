@@ -9,7 +9,7 @@ export class GridView extends View {
      */
     constructor() {
         super();
-        this._htmlElement.style.display = 'grid';
+        this.setStyle('display', 'grid');
     }
 
     /**
@@ -41,7 +41,7 @@ export class GridView extends View {
      * @param pattern Array representing column sizes.
      */
     public set columns(pattern: (number | string)[]) {
-        this._htmlElement.style.gridTemplateColumns = this.gridPattern(pattern);
+        this.setStyle('gridTemplateColumns', this.gridPattern(pattern));
     }
 
     /**
@@ -51,7 +51,7 @@ export class GridView extends View {
      * @param pattern Array representing row sizes.
      */
     public set rows(pattern: (number | string)[]) {
-        this._htmlElement.style.gridTemplateRows = this.gridPattern(pattern);
+        this.setStyle('gridTemplateRows', this.gridPattern(pattern));
     }
 
     /**
@@ -62,6 +62,6 @@ export class GridView extends View {
      */
     public set itemPlacement(placement: string | [string, string]) {
         placement = typeof placement === 'string' ? placement : placement.join(' ');
-        this._htmlElement.style.placeItems = placement;
+        this.setStyle('placeItems', placement);
     }
 }

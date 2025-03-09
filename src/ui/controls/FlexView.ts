@@ -9,7 +9,7 @@ export class FlexView extends View {
      */
     constructor() {
         super();
-        this._htmlElement.style.display = 'flex';
+        this.setStyle('display', 'flex');
     }
 
     /**
@@ -18,7 +18,7 @@ export class FlexView extends View {
      * @param direction Direction to arrange the flex items.
      */
     public set direction(direction: 'column' | 'row') {
-        this._htmlElement.style.flexDirection = direction;
+        this.setStyle('flexDirection', direction);
     }
 
     /**
@@ -27,7 +27,7 @@ export class FlexView extends View {
      * @param alignment [Alignment property value.](https://developer.mozilla.org/en-US/docs/Web/CSS/align-items#syntax)
      */
     public set alignItems(alignment: string) {
-        this._htmlElement.style.alignItems = alignment;
+        this.setStyle('alignItems', alignment);
     }
 
     /**
@@ -36,6 +36,6 @@ export class FlexView extends View {
      * @param justification [Justification property value.](https://developer.mozilla.org/en-US/docs/Web/CSS/justify-content#syntax)
      */
     public set justifyContent(justification: string) {
-        this._htmlElement.style.justifyContent = justification;
+        this.setStyle('justifyContent', justification);
     }
 }

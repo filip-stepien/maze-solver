@@ -5,15 +5,15 @@ export class Input extends Control {
         super();
 
         const type = this.inputType();
-        if (type) this._htmlElement.setAttribute('type', type);
+        if (type) this.setAttribute('type', type);
     }
 
     public set value(value: string) {
-        this._htmlElement.setAttribute('value', value);
+        this.setAttribute('value', value);
     }
 
     public set placeholder(placeholder: string) {
-        this._htmlElement.setAttribute('placeholder', placeholder);
+        this.setAttribute('placeholder', placeholder);
     }
 
     protected inputType(): string | null {

@@ -11,7 +11,7 @@ export class View extends Control {
      * @param gap Number or value with CSS unit as a string.
      */
     public set gap(gap: number | string) {
-        this._htmlElement.style.gap = this.ensurePx(gap);
+        this.setStyle('gap', gap);
     }
 
     /**
@@ -21,6 +21,6 @@ export class View extends Control {
      * @param children The child controls to add to the view.
      */
     public addChild(...children: Control[]) {
-        children.forEach(c => c.appendDomElement(this._htmlElement));
+        children.forEach(c => this.appendChild(c));
     }
 }
