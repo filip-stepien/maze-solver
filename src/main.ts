@@ -9,6 +9,9 @@ import { BFSStrategy } from './strategies/MazePathFindStrategy/BFSStrategy';
 import { PrimsStrategy } from './strategies/PrimsStrategy';
 import { MazeGenerator } from './maze/MazeGenerator';
 import { Random } from './utils/Random';
+import { DFSStrategy } from './strategies/MazePathFindStrategy/DFSStrategy';
+import { node } from 'globals';
+import chalk from 'chalk';
 
 const setupMaze = () => {
     console.debug('initializer: ', MazeNode.initializer);
@@ -57,7 +60,7 @@ const setupMaze = () => {
 };
 
 const generateMaze = () => {
-    const generator = new MazeGenerator(66, 17);
+    const generator = new MazeGenerator(12, 11);
     const strategy = new PrimsStrategy();
     generator.setGenerationStrategy(strategy);
     const colsate = generator.generateMaze().map(row => {
@@ -100,6 +103,7 @@ const findPath = (maze: MazePathFinder<MazePathFinderNode>) => {
     const mpf = maze;
     console.info(`initialzied ${Object.getPrototypeOf(mpf).constructor.name}`);
     const strategy = new BFSStrategy();
+    // const strategy = new DFSStrategy();
     mpf.setPathFindStrategy(strategy);
     console.info(
         `${Object.getPrototypeOf(mpf).constructor.name} strategy set to ${
@@ -108,6 +112,22 @@ const findPath = (maze: MazePathFinder<MazePathFinderNode>) => {
     );
 
     const { start, end } = randomizeStartEndPositions(mpf);
+
+    // Drawing
+    mpf.addNodeLabelChangeObserver(({ node, pos, labelChanged }) => {
+        function msleep(n: number) {
+            Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, n);
+        }
+
+        const string = `Changed node at ${JSON.stringify(pos)}, ${
+            node.hasLabel(labelChanged)
+                ? chalk.green(`+ ${labelChanged}`)
+                : chalk.red(`- ${labelChanged}`)
+        }\n${mpf.toString()}`;
+        console.clear();
+        console.log(string);
+        msleep(50);
+    });
 
     mpf.findPath(start, end);
     console.log(`${mpf}`);
