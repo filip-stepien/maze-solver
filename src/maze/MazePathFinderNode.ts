@@ -3,10 +3,15 @@ import { MazeNode } from './MazeNode';
 import { Color } from 'three';
 import { error } from 'console';
 
+export type MPFNodeLabelCallBackParams = {
+    node: MazePathFinderNode;
+    labelChanged: MazePathFinderNodeLabel;
+};
 
 /**
  * Type of label change observer of MazePathFinderNode
  */
+export type MPFNodeLabelChangeCallback = (args: MPFNodeLabelCallBackParams) => void;
 
 /**
  * Valid labels of MazePathFinderNode
