@@ -99,4 +99,28 @@ export default class MazePathFinder<T extends MazePathFinderNode> extends Maze<T
             nodeObserved.addLabelChangeObserver(callback);
         });
     }
+
+    /**
+     * @returns object containing label statistics
+     */
+    public getStats = () => {
+        const countLabeled = (label: MazePathFinderNodeLabel) => {
+            let counter = 0;
+            this.forEachNode(({ node }) => {
+                if (node.hasLabel(label)) {
+                    ++counter;
+                }
+            });
+            return counter;
+        };
+
+        const stats = {
+            // How many times candidates are there
+            candidated: countLabeled('candidate'),
+            forsaken: countLabeled('forsaken'),
+            queued: countLabeled('queued'),
+            selected: countLabeled('selected')
+        };
+        return stats;
+    };
 }
