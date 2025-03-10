@@ -1,7 +1,7 @@
 import { Control } from './Control';
 import { ControlObservable } from './ControlObservable';
 
-export class Input extends Control implements ControlObservable {
+export class Input extends ControlObservable {
     constructor() {
         super();
 
@@ -17,7 +17,15 @@ export class Input extends Control implements ControlObservable {
         this.setAttribute('placeholder', placeholder);
     }
 
-    public set onChange(handler: (value: string) => void) {
+    protected inputType(): string | null {
+        return null;
+    }
+
+    protected override htmlTag(): keyof HTMLElementTagNameMap {
+        return 'input';
+    }
+
+    public override set onChange(handler: (value: string) => void) {
         const eventType = this.eventType();
         if (eventType) {
             this.addEventListener(eventType, event => {
@@ -25,17 +33,5 @@ export class Input extends Control implements ControlObservable {
                 handler(input.value);
             });
         }
-    }
-
-    protected inputType(): string | null {
-        return null;
-    }
-
-    protected eventType(): keyof HTMLElementEventMap | null {
-        return null;
-    }
-
-    protected override htmlTag(): keyof HTMLElementTagNameMap {
-        return 'input';
     }
 }

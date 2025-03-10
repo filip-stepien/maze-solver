@@ -51,6 +51,10 @@ export class Control {
         this._htmlElement.setAttribute(property, value);
     }
 
+    protected removeAttribute(property: string) {
+        this._htmlElement.removeAttribute(property);
+    }
+
     /**
      * Adds event listener to the HTML element.
      * @param property Name of HTML event.
@@ -58,6 +62,10 @@ export class Control {
      */
     protected addEventListener(eventName: string, handler: (event: Event) => void) {
         this._htmlElement.addEventListener(eventName, handler);
+    }
+
+    protected setInnerText(text: string) {
+        this._htmlElement.innerText = text;
     }
 
     /**
