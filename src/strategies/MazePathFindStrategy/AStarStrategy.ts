@@ -35,6 +35,38 @@ export class AStarStrategy<T extends MazePathFinderNode> implements MazePathFind
 
         let currentNodePos: Vec2d;
 
+        /**
+         *
+         * @param array array
+         * @param value value to find
+         * @param compareFun compare two nodes returns negative if a < b, positive if a > b, 0 if a is equal to b
+         * @returns
+         */
+        const binarySearch = (
+            array: AStarNodeQueued[],
+            value: AStarNodeQueued,
+            compareFun: (a: AStarNodeQueued, b: AStarNodeQueued) => number
+        ): number => {
+            let leftBorder = 0;
+            let rightBorder = array.length - 1;
+            while (leftBorder <= rightBorder) {
+                const middleSplit = (rightBorder + leftBorder) >> 1;
+                const cmp = compareFun(value, array[middleSplit]);
+                if (cmp > 0) {
+                    leftBorder = middleSplit + 1;
+                } else if (cmp < 0) {
+                    rightBorder = middleSplit - 1;
+                } else {
+                    return middleSplit;
+                }
+            }
+            return -leftBorder - 1;
+        };
+
+        const queueComparator = (a: AStarNodeQueued, b: AStarNodeQueued) => {
+            return b.totalCost - a.totalCost;
+        };
+
         const enqueue = ({ node, pos }: { node: T; pos: Vec2d }): void => {
             const prevNodePos = currentNodePos;
             const prevNodeState = state.get(JSON.stringify(prevNodePos));
@@ -45,7 +77,7 @@ export class AStarStrategy<T extends MazePathFinderNode> implements MazePathFind
             // compute totalCost
             const totalCost =
                 // heuristic + distance from start node
-                computeHeuristic({ nodePos: pos }) + distanceToCurrentNodeFromStart;
+                computeHeuristic({ nodePos: pos });
 
             state.set(JSON.stringify(pos), {
                 distanceFromStart: distanceToCurrentNodeFromStart,
@@ -53,6 +85,19 @@ export class AStarStrategy<T extends MazePathFinderNode> implements MazePathFind
             });
 
             // TODO add to sortedQueue so that invariant is valid (lowest cost first)
+
+            const indexToAdd: number = binarySearch(
+                sortedQueue,
+                { totalCost, nodePos: pos },
+                queueComparator
+            );
+
+            sortedQueue.splice(indexToAdd, 0, {
+                totalCost,
+                nodePos: pos
+            });
+            node.makeQueued();
+            console.log(sortedQueue);
         };
 
         // while queue is not empty
@@ -62,6 +107,12 @@ export class AStarStrategy<T extends MazePathFinderNode> implements MazePathFind
             const currentNode = maze.getNode(currentNodePos);
             currentNode.makeCandidate();
 
+            // break loop if found end node
+            if (currentNodePos == end) {
+                console.log('FOUND END');
+                break;
+            }
+
             maze.getAdjacentNodes(currentNodePos)
                 // filter out colliding nodes
                 .filter(data => {
@@ -69,11 +120,11 @@ export class AStarStrategy<T extends MazePathFinderNode> implements MazePathFind
                 })
                 // filter queued/visited already nodes
                 .filter(data => {
-                    state.has(JSON.stringify(data.pos));
+                    const res = !state.has(JSON.stringify(data.pos));
+                    return res;
                 })
                 .forEach(({ node, pos }) => {
-                    // TODO break loop if found end node
-
+                    // console.log('3', node);
                     // enque adjacent nodes
                     enqueue({ node, pos });
                 });

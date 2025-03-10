@@ -10,6 +10,8 @@ import { MazeGenerator } from './maze/MazeGenerator';
 import { Random } from './utils/Random';
 import { DFSStrategy } from './strategies/MazePathFindStrategy/DFSStrategy';
 import chalk from 'chalk';
+import { AStarStrategy } from './strategies/MazePathFindStrategy/AStarStrategy';
+import { FlatESLint } from 'eslint/use-at-your-own-risk';
 
 const setupMaze = () => {
     console.debug('initializer: ', MazeNode.initializer);
@@ -99,18 +101,25 @@ const randomizeStartEndPositions = (maze: Maze<MazeNode>): { start: Vec2d; end: 
 
 const main = () => {
     // const maze = setupMaze();
-    const maze = generateMaze(new Vec2d([140, 10]));
+    const maze = generateMaze(new Vec2d([60, 15]));
     console.log('-----------------------------');
     console.info('drawing maze using toString');
     console.log(`${maze}`);
 
     const strategies = [
         //
-        new BFSStrategy(),
+        // new BFSStrategy(),
         //
-        new DFSStrategy()
+        // new DFSStrategy(),
+        new AStarStrategy()
     ];
-    const doDrawProgress = strategies.length <= 1;
+
+    // FIXME temp disable for debuuging
+    const forceDoNotDrawProgress = false;
+    // FIXME
+    const forceDoNotClearOnDrawProgress = true;
+
+    const doDrawProgress = !forceDoNotDrawProgress && strategies.length <= 1;
 
     const printStats = () => {
         const countLabeled = (label: MazePathFinderNodeLabel) => {
@@ -145,10 +154,11 @@ const main = () => {
                     ? chalk.green(`+ ${labelChanged}`)
                     : chalk.red(`- ${labelChanged}`)
             }\n${maze.toString()}`;
-            console.clear();
+            if (!forceDoNotClearOnDrawProgress) console.clear();
             console.log(string);
             printStats();
             msleep(10);
+            if (node.hasLabel('finish')) msleep(5000);
         });
 
     const { start, end } = randomizeStartEndPositions(maze);
