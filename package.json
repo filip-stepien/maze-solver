@@ -16,6 +16,8 @@
   "description": "",
   "devDependencies": {
     "@eslint/js": "^9.21.0",
+    "@types/command-line-args": "^5.2.3",
+    "@types/command-line-usage": "^5.0.4",
     "@types/three": "^0.174.0",
     "@vitest/coverage-v8": "^3.0.8",
     "eslint": "^9.21.0",
@@ -33,6 +35,8 @@
   },
   "dependencies": {
     "chalk": "^5.4.1",
+    "command-line-args": "^6.0.1",
+    "command-line-usage": "^7.0.3",
     "three": "^0.174.0"
   }
 }

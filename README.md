@@ -10,16 +10,29 @@
 
 ## Usage
 
-```bash
+
+```sh
 # install dependencies
 npm i
+
+```
+
+### CLI interface 
+
+```sh
+npm run main -- --help
+```
+
+### web interface 
+
+```sh
 # run app
 npm start
 ```
 
 Alternatywnie, możliwe jest uruchomienie aplikacji w trybie _development_:
 
-```bash
+```sh
 npm run dev
 ```
 

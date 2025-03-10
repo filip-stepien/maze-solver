@@ -4,15 +4,18 @@ import { MazeNode } from './maze/MazeNode';
 import { MazePath, Vec2d } from './types';
 import MazePathFinder from './maze/MazePathFinder';
 import { MazePathFinderNode, MazePathFinderNodeLabel } from './maze/MazePathFinderNode';
-import { BFSStrategy } from './strategies/MazePathFindStrategy/BFSStrategy';
 import { PrimsStrategy } from './strategies/PrimsStrategy';
 import { MazeGenerator } from './maze/MazeGenerator';
 import { Random } from './utils/Random';
-import { DFSStrategy } from './strategies/MazePathFindStrategy/DFSStrategy';
 import chalk from 'chalk';
-import { AStarStrategy } from './strategies/MazePathFindStrategy/AStarStrategy';
-import { FlatESLint } from 'eslint/use-at-your-own-risk';
 import { Sleep } from './utils/Sleep';
+
+import commandLineArgs from 'command-line-args';
+import commandLineUsage from 'command-line-usage';
+import { string } from 'three/src/Three.TSL';
+import { describe } from 'vitest';
+import { availableStrategies } from './config/strategies';
+import { MazePathFindStrategy } from './strategies/MazePathFindStrategy/MazePathFindStrategy';
 
 const setupMaze = () => {
     console.debug('initializer: ', MazeNode.initializer);
@@ -101,81 +104,175 @@ const randomizeStartEndPositions = (maze: Maze<MazeNode>): { start: Vec2d; end: 
     };
 };
 
-const main = () => {
+const main = (
+    strategies: MazePathFindStrategy<MazePathFinderNode>[],
+    mazeSize: Vec2d,
+    animate: boolean,
+    frameDuration: number
+) => {
     // const { maze, start, end } = setupMaze();
-    const { maze, start, end } = generateMaze(new Vec2d([90, 35]));
-    console.log('-----------------------------');
-    console.info('drawing maze using toString');
+    const { maze, start, end } = generateMaze(mazeSize);
+
+    // draw generated maze
     console.log(`${maze}`);
 
-    const strategies = [
-        //
-        new BFSStrategy(),
-        //
-        new DFSStrategy(),
-        new AStarStrategy()
-    ];
-
-    // FIXME temp disable for debuuging
-    const forceDoNotDrawProgress = false;
-    // FIXME
-    const forceDoNotClearOnDrawProgress = false;
-
-    const doDrawProgress = !forceDoNotDrawProgress && strategies.length <= 1;
-
-    const printStats = () => {
-        const countLabeled = (label: MazePathFinderNodeLabel) => {
-            let counter = 0;
-            maze.forEachNode(({ node }) => {
-                if (node.hasLabel(label)) {
-                    ++counter;
-                }
-            });
-            return counter;
-        };
-
-        const stats = {
-            // How many times candidates are there
-            candidated: countLabeled('candidate'),
-            forsaken: countLabeled('forsaken'),
-            queued: countLabeled('queued'),
-            selected: countLabeled('selected')
-        };
-        console.table(stats);
-    };
-
-    if (doDrawProgress)
-        // Drawing on each label change
+    if (animate)
+        // on each label change
         maze.addNodeLabelChangeObserver(({ node, pos, labelChanged }) => {
             // skip removing labels
             if (!node.hasLabel(labelChanged)) return;
 
-            const string = `Changed node at ${JSON.stringify(pos)}, ${
-                node.hasLabel(labelChanged)
+            const getLabelChangeText = () => {
+                return node.hasLabel(labelChanged)
                     ? chalk.green(`+ ${labelChanged}`)
-                    : chalk.red(`- ${labelChanged}`)
-            }\n${maze.toString()}`;
-            if (!forceDoNotClearOnDrawProgress) console.clear();
+                    : chalk.red(`- ${labelChanged}`);
+            };
+
+            //constuct frame
+            let string = `Changed node at ${JSON.stringify(pos)}\t${getLabelChangeText()}\n`;
+            string += `${maze.toString()}`;
+
+            // clear terminal
+            console.clear();
+            // draw
             console.log(string);
-            printStats();
-            Sleep.msleep(50);
+            // draw stats table
+            console.table(maze.getStats());
+            Sleep.msleep(frameDuration);
         });
 
     for (const strategy of strategies) {
         console.log('-----------------------------');
-
         console.log('Using strategy', Object.getPrototypeOf(strategy).constructor.name);
 
         maze.setPathFindStrategy(strategy);
         const path = maze.findPath(start, end);
         // clear last frame if prgoress is drawn
-        if (doDrawProgress) {
+        if (animate) {
             console.clear();
         }
         console.log(`\n${maze.toString()}`);
-        printStats();
+        console.table(maze.getStats());
     }
 };
+
 export default main;
 
-main();
+// main();
+
+/**
+ * map of strategies as strings for option flags and their implemntations
+ */
+const strategyOptions = availableStrategies.reduce((map, strategy) => {
+    const strategyStringRepresentation = Object.getPrototypeOf(strategy).constructor.name.replace(
+        /Strategy/,
+        ''
+    );
+    map.set(strategyStringRepresentation, strategy);
+    return map;
+}, new Map<string, MazePathFindStrategy<MazePathFinderNode>>());
+
+const optionDefinitions = [
+    {
+        name: 'animate',
+        alias: 'a',
+        type: Boolean,
+        defaultValue: false,
+        description: 'animate solving'
+    },
+    {
+        name: 'help',
+        alias: 'h',
+        type: Boolean,
+        defaultValue: false,
+        description: 'show help and exit'
+    },
+    {
+        name: 'strategy',
+        alias: 's',
+        type: String,
+        lazyMultiple: true,
+        description:
+            'solving stratgy to use (case insensitive). Use --strategy-list to see allowed values. Can be specified multiple times to use few. If none set all stretegies avilable will be used.',
+        defaultValue: Array.from(strategyOptions.keys())
+    },
+    {
+        name: 'strategy-list',
+        alias: 'S',
+        type: Boolean,
+        description: 'list solving strategies'
+    },
+    {
+        name: 'frame-duration',
+        alias: 'f',
+        type: Number,
+        description: 'minimum frame duration when animating in ms',
+        defaultValue: 100
+    },
+    {
+        name: 'height',
+        alias: 'y',
+        type: Number,
+        description: 'height of maze',
+        defaultValue: 25
+    },
+    {
+        name: 'width',
+        alias: 'x',
+        type: Number,
+        description: 'width of maze',
+        defaultValue: 50
+    }
+];
+const sections = [
+    {
+        header: 'Usage',
+        optionList: optionDefinitions
+    }
+];
+
+const showHelpAndExit = () => {
+    const usage = commandLineUsage(sections);
+    console.log(usage);
+    process.exit(1);
+};
+
+let options;
+try {
+    options = commandLineArgs(optionDefinitions);
+} catch (exception) {
+    // console.log(exception);
+    console.log(exception.name, exception.optionName);
+    showHelpAndExit();
+}
+// console.log(options);
+
+if (options.help === true) {
+    showHelpAndExit();
+}
+if (options['strategy-list'] === true) {
+    // showing strategy list
+    console.log('Avilable strategies:\n\t' + Array.from(strategyOptions.keys()).join(' '));
+    process.exit(0);
+}
+
+const mazeSize: Vec2d = new Vec2d([options.width, options.height]);
+const frameDuration: number = options['frame-duration'];
+const animate: boolean = options.animate;
+
+// parese strategy names
+const strategies = options.strategy.reduce(
+    (acc: MazePathFindStrategy<MazePathFinderNode>[], strategyToFind: string) => {
+        strategyOptions.forEach((strategyImpl, strategyName) => {
+            // console.log('looking for', strategyToFind);
+            if ((strategyToFind as string).toLowerCase() === strategyName.toLowerCase()) {
+                console.log('using', strategyName);
+                acc.push(strategyImpl);
+            }
+        });
+        return acc;
+    },
+    []
+);
+
+main(strategies, mazeSize, animate, frameDuration);
