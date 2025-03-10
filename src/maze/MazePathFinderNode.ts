@@ -1,7 +1,5 @@
 import chalk, { colorNames, foregroundColorNames } from 'chalk';
 import { MazeNode } from './MazeNode';
-import { Color } from 'three';
-import { error } from 'console';
 
 export type MPFNodeLabelCallBackParams = {
     node: MazePathFinderNode;
@@ -140,7 +138,7 @@ export class MazePathFinderNode extends MazeNode {
      */
     protected promoteLabel(oldLabel: MazePathFinderNodeLabel, newLabel: MazePathFinderNodeLabel) {
         if (!this.hasLabel(oldLabel)) {
-            throw new Error(`Can not protmote to ${newLabel}, without being ${oldLabel} first`);
+            throw new Error(`Can not protmote to ${newLabel}, without being ${oldLabel} first.`);
         }
         this.addLabels([newLabel]);
         this.deleteLabels([oldLabel]);

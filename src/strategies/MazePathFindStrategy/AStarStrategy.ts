@@ -3,6 +3,7 @@ import MazePathFinder from '../../maze/MazePathFinder';
 import { MazePathFinderNode } from '../../maze/MazePathFinderNode';
 import { Vec2d, MazePath } from '../../types';
 import { MazePathFindStrategy } from './MazePathFindStrategy';
+import { Sleep } from '../../utils/Sleep';
 
 export class AStarStrategy<T extends MazePathFinderNode> implements MazePathFindStrategy<T> {
     findPath(maze: MazePathFinder<T>, start: Vec2d, end: Vec2d): MazePath {
@@ -23,93 +24,121 @@ export class AStarStrategy<T extends MazePathFinderNode> implements MazePathFind
             nodePos: Vec2d;
         };
 
-        const computeHeuristic = ({ nodePos }: { nodePos: Vec2d }) => {
-            return Math.sqrt(Math.abs(nodePos.x - end.x) + Math.abs(nodePos.y - end.y));
-        };
-
+        /**
+         * algorithm queue. It holds nodes to be processed
+         */
         const sortedQueue: AStarNodeQueued[] = [];
 
-        state.set(JSON.stringify(start), { distanceFromStart: 0, cameToFrom: start });
-        sortedQueue.push({ totalCost: computeHeuristic({ nodePos: start }), nodePos: start });
-        maze.getNode(start).makeQueued();
-
+        /**
+         * Currently processed node.
+         * If end was found lopp will break therefore currentNodePos will be end node postion.
+         */
         let currentNodePos: Vec2d;
 
         /**
-         *
+         * computes heuristic
+         * @param param0 postion of node to compute heuristic for
+         * @returns heuristic value
+         */
+        const computeHeuristic = (nodePos: Vec2d) => {
+            // it compustes Taxicab distance
+            return Math.abs(nodePos.x - end.x) + Math.abs(nodePos.y - end.y);
+        };
+
+        /**
          * @param array array
          * @param value value to find
-         * @param compareFun compare two nodes returns negative if a < b, positive if a > b, 0 if a is equal to b
-         * @returns
+         * @param isLess checks a < b
+         * @returns number of index to insert at
          */
-        const binarySearch = (
+        const findIndexToInsertAt = (
             array: AStarNodeQueued[],
             value: AStarNodeQueued,
-            compareFun: (a: AStarNodeQueued, b: AStarNodeQueued) => number
+            isLess: (a: AStarNodeQueued, b: AStarNodeQueued) => boolean
         ): number => {
-            let leftBorder = 0;
-            let rightBorder = array.length - 1;
-            while (leftBorder <= rightBorder) {
-                const middleSplit = (rightBorder + leftBorder) >> 1;
-                const cmp = compareFun(value, array[middleSplit]);
-                if (cmp > 0) {
-                    leftBorder = middleSplit + 1;
-                } else if (cmp < 0) {
-                    rightBorder = middleSplit - 1;
-                } else {
-                    return middleSplit;
-                }
-            }
-            return -leftBorder - 1;
+            let idx: number = 0;
+            while (idx < array.length && isLess(array[idx], value)) ++idx;
+
+            return idx;
         };
 
         const queueComparator = (a: AStarNodeQueued, b: AStarNodeQueued) => {
-            return b.totalCost - a.totalCost;
+            const res = a.totalCost < b.totalCost;
+            return res;
         };
 
+        const getDistanceOfNodeFromStartNode = (nodePos: Vec2d) => {
+            return state.get(JSON.stringify(nodePos)).distanceFromStart;
+        };
+
+        /**
+         * @param nodePos position of node to compute total cost of
+         * @returns number
+         */
+        const computeTotalCost = (nodePos: Vec2d): number => {
+            return computeHeuristic(nodePos) + getDistanceOfNodeFromStartNode(nodePos);
+        };
+
+        /**
+         * enqueues node to queue doing all state tracking along the way
+         * @param param0 node and it's postion
+         */
         const enqueue = ({ node, pos }: { node: T; pos: Vec2d }): void => {
+            // current node processed is preveious of enqueued one
             const prevNodePos = currentNodePos;
-            const prevNodeState = state.get(JSON.stringify(prevNodePos));
+            const previousNode = state.get(JSON.stringify(prevNodePos));
 
-            // this is distance from start to previous node + distance from previous node to current node (1)
-            const distanceToCurrentNodeFromStart = prevNodeState.distanceFromStart + 1;
+            // extract previous node distance from start
+            const distanceToPreviousNodeFromStart = previousNode.distanceFromStart;
 
-            // compute totalCost
-            const totalCost =
-                // heuristic + distance from start node
-                computeHeuristic({ nodePos: pos });
+            // distance to current node is sum of:
+            // - distance from start node to previous node
+            // - distance from previous node to current node (1)
+            const distanceToNodeFromStart = distanceToPreviousNodeFromStart + 1;
 
+            // Save state of queued node
             state.set(JSON.stringify(pos), {
-                distanceFromStart: distanceToCurrentNodeFromStart,
+                distanceFromStart: distanceToNodeFromStart,
                 cameToFrom: prevNodePos
             });
 
-            // TODO add to sortedQueue so that invariant is valid (lowest cost first)
+            const totalCost = computeTotalCost(pos);
 
-            const indexToAdd: number = binarySearch(
+            /// helper variable to store queuing node state
+            const nodeQueued: AStarNodeQueued = {
+                totalCost,
+                nodePos: pos
+            };
+
+            // find index where to insert queuing node so that it remains sorted
+            const indexToAdd: number = findIndexToInsertAt(
                 sortedQueue,
-                { totalCost, nodePos: pos },
+                nodeQueued,
                 queueComparator
             );
 
-            sortedQueue.splice(indexToAdd, 0, {
-                totalCost,
-                nodePos: pos
-            });
+            // insert to queue
+            sortedQueue.splice(indexToAdd, 0, nodeQueued);
+            // mark node as queued
             node.makeQueued();
-            console.log(sortedQueue);
         };
+
+        // add state of start node, it has 0 distance from start as it's start node
+        state.set(JSON.stringify(start), { distanceFromStart: 0, cameToFrom: start });
+        // add start node to queue
+        sortedQueue.push({ totalCost: computeHeuristic(start), nodePos: start });
+        maze.getNode(start).makeQueued();
 
         // while queue is not empty
         while (sortedQueue.length !== 0) {
             // get node pos
             currentNodePos = sortedQueue.shift().nodePos;
+
             const currentNode = maze.getNode(currentNodePos);
             currentNode.makeCandidate();
 
             // break loop if found end node
-            if (currentNodePos == end) {
-                console.log('FOUND END');
+            if (JSON.stringify(currentNodePos) == JSON.stringify(end)) {
                 break;
             }
 
@@ -124,15 +153,37 @@ export class AStarStrategy<T extends MazePathFinderNode> implements MazePathFind
                     return res;
                 })
                 .forEach(({ node, pos }) => {
-                    // console.log('3', node);
-                    // enque adjacent nodes
+                    // enqueue adjacent nodes
                     enqueue({ node, pos });
                 });
         }
 
-        // TODO rebuildpath
+        /**
+         * Path to end from start node
+         */
+        const path: MazePath = [];
 
-        // if not found path
-        return [];
+        // TODO rebuildpath
+        if (JSON.stringify(currentNodePos) === JSON.stringify(end)) {
+            // while not backtracked to start node
+            while (JSON.stringify(currentNodePos) !== JSON.stringify(start)) {
+                // get current node
+                const currentNode = maze.getNode(currentNodePos);
+                // mark it as selected
+                currentNode.makeSelected();
+                // add it to path
+                path.push(currentNodePos);
+
+                // go back to previous node
+                currentNodePos = state.get(JSON.stringify(currentNodePos)).cameToFrom;
+            }
+            // make start node selected
+            maze.getNode(currentNodePos).makeSelected();
+        }
+
+        // revert backtracked path
+        path.reverse();
+
+        return path;
     }
 }

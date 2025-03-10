@@ -12,13 +12,14 @@ import { DFSStrategy } from './strategies/MazePathFindStrategy/DFSStrategy';
 import chalk from 'chalk';
 import { AStarStrategy } from './strategies/MazePathFindStrategy/AStarStrategy';
 import { FlatESLint } from 'eslint/use-at-your-own-risk';
+import { Sleep } from './utils/Sleep';
 
 const setupMaze = () => {
     console.debug('initializer: ', MazeNode.initializer);
 
     console.info('creatig maze');
     const maze = new MazePathFinder({
-        size: new Vec2d({ x: 5, y: 6 }),
+        size: new Vec2d({ x: 50, y: 20 }),
         nodeFactory: () => {
             return new MazePathFinderNode();
         }
@@ -26,7 +27,7 @@ const setupMaze = () => {
 
     console.info('making every maze node solid');
     maze.forEachNode(({ node }) => {
-        node.makeColliding();
+        // node.makeColliding();
     });
 
     console.info('setting some maze nodes to not solid');
@@ -54,9 +55,9 @@ const setupMaze = () => {
         [4, 5]
     ].forEach(e => {
         const pos = new Vec2d(e);
-        maze.getNode(pos).makeNotColliding();
+        maze.getNode(pos.move(new Vec2d([5, 5]))).makeColliding();
     });
-    return maze;
+    return { start: new Vec2d([0, 0]), end: new Vec2d([30, 15]), maze };
 };
 
 const generateMaze = (size: Vec2d) => {
@@ -73,8 +74,9 @@ const generateMaze = (size: Vec2d) => {
             return new MazePathFinderNode();
         }
     });
+    const { start, end } = randomizeStartEndPositions(maze);
 
-    return maze;
+    return { maze, start, end };
 };
 
 const randomizeStartEndPositions = (maze: Maze<MazeNode>): { start: Vec2d; end: Vec2d } => {
@@ -100,24 +102,24 @@ const randomizeStartEndPositions = (maze: Maze<MazeNode>): { start: Vec2d; end: 
 };
 
 const main = () => {
-    // const maze = setupMaze();
-    const maze = generateMaze(new Vec2d([60, 15]));
+    // const { maze, start, end } = setupMaze();
+    const { maze, start, end } = generateMaze(new Vec2d([90, 35]));
     console.log('-----------------------------');
     console.info('drawing maze using toString');
     console.log(`${maze}`);
 
     const strategies = [
         //
-        // new BFSStrategy(),
+        new BFSStrategy(),
         //
-        // new DFSStrategy(),
+        new DFSStrategy(),
         new AStarStrategy()
     ];
 
     // FIXME temp disable for debuuging
     const forceDoNotDrawProgress = false;
     // FIXME
-    const forceDoNotClearOnDrawProgress = true;
+    const forceDoNotClearOnDrawProgress = false;
 
     const doDrawProgress = !forceDoNotDrawProgress && strategies.length <= 1;
 
@@ -145,9 +147,8 @@ const main = () => {
     if (doDrawProgress)
         // Drawing on each label change
         maze.addNodeLabelChangeObserver(({ node, pos, labelChanged }) => {
-            function msleep(n: number) {
-                Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, n);
-            }
+            // skip removing labels
+            if (!node.hasLabel(labelChanged)) return;
 
             const string = `Changed node at ${JSON.stringify(pos)}, ${
                 node.hasLabel(labelChanged)
@@ -157,11 +158,8 @@ const main = () => {
             if (!forceDoNotClearOnDrawProgress) console.clear();
             console.log(string);
             printStats();
-            msleep(10);
-            if (node.hasLabel('finish')) msleep(5000);
+            Sleep.msleep(50);
         });
-
-    const { start, end } = randomizeStartEndPositions(maze);
 
     for (const strategy of strategies) {
         console.log('-----------------------------');
