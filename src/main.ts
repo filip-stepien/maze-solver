@@ -12,8 +12,6 @@ import { Sleep } from './utils/Sleep';
 
 import commandLineArgs from 'command-line-args';
 import commandLineUsage from 'command-line-usage';
-import { string } from 'three/src/Three.TSL';
-import { describe } from 'vitest';
 import { availableStrategies } from './config/strategies';
 import { MazePathFindStrategy } from './strategies/MazePathFindStrategy/MazePathFindStrategy';
 
