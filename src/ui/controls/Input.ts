@@ -21,6 +21,10 @@ export class Input extends ControlObservable {
         return null;
     }
 
+    protected eventReturnValue(eventTarget: HTMLInputElement): string {
+        return eventTarget.value;
+    }
+
     protected override htmlTag(): keyof HTMLElementTagNameMap {
         return 'input';
     }
@@ -30,7 +34,8 @@ export class Input extends ControlObservable {
         if (eventType) {
             this.addEventListener(eventType, event => {
                 const input = event.target as HTMLInputElement;
-                handler(input.value);
+                const eventReturnValue = this.eventReturnValue(input);
+                handler(eventReturnValue);
             });
         }
     }
