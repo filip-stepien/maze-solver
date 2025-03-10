@@ -6,25 +6,25 @@ export class DropDownOption extends Control {
         this.setInnerText(label);
     }
 
-    public select() {
-        this.setAttribute('selected', 'selected');
+    public set selected(selected: boolean) {
+        if (selected) {
+            this.setAttribute('selected', 'selected');
+        } else {
+            this.removeAttribute('selected');
+        }
     }
 
-    public unselect() {
-        this.removeAttribute('selected');
+    public set isPlaceholder(isPlaceholder: boolean) {
+        if (isPlaceholder) {
+            this.setAttribute('disabled', 'disabled');
+            this.setAttribute('hidden', 'hidden');
+        } else {
+            this.removeAttribute('disabled');
+            this.removeAttribute('hidden');
+        }
     }
 
-    public setAsPlaceholder() {
-        this.setAttribute('disabled', 'disabled');
-        this.setAttribute('hidden', 'hidden');
-    }
-
-    public unsetPlaceholder() {
-        this.removeAttribute('disabled');
-        this.removeAttribute('hidden');
-    }
-
-    public setLabel(label: string) {
+    public set label(label: string) {
         this.setInnerText(label);
     }
 

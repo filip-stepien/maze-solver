@@ -1,6 +1,11 @@
 import { Control } from './Control';
 
 export class Text extends Control {
+    constructor(text: string) {
+        super();
+        this.setInnerText(text);
+    }
+
     public set align(align: string) {
         this.setStyle('textAlign', align);
     }
@@ -11,10 +16,5 @@ export class Text extends Control {
 
     public set fontSize(fontSize: string | number) {
         this.setStyle('fontSize', fontSize);
-    }
-
-    constructor(text: string) {
-        super();
-        this.setInnerText(text);
     }
 }
