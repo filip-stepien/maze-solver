@@ -108,15 +108,82 @@ const main = (
     strategies: MazePathFindStrategy<MazePathFinderNode>[],
     mazeSize: Vec2d,
     animate: boolean,
-    frameDuration: number
+    frameDuration: number,
+    maximize: boolean
 ) => {
-    // const { maze, start, end } = setupMaze();
-    const { maze, start, end } = generateMaze(mazeSize);
+    const placeHolderMaze = new MazePathFinder({
+        nodeFactory: () => {
+            return new MazePathFinderNode();
+        },
+        size: new Vec2d([1, 1])
+    });
 
-    /**
-     *  how many lines to NOT touch under maze, offset from maze to stats
-     */
-    let statusOffset = 1;
+    const generateUsingStrategyString = (strategy: MazePathFindStrategy<MazePathFinderNode>) => {
+        return `${Object.getPrototypeOf(strategy)?.constructor?.name}`;
+    };
+
+    const generateInfoBanner = (strategy: MazePathFindStrategy<MazePathFinderNode>) => {
+        let statusBanner = '';
+        statusBanner += `${generateUsingStrategyString(strategy)}`;
+
+        return statusBanner;
+    };
+
+    const statsRows = Object.keys(placeHolderMaze.getStats()).length;
+
+    const infoBannerRows = generateInfoBanner(availableStrategies[0]).split('\n').length;
+
+    const reserverdRows =
+        // stats entries count is same for any maze so just craete placeholer to get it
+        statsRows +
+        // status table borders
+        +6 +
+        // status offset
+        infoBannerRows;
+
+    const finallMazeSize = new Vec2d({
+        x: maximize ? process.stdout.columns : mazeSize.x,
+        y: maximize ? process.stdout.rows - reserverdRows : mazeSize.y
+    });
+
+    const prepareForAnimation = (strategy: MazePathFindStrategy<MazePathFinderNode>) => {
+        // create banner
+        const statusBanner = generateInfoBanner(strategy);
+        // comute space needed for banner
+        const statusOffset = statusBanner.split('\n').length;
+
+        //check if it fits
+        if (process.stdout.columns < mimimumColsNeeded) {
+            throw Error(
+                `Terminal has too few columns (${chalk.red(
+                    process.stdout.columns
+                )}), required ${chalk.yellow(mimimumColsNeeded)}.`
+            );
+        }
+        if (process.stdout.rows < minimumRowsNeeded) {
+            throw Error(
+                `Terminal has too few rows (${chalk.red(
+                    process.stdout.rows
+                )}), required ${chalk.yellow(minimumRowsNeeded)}.`
+            );
+        }
+
+        // write stuff
+        console.clear();
+        process.stdout.cursorTo(0, 0);
+        process.stdout.write(maze.toString());
+        process.stdout.write(statusBanner);
+        process.stdout.moveCursor(-999999, 1);
+    };
+
+    const { maze, start, end } = generateMaze(finallMazeSize);
+    // const { maze, start, end } = setupMaze();
+
+    const minimumRowsNeeded = maze.getSize().y + reserverdRows;
+    const mimimumColsNeeded = maze.getSize().x;
+
+    // const { maze, start, end } = generateMaze(mazeSize);
+
     if (animate) {
         // on each label change
         process.stdout.cursorTo(0, 0);
@@ -141,9 +208,11 @@ const main = (
             const statusString =
                 'Changed node at' + `\t${JSON.stringify(pos)}\t\t${getLabelChangeText()}`;
 
-            process.stdout.cursorTo(0, mazeSize.y + statusOffset, () => {});
+            // go to status string
+            process.stdout.cursorTo(0, mazeSize.y + infoBannerRows, () => {});
             process.stdout.clearLine(1);
             process.stdout.write(statusString, () => {});
+            // under status write stats
             process.stdout.moveCursor(-1000, 1);
             console.table(maze.getStats());
 
@@ -151,49 +220,7 @@ const main = (
 
             Sleep.msleep(frameDuration);
         });
-
-        process.stdin.read();
-
-        // hide curosr so that it doesn't catch eye attention
-        restoreCursor();
-        cliCursor.hide();
     }
-
-    const generateUsingStrategyString = (strategy: MazePathFindStrategy<MazePathFinderNode>) => {
-        return `${Object.getPrototypeOf(strategy)?.constructor?.name}`;
-    };
-
-    const prepareForAnimation = (strategy: MazePathFindStrategy<MazePathFinderNode>) => {
-        // create banner
-        let statusBanner = '';
-        statusBanner += `${generateUsingStrategyString(strategy)}`;
-
-        // comute space needed for banner
-        statusOffset = statusBanner.split('\n').length;
-
-        //check if it fits
-        if (process.stdout.columns < maze.getSize().x) {
-            throw Error(
-                `Terminal has too few columns (${chalk.red(
-                    process.stdout.columns
-                )}), required ${chalk.yellow(maze.getSize().x)}.`
-            );
-        }
-        if (process.stdout.rows < maze.getSize().y) {
-            throw Error(
-                `Terminal has too few rows (${chalk.red(
-                    process.stdout.rows
-                )}), required ${chalk.yellow(maze.getSize().y)}.`
-            );
-        }
-
-        // write stuff
-        console.clear();
-        process.stdout.cursorTo(0, 0);
-        process.stdout.write(maze.toString());
-        process.stdout.write(statusBanner);
-        process.stdout.moveCursor(-999999, 1);
-    };
 
     if (!animate) {
         // draw generated maze
@@ -293,6 +320,13 @@ const optionDefinitions = [
         type: Number,
         description: 'width of maze',
         defaultValue: 50
+    },
+    {
+        name: 'maximize',
+        alias: 'm',
+        type: Boolean,
+        description: 'set maze size to maximum that fits withing terminal',
+        defaultValue: false
     }
 ];
 const sections = [
@@ -330,6 +364,7 @@ if (options['strategy-list'] === true) {
 const mazeSize: Vec2d = new Vec2d([options.width, options.height]);
 const frameDuration: number = options['frame-duration'];
 const animate: boolean = options.animate;
+const maximize: boolean = options.maximize;
 
 // parese strategy names
 const strategies = options.strategy.reduce(
@@ -346,4 +381,4 @@ const strategies = options.strategy.reduce(
     []
 );
 
-main(strategies, mazeSize, animate, frameDuration);
+main(strategies, mazeSize, animate, frameDuration, maximize);
