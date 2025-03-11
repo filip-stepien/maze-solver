@@ -9,13 +9,11 @@ import { MazeGenerator } from './maze/MazeGenerator';
 import { Random } from './utils/Random';
 import chalk from 'chalk';
 import { Sleep } from './utils/Sleep';
-import cliCursor from 'cli-cursor';
 
 import commandLineArgs from 'command-line-args';
 import commandLineUsage from 'command-line-usage';
 import { availableStrategies } from './config/strategies';
 import { MazePathFindStrategy } from './strategies/MazePathFindStrategy/MazePathFindStrategy';
-import restoreCursor from 'restore-cursor';
 
 const setupMaze = () => {
     console.debug('initializer: ', MazeNode.initializer);
