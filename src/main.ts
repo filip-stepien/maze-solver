@@ -325,7 +325,7 @@ const optionDefinitions = [
         name: 'maximize',
         alias: 'm',
         type: Boolean,
-        description: 'set maze size to maximum that fits withing terminal',
+        description: 'set maze size to maximum that fits within terminal',
         defaultValue: false
     }
 ];
