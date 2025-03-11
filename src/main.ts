@@ -14,6 +14,9 @@ import commandLineArgs from 'command-line-args';
 import commandLineUsage from 'command-line-usage';
 import { availableStrategies } from './config/strategies';
 import { MazePathFindStrategy } from './strategies/MazePathFindStrategy/MazePathFindStrategy';
+import { WriteStream } from 'fs';
+import { cursorTo } from 'readline';
+import { preProcessFile } from 'typescript';
 
 const setupMaze = () => {
     console.debug('initializer: ', MazeNode.initializer);
@@ -114,11 +117,16 @@ const main = (
     // draw generated maze
     console.log(`${maze}`);
 
-    if (animate)
+    if (animate) {
         // on each label change
+        process.stdout.cursorTo(0, 0);
+        process.stdout.clearScreenDown();
+        process.stdout.cursorTo(0, 0);
+        process.stdout.write(`${maze}`);
+
         maze.addNodeLabelChangeObserver(({ node, pos, labelChanged }) => {
             // skip removing labels
-            if (!node.hasLabel(labelChanged)) return;
+            // if (!node.hasLabel(labelChanged)) return;
 
             const getLabelChangeText = () => {
                 return node.hasLabel(labelChanged)
@@ -127,30 +135,50 @@ const main = (
             };
 
             //constuct frame
-            let string = `Changed node at ${JSON.stringify(pos)}\t${getLabelChangeText()}\n`;
-            string += `${maze.toString()}`;
+            const statusString = `Changed node at ${JSON.stringify(pos)}\t${getLabelChangeText()}`;
+
+            process.stdout.cursorTo(pos.x, pos.y);
+            process.stdout.write(node.toString());
+
+            process.stdout.cursorTo(0, mazeSize.y, () => {});
+            process.stdout.write(statusString, () => {});
+            process.stdout.clearLine(1);
+            process.stdout.moveCursor(-1000, 1);
+            console.table(maze.getStats());
+
+            // process.stdout.cursorTo(0, 0);
+
+            const mazeString = `${maze.toString()}`;
 
             // clear terminal
-            console.clear();
+            // console.clear();
             // draw
-            console.log(string);
+            // console.log(statusString);
             // draw stats table
-            console.table(maze.getStats());
+
             Sleep.msleep(frameDuration);
         });
+    }
 
     for (const strategy of strategies) {
-        console.log('-----------------------------');
-        console.log('Using strategy', Object.getPrototypeOf(strategy).constructor.name);
-
         maze.setPathFindStrategy(strategy);
         const path = maze.findPath(start, end);
+
         // clear last frame if prgoress is drawn
+        console.table(animate);
         if (animate) {
-            console.clear();
+            process.stdout.cursorTo(0, 0);
+
+            // process.stdout.write(`${maze.toString()}`);
+        } else {
+            // console.log('-----------------------------');
+            // console.log('Using strategy', Object.getPrototypeOf(strategy).constructor.name);
+            maze.toString();
+            // console.table(maze.getStats());
         }
-        console.log(`\n${maze.toString()}`);
-        console.table(maze.getStats());
+
+        // display maze
+        // stats
     }
 };
 
