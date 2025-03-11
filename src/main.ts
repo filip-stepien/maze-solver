@@ -173,8 +173,8 @@ const main = (
         } else {
             // console.log('-----------------------------');
             // console.log('Using strategy', Object.getPrototypeOf(strategy).constructor.name);
-            maze.toString();
-            // console.table(maze.getStats());
+            console.log(maze.toString());
+            console.table(maze.getStats());
         }
 
         // display maze
