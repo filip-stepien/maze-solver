@@ -9,15 +9,13 @@ import { MazeGenerator } from './maze/MazeGenerator';
 import { Random } from './utils/Random';
 import chalk from 'chalk';
 import { Sleep } from './utils/Sleep';
+import cliCursor from 'cli-cursor';
 
 import commandLineArgs from 'command-line-args';
 import commandLineUsage from 'command-line-usage';
 import { availableStrategies } from './config/strategies';
 import { MazePathFindStrategy } from './strategies/MazePathFindStrategy/MazePathFindStrategy';
-import { write, WriteStream } from 'fs';
-import { cursorTo } from 'readline';
-import { preProcessFile } from 'typescript';
-import { FlatESLint } from 'eslint/use-at-your-own-risk';
+import restoreCursor from 'restore-cursor';
 
 const setupMaze = () => {
     console.debug('initializer: ', MazeNode.initializer);
@@ -149,18 +147,16 @@ const main = (
             process.stdout.moveCursor(-1000, 1);
             console.table(maze.getStats());
 
-            // process.stdout.cursorTo(0, 0);
-
             const mazeString = `${maze.toString()}`;
-
-            // clear terminal
-            // console.clear();
-            // draw
-            // console.log(statusString);
-            // draw stats table
 
             Sleep.msleep(frameDuration);
         });
+
+        process.stdin.read();
+
+        // hide curosr so that it doesn't catch eye attention
+        restoreCursor();
+        cliCursor.hide();
     }
 
     const generateUsingStrategyString = (strategy: MazePathFindStrategy<MazePathFinderNode>) => {

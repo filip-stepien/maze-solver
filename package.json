@@ -35,8 +35,10 @@
   },
   "dependencies": {
     "chalk": "^5.4.1",
+    "cli-cursor": "^5.0.0",
     "command-line-args": "^6.0.1",
     "command-line-usage": "^7.0.3",
+    "restore-cursor": "^5.1.0",
     "three": "^0.174.0"
   }
 }
