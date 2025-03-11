@@ -35,6 +35,7 @@ export default class MazePathFinder<T extends MazePathFinderNode> extends Maze<T
      */
     setPathFindStrategy(strategy: MazePathFindStrategy<T>): void {
         this.m_pathfindStrategy = strategy;
+        this.resetNodeLabels();
     }
 
     /**
