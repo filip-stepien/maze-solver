@@ -2,7 +2,7 @@
 
 ## Demo
 
-[![asciicast](https://asciinema.org/a/43EYqZO1409vmJZ2ZKBSySKEM.svg)](https://asciinema.org/a/43EYqZO1409vmJZ2ZKBSySKEM))
+[![asciicast](https://asciinema.org/a/jhVzuSV5jFYmajLJPxfZvDxyQ.svg)](https://asciinema.org/a/jhVzuSV5jFYmajLJPxfZvDxyQ)
 
 ## Usage
 
