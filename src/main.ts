@@ -14,9 +14,10 @@ import commandLineArgs from 'command-line-args';
 import commandLineUsage from 'command-line-usage';
 import { availableStrategies } from './config/strategies';
 import { MazePathFindStrategy } from './strategies/MazePathFindStrategy/MazePathFindStrategy';
-import { WriteStream } from 'fs';
+import { write, WriteStream } from 'fs';
 import { cursorTo } from 'readline';
 import { preProcessFile } from 'typescript';
+import { FlatESLint } from 'eslint/use-at-your-own-risk';
 
 const setupMaze = () => {
     console.debug('initializer: ', MazeNode.initializer);
@@ -114,9 +115,10 @@ const main = (
     // const { maze, start, end } = setupMaze();
     const { maze, start, end } = generateMaze(mazeSize);
 
-    // draw generated maze
-    console.log(`${maze}`);
-
+    /**
+     *  how many lines to NOT touch under maze, offset from maze to stats
+     */
+    let statusOffset = 1;
     if (animate) {
         // on each label change
         process.stdout.cursorTo(0, 0);
@@ -134,15 +136,16 @@ const main = (
                     : chalk.red(`- ${labelChanged}`);
             };
 
-            //constuct frame
-            const statusString = `Changed node at ${JSON.stringify(pos)}\t${getLabelChangeText()}`;
-
             process.stdout.cursorTo(pos.x, pos.y);
             process.stdout.write(node.toString());
 
-            process.stdout.cursorTo(0, mazeSize.y, () => {});
-            process.stdout.write(statusString, () => {});
+            // status banner
+            const statusString =
+                'Changed node at' + `\t${JSON.stringify(pos)}\t\t${getLabelChangeText()}`;
+
+            process.stdout.cursorTo(0, mazeSize.y + statusOffset, () => {});
             process.stdout.clearLine(1);
+            process.stdout.write(statusString, () => {});
             process.stdout.moveCursor(-1000, 1);
             console.table(maze.getStats());
 
@@ -160,19 +163,65 @@ const main = (
         });
     }
 
+    const generateUsingStrategyString = (strategy: MazePathFindStrategy<MazePathFinderNode>) => {
+        return `${Object.getPrototypeOf(strategy)?.constructor?.name}`;
+    };
+
+    const prepareForAnimation = (strategy: MazePathFindStrategy<MazePathFinderNode>) => {
+        // create banner
+        let statusBanner = '';
+        statusBanner += `${generateUsingStrategyString(strategy)}`;
+
+        // comute space needed for banner
+        statusOffset = statusBanner.split('\n').length;
+
+        //check if it fits
+        if (process.stdout.columns < maze.getSize().x) {
+            throw Error(
+                `Terminal has too few columns (${chalk.red(
+                    process.stdout.columns
+                )}), required ${chalk.yellow(maze.getSize().x)}.`
+            );
+        }
+        if (process.stdout.rows < maze.getSize().y) {
+            throw Error(
+                `Terminal has too few rows (${chalk.red(
+                    process.stdout.rows
+                )}), required ${chalk.yellow(maze.getSize().y)}.`
+            );
+        }
+
+        // write stuff
+        console.clear();
+        process.stdout.cursorTo(0, 0);
+        process.stdout.write(maze.toString());
+        process.stdout.write(statusBanner);
+        process.stdout.moveCursor(-999999, 1);
+    };
+
+    if (!animate) {
+        // draw generated maze
+        console.log('Maze');
+        console.log(maze.toString());
+    }
+
     for (const strategy of strategies) {
         maze.setPathFindStrategy(strategy);
+
+        if (animate) {
+            try {
+                prepareForAnimation(strategy);
+            } catch (error) {
+                console.log('Animating failed', error);
+                process.exit(2);
+            }
+        }
+
         const path = maze.findPath(start, end);
 
-        // clear last frame if prgoress is drawn
-        console.table(animate);
-        if (animate) {
-            process.stdout.cursorTo(0, 0);
-
-            // process.stdout.write(`${maze.toString()}`);
-        } else {
-            // console.log('-----------------------------');
-            // console.log('Using strategy', Object.getPrototypeOf(strategy).constructor.name);
+        if (!animate) {
+            console.log('-----------------------------');
+            process.stdout.write(generateUsingStrategyString(strategy) + '\n');
             console.log(maze.toString());
             console.table(maze.getStats());
         }
@@ -292,7 +341,7 @@ const strategies = options.strategy.reduce(
         strategyOptions.forEach((strategyImpl, strategyName) => {
             // console.log('looking for', strategyToFind);
             if ((strategyToFind as string).toLowerCase() === strategyName.toLowerCase()) {
-                console.log('using', strategyName);
+                // console.log('using', strategyName);
                 acc.push(strategyImpl);
             }
         });
