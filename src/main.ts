@@ -175,6 +175,8 @@ const main = (
     };
 
     const { maze, start, end } = generateMaze(finallMazeSize);
+    maze.getNode(start).makeStart();
+    maze.getNode(end).makeFinish();
     // const { maze, start, end } = setupMaze();
 
     const minimumRowsNeeded = maze.getSize().y + reserverdRows;
