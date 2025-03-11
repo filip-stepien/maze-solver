@@ -134,12 +134,12 @@ const main = (
     const infoBannerRows = generateInfoBanner(availableStrategies[0]).split('\n').length;
 
     const reserverdRows =
+        // info banner offset
+        infoBannerRows +
         // stats entries count is same for any maze so just craete placeholer to get it
         statsRows +
         // status table borders
-        +6 +
-        // status offset
-        infoBannerRows;
+        +6;
 
     const finallMazeSize = new Vec2d({
         x: maximize ? process.stdout.columns : mazeSize.x,
@@ -206,17 +206,15 @@ const main = (
 
             // status banner
             const statusString =
-                'Changed node at' + `\t${JSON.stringify(pos)}\t\t${getLabelChangeText()}`;
+                'Changed node at' + `\t${JSON.stringify(pos)}\t\t${getLabelChangeText()}\n`;
 
             // go to status string
-            process.stdout.cursorTo(0, mazeSize.y + infoBannerRows, () => {});
+            process.stdout.cursorTo(0, maze.getSize().y + infoBannerRows, () => {});
             process.stdout.clearLine(1);
             process.stdout.write(statusString, () => {});
             // under status write stats
-            process.stdout.moveCursor(-1000, 1);
+            // process.stdout.moveCursor(-100, -3);
             console.table(maze.getStats());
-
-            const mazeString = `${maze.toString()}`;
 
             Sleep.msleep(frameDuration);
         });
