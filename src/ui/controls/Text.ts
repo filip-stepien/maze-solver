@@ -1,9 +1,13 @@
 import { Control } from './Control';
 
 export class Text extends Control {
-    constructor(text: string) {
+    constructor(text?: string) {
         super();
-        this.setInnerText(text);
+        this.content = text ?? '';
+    }
+
+    public set content(content: string) {
+        this.setInnerText(content);
     }
 
     public set align(align: string) {

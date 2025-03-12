@@ -9,8 +9,8 @@ export class Input extends ControlObservable {
         if (inputType) this.setAttribute('type', inputType);
     }
 
-    public set value(value: string) {
-        this.setAttribute('value', value);
+    public set value(value: string | number) {
+        this.setAttribute('value', value.toString());
     }
 
     public set placeholder(placeholder: string) {

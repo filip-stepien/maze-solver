@@ -47,8 +47,12 @@ export class Control {
      * @param property Name of HTML property.
      * @param value HTML property value.
      */
-    protected setAttribute(property: string, value: string) {
-        this._htmlElement.setAttribute(property, value);
+    protected setAttribute(property: string, value: number | string) {
+        this._htmlElement.setAttribute(property, value.toString());
+    }
+
+    protected getAttribute(property: string): string | null {
+        return this._htmlElement.getAttribute(property);
     }
 
     protected removeAttribute(property: string) {
