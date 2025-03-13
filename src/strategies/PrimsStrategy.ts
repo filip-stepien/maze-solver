@@ -68,7 +68,7 @@ export class PrimsStrategy implements GenerationStrategy {
             }
         }
 
-        return maze.map(row => row.map(e => e === 0));
+        return maze.map(row => row.map(e => e !== 0));
         // console.table(maze);
     }
 }
