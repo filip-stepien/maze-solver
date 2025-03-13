@@ -1,16 +1,31 @@
 import { MazeBox } from '../models/MazeBox';
-import { Scene } from '../core/Scene';
+import { Scene, StartArgs } from '../core/Scene';
+import { Vec2d } from '../../types';
+import { Vector3 } from 'three';
 
 export class BoxScene extends Scene {
-    private _box = new MazeBox(this);
+    private _box: MazeBox;
 
-    override start(): void {
-        this._box.threeObject.position.x = (3 * 0.25) / 2;
-        this._box.threeObject.position.y = 0.5;
-        this._box.threeObject.position.z = (3 * 0.25) / 2;
+    constructor() {
+        super();
+        this._box = new MazeBox(this);
     }
 
-    override loop(): void {
-        this._box.threeObject.rotation.y += 0.01;
+    public set position(position: Vec2d) {
+        this._box.threeObject.position.x = position.x;
+        this._box.threeObject.position.z = position.y;
     }
+
+    public get position(): Vec2d {
+        return new Vec2d({
+            x: this._box.threeObject.position.x,
+            y: this._box.threeObject.position.z
+        });
+    }
+
+    public static get size() {
+        return MazeBox.size;
+    }
+
+    override start(): void {}
 }

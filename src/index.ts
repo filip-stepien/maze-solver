@@ -8,12 +8,13 @@ import { DropDown } from './ui/controls/DropDown';
 import { CheckBox } from './ui/controls/CheckBox';
 import { Text } from './ui/controls/Text';
 import { RangeSlider } from './ui/controls/RangeSlider';
+import { MazeScene } from './ui/scenes/MazeScene';
+import { Vec2d } from './types';
 
-const scene1 = new ExampleScene();
-const scene2 = new BoxScene();
 const renderer = Renderer.instance;
+const mazeScene = new MazeScene();
 renderer.camera = new OrthographicCamera(1, 0.1, 1000);
-renderer.addScene(scene1, scene2);
+renderer.addScene(mazeScene);
 renderer.instatiate();
 
 const view = new View();

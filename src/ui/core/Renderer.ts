@@ -63,9 +63,12 @@ export class Renderer {
         this._renderer.setSize(window.innerWidth, window.innerHeight);
 
         this._renderer.setAnimationLoop(time => {
-            this._scenes.forEach(scene =>
-                scene.loop(this._camera.threeCamera, this._clock.getDelta(), time)
-            );
+            this._scenes.forEach(scene => {
+                const delta = this._clock.getDelta();
+                scene.loop({ camera: this._camera, renderer: this, delta, time });
+                scene.animate({ camera: this._camera, renderer: this, delta, time });
+                if (this._camera.lockAt) this._camera.threeCamera.lookAt(this._camera.lockAt);
+            });
 
             this._renderer.render(this._threeScene, this._camera.threeCamera);
         });
@@ -83,7 +86,6 @@ export class Renderer {
      */
     public addScene(...scenes: Scene[]) {
         scenes.forEach(scene => {
-            scene.start(this._camera.threeCamera);
             this._scenes.push(scene);
             scene.objects.forEach(obj => {
                 this._threeScene.add(obj.threeObject);
@@ -105,13 +107,14 @@ export class Renderer {
      * in order to successfully instatiate the render.
      */
     public instatiate() {
-        if (!this._camera || this._scenes.length === 0) {
+        if (!this._camera) {
             throw new Error(
-                'Unable to append partially initialized Renderer object. Make sure you are specifying Camera and at least one Scene object.'
+                'Unable to append partially initialized Renderer object. Make sure you are specifying Camera object.'
             );
         }
 
+        this._scenes.forEach(scene => scene.start({ camera: this._camera, renderer: this }));
+        this._camera.resize();
         this.initializeRenderer();
-        this._scenes.forEach(scene => scene.start(this._camera.threeCamera));
     }
 }

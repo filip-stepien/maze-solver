@@ -25,11 +25,15 @@ export class OrthographicCamera extends Camera3D {
      * @param near Near clipping plane distance.
      * @param far Far clipping plane distance.
      */
-    constructor(size: number = 75, near?: number, far?: number) {
+    constructor(size: number = 1, near?: number, far?: number) {
         super(near, far);
         this._size = size;
         this._left = this.calculateLeftFrustum();
         this._right = this.calculateRightFrustum();
+    }
+
+    public static isOrthographic(camera: Camera3D): camera is OrthographicCamera {
+        return (camera as OrthographicCamera).size !== undefined;
     }
 
     /**
@@ -46,12 +50,31 @@ export class OrthographicCamera extends Camera3D {
         return this._aspectRatio * this._size;
     }
 
+    private updateFrustum() {
+        const cam = this._threeCamera as ThreeOrthographicCamera;
+        if (cam) {
+            cam.left = this.calculateLeftFrustum();
+            cam.right = this.calculateRightFrustum();
+            cam.top = this._size;
+            cam.bottom = -this.size;
+            cam.updateProjectionMatrix();
+        }
+    }
+
+    public set size(size: number) {
+        this._size = size;
+        this.updateFrustum();
+    }
+
+    public get size() {
+        return this._size;
+    }
+
     /**
      * Resize event callback.
      */
     public override resize() {
-        this._left = this.calculateLeftFrustum();
-        this._right = this.calculateRightFrustum();
+        this.updateFrustum();
     }
 
     /**

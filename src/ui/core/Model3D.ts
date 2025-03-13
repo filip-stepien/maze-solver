@@ -21,9 +21,17 @@ export abstract class Model3D extends Renderable {
      * @param material Material that defines the appearance of the model.
      * @param scene Scene to which the model will be added.
      */
-    constructor(geometry: BufferGeometry, material: Material, scene: Scene) {
+    constructor(scene: Scene, material?: Material, geometry?: BufferGeometry) {
         super(scene);
         this._geometry = geometry;
+        this._material = material;
+    }
+
+    public set geometry(geometry: BufferGeometry) {
+        this._geometry = geometry;
+    }
+
+    public set material(material: Material) {
         this._material = material;
     }
 

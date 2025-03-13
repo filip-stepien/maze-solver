@@ -7,6 +7,12 @@ import { Scene } from '../core/Scene';
  */
 export class MazeBox extends Model3D {
     constructor(scene: Scene) {
-        super(new BoxGeometry(0.2, 0.2, 0.2), new MeshNormalMaterial(), scene);
+        super(scene);
+        this.geometry = new BoxGeometry(MazeBox.size, MazeBox.size, MazeBox.size);
+        this.material = new MeshNormalMaterial();
+    }
+
+    public static get size() {
+        return 0.5;
     }
 }
