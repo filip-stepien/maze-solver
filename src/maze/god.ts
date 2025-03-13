@@ -22,6 +22,7 @@ export class MazeFacade {
                 return new MazePathFinderNode();
             }
         });
+        return this.getMazePathFinder();
     }
 
     setPathFinderStrategy(strategy: MazePathFindStrategy<MazePathFinderNode>) {
