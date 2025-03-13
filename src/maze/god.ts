@@ -5,7 +5,7 @@ import { Random } from '../utils/Random';
 import MazePathFinder from './MazePathFinder';
 import { MazePathFinderNode } from './MazePathFinderNode';
 
-export class MazeMediator {
+export class MazeFacade {
     protected m_mazePathFinder: MazePathFinder<MazePathFinderNode> = undefined;
     protected m_mazeGenerator: GenerationStrategy = undefined;
     protected m_mazePathFinderStrategy: MazePathFindStrategy<MazePathFinderNode> = undefined;
@@ -55,7 +55,7 @@ export class MazeMediator {
         };
     };
 
-    getMazePathFinderImplementationDetailGetterAntiPattern() {
+    getMazePathFinder() {
         return this.m_mazePathFinder;
     }
 }

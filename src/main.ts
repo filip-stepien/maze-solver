@@ -12,7 +12,7 @@ import commandLineArgs from 'command-line-args';
 import commandLineUsage from 'command-line-usage';
 import { availableStrategies } from './config/strategies';
 import { MazePathFindStrategy } from './strategies/MazePathFindStrategy/MazePathFindStrategy';
-import { MazeMediator } from './maze/god';
+import { MazeFacade } from './maze/god';
 
 const setupMaze = () => {
     console.debug('initializer: ', MazeNode.initializer);
@@ -61,10 +61,10 @@ const setupMaze = () => {
 };
 
 const generateMaze = (size: Vec2d) => {
-    const god: MazeMediator = new MazeMediator();
+    const god: MazeFacade = new MazeFacade();
     god.setGeneratorStrategy(new PrimsStrategy());
     god.generateMaze(size);
-    const maze = god.getMazePathFinderImplementationDetailGetterAntiPattern();
+    const maze = god.getMazePathFinder();
     const { start, end } = god.randomizeStartEndPositions();
 
     return { maze, start, end };
