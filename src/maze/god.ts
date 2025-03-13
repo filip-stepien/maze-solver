@@ -5,7 +5,7 @@ import { Random } from '../utils/Random';
 import MazePathFinder from './MazePathFinder';
 import { MazePathFinderNode } from './MazePathFinderNode';
 
-export class GodClassAntiPattern {
+export class MazeMediator {
     protected m_mazePathFinder: MazePathFinder<MazePathFinderNode> = undefined;
     protected m_mazeGenerator: GenerationStrategy = undefined;
     protected m_mazePathFinderStrategy: MazePathFindStrategy<MazePathFinderNode> = undefined;
@@ -28,7 +28,7 @@ export class GodClassAntiPattern {
         this.m_mazePathFinderStrategy = strategy;
     }
 
-    randomizeStartEndPositions = (): { start: Vec2d; end: Vec2d } => {
+    getRandomNonCollidingNodePositon() {
         const nonColliding: Vec2d[] = [];
 
         this.m_mazePathFinder.forEachNode(({ pos, node }) => {
@@ -37,12 +37,17 @@ export class GodClassAntiPattern {
             }
         });
 
-        const start = nonColliding[Random.randomIndex(nonColliding)];
+        const randomNonCollidingNodeIndex = nonColliding[Random.randomIndex(nonColliding)];
+        return randomNonCollidingNodeIndex;
+    }
+
+    randomizeStartEndPositions = (): { start: Vec2d; end: Vec2d } => {
+        const start = this.getRandomNonCollidingNodePositon();
 
         let end: Vec2d;
         do {
-            end = nonColliding[Random.randomIndex(nonColliding)];
-        } while (JSON.stringify(start) === JSON.stringify(end));
+            end = this.getRandomNonCollidingNodePositon();
+        } while (start.equals(end));
 
         return {
             start,

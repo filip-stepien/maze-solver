@@ -138,7 +138,7 @@ export class AStarStrategy<T extends MazePathFinderNode> implements MazePathFind
             currentNode.makeCandidate();
 
             // break loop if found end node
-            if (JSON.stringify(currentNodePos) == JSON.stringify(end)) {
+            if (currentNodePos.equals(end)) {
                 break;
             }
 
@@ -164,9 +164,9 @@ export class AStarStrategy<T extends MazePathFinderNode> implements MazePathFind
         const path: MazePath = [];
 
         // TODO rebuildpath
-        if (JSON.stringify(currentNodePos) === JSON.stringify(end)) {
+        if (currentNodePos.equals(end)) {
             // while not backtracked to start node
-            while (JSON.stringify(currentNodePos) !== JSON.stringify(start)) {
+            while (currentNodePos.equals(start)) {
                 // get current node
                 const currentNode = maze.getNode(currentNodePos);
                 // mark it as selected

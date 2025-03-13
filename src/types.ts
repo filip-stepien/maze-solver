@@ -30,6 +30,10 @@ export class Vec2d implements Point {
             y: this.y + offset.y
         });
     }
+
+    equals(other: Vec2d) {
+        return this.x === other.x && this.y === other.y;
+    }
 }
 
 export type MazePath = Vec2d[];

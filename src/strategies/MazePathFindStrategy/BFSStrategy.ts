@@ -22,7 +22,7 @@ export class BFSStrategy<T extends MazePathFinderNode> implements MazePathFindSt
             node.makeCandidate();
 
             // end if current node is finish node
-            if (JSON.stringify(currentNodePos) === JSON.stringify(end)) {
+            if (currentNodePos.equals(end)) {
                 break;
             }
 
@@ -50,13 +50,10 @@ export class BFSStrategy<T extends MazePathFinderNode> implements MazePathFindSt
         } while (queue.length != 0);
 
         // if last processed node is end node
-        if (
-            JSON.stringify(currentNodePos) == JSON.stringify(end) &&
-            state.has(JSON.stringify(currentNodePos))
-        ) {
+        if (currentNodePos.equals(end) && state.has(JSON.stringify(currentNodePos))) {
             const path: MazePath = [];
             // bactrack nodes till to start
-            while (JSON.stringify(currentNodePos) !== JSON.stringify(start)) {
+            while (!currentNodePos.equals(start)) {
                 // make current node selected
                 maze.getNode(currentNodePos).makeSelected();
 
