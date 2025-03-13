@@ -9,8 +9,6 @@ import { node } from 'globals';
  * Finds path using Depth-first search
  */
 export class DFSStrategy<T extends MazePathFinderNode> implements MazePathFindStrategy<T> {
-    private logVisialzation = true;
-
     findPath(maze: MazePathFinder<T>, start: Vec2d, end: Vec2d): MazePath {
         const state: Map<string, { visitedAlready: boolean }> = new Map();
 
