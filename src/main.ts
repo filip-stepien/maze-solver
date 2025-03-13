@@ -137,6 +137,7 @@ const main = (
         // write stuff
         console.clear();
         process.stdout.cursorTo(0, 0);
+        maze.resetNodeLabels();
         process.stdout.write(maze.toString());
         process.stdout.write(statusBanner);
         process.stdout.moveCursor(-999999, 1);
@@ -195,8 +196,6 @@ const main = (
     }
 
     for (const strategy of strategies) {
-        maze.setPathFindStrategy(strategy);
-
         if (animate) {
             try {
                 prepareForAnimation(strategy);
@@ -206,7 +205,7 @@ const main = (
             }
         }
 
-        const path = maze.findPath(start, end);
+        const path = maze.findPath(strategy, start, end);
 
         if (!animate) {
             console.log('-----------------------------');

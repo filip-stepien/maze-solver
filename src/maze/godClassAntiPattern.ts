@@ -26,7 +26,6 @@ export class GodClassAntiPattern {
 
     setPathFinderStrategy(strategy: MazePathFindStrategy<MazePathFinderNode>) {
         this.m_mazePathFinderStrategy = strategy;
-        if (this.m_mazePathFinder) this.m_mazePathFinder.setPathFindStrategy(strategy);
     }
 
     randomizeStartEndPositions = (): { start: Vec2d; end: Vec2d } => {

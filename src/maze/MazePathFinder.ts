@@ -21,21 +21,11 @@ type MPFLabelChangeCallback = (args: MPFLabelChangeCallbackParams) => void;
  * Extends Maze giving it pathfinding abilities
  */
 export default class MazePathFinder<T extends MazePathFinderNode> extends Maze<T> {
-    protected m_pathfindStrategy: MazePathFindStrategy<T>;
-
     private m_MPFLabelChangeObservers: MPFLabelChangeCallback[] = [];
 
     public constructor(args: MazeConstructorArgs<T>) {
         super(args);
         this.addNodeChangeHandlers();
-    }
-
-    /**
-     * @param strategy pathfinder strategy to use
-     */
-    setPathFindStrategy(strategy: MazePathFindStrategy<T>): void {
-        this.m_pathfindStrategy = strategy;
-        this.resetNodeLabels();
     }
 
     /**
@@ -48,11 +38,7 @@ export default class MazePathFinder<T extends MazePathFinderNode> extends Maze<T
      * - when *start* or *end* position is invalid
      * - when *start* or *end* is colliding
      */
-    findPath(start: Vec2d, end: Vec2d): MazePath {
-        if (!this.m_pathfindStrategy) {
-            throw new Error('MazePathFinder::findPath strategy is not set');
-        }
-
+    findPath(strategy: MazePathFindStrategy<T>, start: Vec2d, end: Vec2d): MazePath {
         this.validateNodePosition(start);
         this.validateNodePosition(end);
         if (this.getNode(start).isColliding() || this.getNode(end).isColliding()) {
@@ -63,7 +49,7 @@ export default class MazePathFinder<T extends MazePathFinderNode> extends Maze<T
 
         this.getNode(start).makeStart();
         this.getNode(end).makeFinish();
-        return this.m_pathfindStrategy.findPath(this, start, end);
+        return strategy.findPath(this, start, end);
     }
 
     public resetNodeLabels() {
