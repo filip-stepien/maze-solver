@@ -14,6 +14,11 @@ export class Random {
         return Math.floor(Math.random() * arr.length);
     }
 
+    public static randomFloat(min: number, max: number): number {
+        if (min > max) throw new Error('No numbers in the given range.');
+        return Math.random() * (max - min) + min;
+    }
+
     // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
     public static shuffle<T>(array: T[]) {
         let currentIndex = array.length;

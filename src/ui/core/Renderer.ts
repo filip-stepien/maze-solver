@@ -39,10 +39,11 @@ export class Renderer {
     private _clock: Clock;
 
     private constructor() {
-        this._renderer = new WebGLRenderer({ antialias: true });
         this._clock = new Clock();
         this._threeScene = new ThreeScene();
         this._scenes = [];
+        this._renderer = new WebGLRenderer({ antialias: true });
+        document.body.appendChild(this._renderer.domElement);
     }
 
     /**
@@ -76,8 +77,6 @@ export class Renderer {
         window.addEventListener('resize', () => {
             this._renderer.setSize(window.innerWidth, window.innerHeight);
         });
-
-        document.body.appendChild(this._renderer.domElement);
     }
 
     /**

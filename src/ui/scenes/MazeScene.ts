@@ -13,6 +13,7 @@ import { DFSStrategy } from '../../strategies/MazePathFindStrategy/DFSStrategy';
 import { BoxScene } from './BoxScene';
 import { OrthographicCamera } from '../core/OrthographicCamera';
 import { Vector3 } from 'three';
+import { RangeSlider } from '../controls/RangeSlider';
 
 function randomizeStartEndPositions(maze: Maze<MazeNode>): { start: Vec2d; end: Vec2d } {
     const nonColliding: Vec2d[] = [];
@@ -57,22 +58,35 @@ function generateMaze(size: Vec2d) {
 
 export class MazeScene extends Scene {
     private _maze: MazePathFinder<MazePathFinderNode>;
+    private _slider: RangeSlider;
 
     constructor() {
         super();
+
+        this._slider = new RangeSlider();
+        this._slider.min = 1;
+        this._slider.max = 10;
+        this._slider.step = 0.1;
 
         const { maze, start, end } = generateMaze(new Vec2d({ x: 11, y: 11 }));
         this._maze = maze;
         this._maze.getNode(start).makeStart();
         this._maze.getNode(end).makeFinish();
+
         // this._maze.setPathFindStrategy(new DFSStrategy());
+
         // this._maze.addNodeLabelChangeObserver(console.log);
+
         // this._maze.findPath(start, end);
     }
 
     override start({ renderer, camera }: StartArgs): void {
         if (OrthographicCamera.isOrthographic(camera)) {
-            const gap = 0.1;
+            this._slider.onChange = value => {
+                camera.size = parseFloat(value);
+            };
+
+            const gap = 0.2;
 
             this._maze.forEachNode(({ pos }) => {
                 const box = new BoxScene();
@@ -83,11 +97,17 @@ export class MazeScene extends Scene {
 
                 box.position = renderPos;
                 renderer.addScene(box);
+                this.animatePosition(
+                    box.objects[0],
+                    new Vector3(renderPos.x, 1, renderPos.y),
+                    Random.randomFloat(1, 2)
+                );
             });
 
             const center = (11 * BoxScene.size) / 2 - BoxScene.size / 2;
 
-            camera.size = 3;
+            camera.size = 5;
+            this._slider.value = camera.size;
 
             camera.threeCamera.position.x = 100;
             camera.threeCamera.position.y = 100;
