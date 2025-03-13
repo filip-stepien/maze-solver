@@ -163,7 +163,6 @@ export class AStarStrategy<T extends MazePathFinderNode> implements MazePathFind
          */
         const path: MazePath = [];
 
-        // TODO rebuildpath
         if (currentNodePos.equals(end)) {
             // while not backtracked to start node
             while (!currentNodePos.equals(start)) {
