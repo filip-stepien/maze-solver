@@ -166,7 +166,7 @@ export class AStarStrategy<T extends MazePathFinderNode> implements MazePathFind
         // TODO rebuildpath
         if (currentNodePos.equals(end)) {
             // while not backtracked to start node
-            while (currentNodePos.equals(start)) {
+            while (!currentNodePos.equals(start)) {
                 // get current node
                 const currentNode = maze.getNode(currentNodePos);
                 // mark it as selected
