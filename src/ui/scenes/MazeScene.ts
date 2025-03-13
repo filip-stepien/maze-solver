@@ -1,121 +1,86 @@
-import { loop } from 'three/src/Three.TSL';
-import { Maze } from '../../maze/Maze';
-import { MazeGenerator } from '../../maze/MazeGenerator';
-import { MazeNode } from '../../maze/MazeNode';
+import { Vec2d } from '../../types';
+import { LoopArgs, Scene, StartArgs } from '../core/Scene';
+import { MazeFacade } from '../../maze/god';
+import { OrthographicCamera } from '../core/OrthographicCamera';
+import { BoxScene } from './BoxScene';
+import { Vector3 } from 'three';
+import { Renderer } from '../core/Renderer';
+import { GenerationStrategy } from '../../strategies/GenerationStrategy';
+import { PrimsStrategy } from '../../strategies/PrimsStrategy';
 import MazePathFinder from '../../maze/MazePathFinder';
 import { MazePathFinderNode } from '../../maze/MazePathFinderNode';
-import { PrimsStrategy } from '../../strategies/PrimsStrategy';
-import { Vec2d } from '../../types';
+import { Camera3D } from '../core/Camera3D';
 import { Random } from '../../utils/Random';
-import { LoopArgs, Scene, StartArgs } from '../core/Scene';
-import { MazeBox } from '../models/MazeBox';
-import { DFSStrategy } from '../../strategies/MazePathFindStrategy/DFSStrategy';
-import { BoxScene } from './BoxScene';
-import { OrthographicCamera } from '../core/OrthographicCamera';
-import { Vector3 } from 'three';
-import { RangeSlider } from '../controls/RangeSlider';
-
-function randomizeStartEndPositions(maze: Maze<MazeNode>): { start: Vec2d; end: Vec2d } {
-    const nonColliding: Vec2d[] = [];
-
-    maze.forEachNode(({ pos, node }) => {
-        if (!node.isColliding()) {
-            nonColliding.push(pos);
-        }
-    });
-
-    const start = nonColliding[Random.randomIndex(nonColliding)];
-
-    let end: Vec2d;
-    do {
-        end = nonColliding[Random.randomIndex(nonColliding)];
-    } while (JSON.stringify(start) === JSON.stringify(end));
-
-    return {
-        start,
-        end
-    };
-}
-
-function generateMaze(size: Vec2d) {
-    const generator = new MazeGenerator(size.x, size.y);
-    const strategy = new PrimsStrategy();
-    generator.setGenerationStrategy(strategy);
-    const colsate = generator.generateMaze().map(row => {
-        return row.map(e => e != 0);
-    });
-
-    const maze = new MazePathFinder({
-        collsionState: colsate,
-        nodeFactory: () => {
-            return new MazePathFinderNode();
-        }
-    });
-    const { start, end } = randomizeStartEndPositions(maze);
-
-    return { maze, start, end };
-}
+import { Button } from '../controls/Button';
 
 export class MazeScene extends Scene {
-    private _maze: MazePathFinder<MazePathFinderNode>;
-    private _slider: RangeSlider;
+    private _maze: MazeFacade;
+    private _generationStrategy: GenerationStrategy;
+    private _mazeSize: Vec2d;
+    private _mazeFinder: MazePathFinder<MazePathFinderNode>;
+    private _resetButton: Button;
 
     constructor() {
         super();
+        this._mazeSize = new Vec2d([101, 101]);
+        this._maze = new MazeFacade();
+        this._generationStrategy = new PrimsStrategy();
+        this._resetButton = new Button('Reset');
+    }
 
-        this._slider = new RangeSlider();
-        this._slider.min = 1;
-        this._slider.max = 10;
-        this._slider.step = 0.1;
+    private generateMazeBoxes(renderer: Renderer, gap: number = 0.2) {
+        this._maze.setGeneratorStrategy(this._generationStrategy);
+        this._maze.generateMaze(this._mazeSize);
+        this._mazeFinder = this._maze.getMazePathFinder();
 
-        const { maze, start, end } = generateMaze(new Vec2d({ x: 11, y: 11 }));
-        this._maze = maze;
-        this._maze.getNode(start).makeStart();
-        this._maze.getNode(end).makeFinish();
+        this._mazeFinder.forEachNode(({ pos, node }) => {
+            const box = new BoxScene();
+            const renderPos = new Vec2d({
+                x: pos.x * BoxScene.size * (1 + gap),
+                y: pos.y * BoxScene.size * (1 + gap)
+            });
 
-        // this._maze.setPathFindStrategy(new DFSStrategy());
+            box.position = renderPos;
+            renderer.addScene(box);
 
-        // this._maze.addNodeLabelChangeObserver(console.log);
+            if (node.isColliding()) {
+                setTimeout(() => {
+                    this.animatePosition(
+                        box.objects[0],
+                        new Vector3(renderPos.x, -100, renderPos.y),
+                        5
+                    );
+                }, Random.randomInt(100, 1000));
+            }
+        });
+    }
 
-        // this._maze.findPath(start, end);
+    private setupCamera(camera: OrthographicCamera) {
+        const centerX = (this._mazeSize.x * BoxScene.size) / 2 - BoxScene.size / 2 + BoxScene.size;
+        const centerZ = (this._mazeSize.y * BoxScene.size) / 2 - BoxScene.size / 2 + BoxScene.size;
+        const diagonal = Math.sqrt(Math.pow(this._mazeSize.x, 2) + Math.pow(this._mazeSize.y, 2));
+        const position = diagonal * 4;
+        const size = diagonal / 4;
+
+        camera.threeCamera.position.x = position;
+        camera.threeCamera.position.y = position;
+        camera.threeCamera.position.z = position;
+
+        camera.size = size;
+        camera.lockAt = new Vector3(centerX, 0, centerZ);
     }
 
     override start({ renderer, camera }: StartArgs): void {
-        if (OrthographicCamera.isOrthographic(camera)) {
-            this._slider.onChange = value => {
-                camera.size = parseFloat(value);
-            };
+        if (!OrthographicCamera.isOrthographic(camera))
+            throw new Error('This scene needs an orthographic camera to work properly!');
 
-            const gap = 0.2;
+        this._resetButton.onChange = () => {
+            this.generateMazeBoxes(renderer);
+        };
 
-            this._maze.forEachNode(({ pos }) => {
-                const box = new BoxScene();
-                const renderPos = new Vec2d({
-                    x: pos.x * BoxScene.size * (1 + gap),
-                    y: pos.y * BoxScene.size * (1 + gap)
-                });
-
-                box.position = renderPos;
-                renderer.addScene(box);
-                this.animatePosition(
-                    box.objects[0],
-                    new Vector3(renderPos.x, 1, renderPos.y),
-                    Random.randomFloat(1, 2)
-                );
-            });
-
-            const center = (11 * BoxScene.size) / 2 - BoxScene.size / 2;
-
-            camera.size = 5;
-            this._slider.value = camera.size;
-
-            camera.threeCamera.position.x = 100;
-            camera.threeCamera.position.y = 100;
-            camera.threeCamera.position.z = 100;
-
-            camera.lockAt = new Vector3(center, 0, center);
-            this.animatePosition(camera, new Vector3(200, 100, 120), 5);
-        }
+        this.generateMazeBoxes(renderer);
+        this.setupCamera(camera);
+        //this.animatePosition(camera, new Vector3(200, 100, 120), 5);
     }
 
     override loop({ camera }: LoopArgs): void {}
