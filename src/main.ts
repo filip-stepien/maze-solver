@@ -1,12 +1,10 @@
 import './maze/Maze';
-import { Maze } from './maze/Maze';
 import { MazeNode } from './maze/MazeNode';
-import { MazePath, Vec2d } from './types';
+import { Vec2d } from './types';
 import MazePathFinder from './maze/MazePathFinder';
-import { MazePathFinderNode, MazePathFinderNodeLabel } from './maze/MazePathFinderNode';
+import { MazePathFinderNode } from './maze/MazePathFinderNode';
 import { PrimsStrategy } from './strategies/PrimsStrategy';
-import { MazeGenerator } from './maze/MazeGenerator';
-import { Random } from './utils/Random';
+
 import chalk from 'chalk';
 import { Sleep } from './utils/Sleep';
 
@@ -14,6 +12,7 @@ import commandLineArgs from 'command-line-args';
 import commandLineUsage from 'command-line-usage';
 import { availableStrategies } from './config/strategies';
 import { MazePathFindStrategy } from './strategies/MazePathFindStrategy/MazePathFindStrategy';
+import { GodClassAntiPattern } from './maze/godClassAntiPattern';
 
 const setupMaze = () => {
     console.debug('initializer: ', MazeNode.initializer);
@@ -62,44 +61,13 @@ const setupMaze = () => {
 };
 
 const generateMaze = (size: Vec2d) => {
-    const generator = new MazeGenerator(size.x, size.y);
-    const strategy = new PrimsStrategy();
-    generator.setGenerationStrategy(strategy);
-    const colsate = generator.generateMaze().map(row => {
-        return row.map(e => e != 0);
-    });
-
-    const maze = new MazePathFinder({
-        collsionState: colsate,
-        nodeFactory: () => {
-            return new MazePathFinderNode();
-        }
-    });
-    const { start, end } = randomizeStartEndPositions(maze);
+    const god: GodClassAntiPattern = new GodClassAntiPattern();
+    god.setGeneratorStrategy(new PrimsStrategy());
+    god.generateMaze(size);
+    const maze = god.getMazePathFinderImplementationDetailGetterAntiPattern();
+    const { start, end } = god.randomizeStartEndPositions();
 
     return { maze, start, end };
-};
-
-const randomizeStartEndPositions = (maze: Maze<MazeNode>): { start: Vec2d; end: Vec2d } => {
-    const nonColliding: Vec2d[] = [];
-
-    maze.forEachNode(({ pos, node }) => {
-        if (!node.isColliding()) {
-            nonColliding.push(pos);
-        }
-    });
-
-    const start = nonColliding[Random.randomIndex(nonColliding)];
-
-    let end: Vec2d;
-    do {
-        end = nonColliding[Random.randomIndex(nonColliding)];
-    } while (JSON.stringify(start) === JSON.stringify(end));
-
-    return {
-        start,
-        end
-    };
 };
 
 const main = (
