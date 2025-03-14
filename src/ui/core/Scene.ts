@@ -2,29 +2,17 @@ import { Vector3 } from 'three';
 import { Camera3D } from './Camera3D';
 import { Object3D } from './Object3D';
 import { Renderer } from './Renderer';
-import { ModelGroup } from './ModelGroup';
+import { Animation } from './Animation';
 
 export type StartArgs = {
     camera: Camera3D;
-    renderer: Renderer;
 };
 
 export type LoopArgs = {
     camera: Camera3D;
-    renderer: Renderer;
     delta: number;
     time: number;
 };
-
-export type Animation = {
-    callback: (vec: Vector3) => void;
-    current: Vector3;
-    start: Vector3;
-    end: Vector3;
-    duration: number;
-    elapsedTime: number;
-};
-
 /**
  * Scene, which manages rendered objects.
  */
@@ -33,10 +21,11 @@ export class Scene {
     private _objects: Object3D[];
 
     /** Active animations. */
-    private _animations: Animation[] = [];
+    private _animations: Animation[];
 
     constructor() {
         this._objects = [];
+        this._animations = [];
     }
 
     /** Retrieve all objects in the scene. */
@@ -53,17 +42,17 @@ export class Scene {
      */
     public loop(args: LoopArgs): void {}
 
-    public animate({ delta }: LoopArgs): void {
-        this._animations = this._animations.filter(anim => {
-            anim.elapsedTime += delta;
+    public animate(delta: number): void {
+        this._animations = this._animations.filter(animation => {
+            animation.elapsedTime += delta;
 
-            const t = Math.min(anim.elapsedTime / anim.duration, 1);
-            const v1 = anim.start;
-            const v2 = anim.end;
-            const vec = anim.current.lerpVectors(v1, v2, t);
+            const t = Math.min(animation.elapsedTime / animation.durationSeconds, 1);
+            const v1 = animation.startVector;
+            const v2 = animation.endVector;
+            const vec = animation.currentVector.lerpVectors(v1, v2, t);
 
-            anim.callback(vec);
-            anim.current = vec;
+            animation.callback(vec);
+            animation.currentVector = vec;
 
             return t < 1;
         });
@@ -71,23 +60,10 @@ export class Scene {
 
     /** Adds new objects to the scene. */
     public addToScene(...objects: Object3D[]) {
-        objects.forEach(obj => this._objects.push(obj));
+        this._objects.push(...objects);
     }
 
-    /** Animates an object's position over a duration. */
-    public linearAnimation(
-        start: Vector3,
-        end: Vector3,
-        duration: number,
-        callback: (vec: Vector3) => void
-    ) {
-        this._animations.push({
-            callback,
-            current: start.clone(),
-            start: start.clone(),
-            end: end.clone(),
-            duration,
-            elapsedTime: 0
-        });
+    public addAnimation(...animatons: Animation[]) {
+        this._animations.push(...animatons);
     }
 }

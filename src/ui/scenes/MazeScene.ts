@@ -10,6 +10,7 @@ import { MazePathFinderNode } from '../../maze/MazePathFinderNode';
 import { Random } from '../../utils/Random';
 import { Button } from '../controls/Button';
 import { MazeBoxGroup } from '../models/MazeBoxGroup';
+import { Animation } from '../core/Animation';
 
 export class MazeScene extends Scene {
     private _maze: MazeFacade;
@@ -46,12 +47,12 @@ export class MazeScene extends Scene {
 
             if (node.isColliding()) {
                 setTimeout(() => {
-                    this.linearAnimation(
-                        renderPos,
-                        new Vector3(renderPos.x, -200, renderPos.y),
-                        5,
-                        vec => this._boxGroup.setInstancePosition(i, vec)
-                    );
+                    new Animation(this)
+                        .setStartVector(renderPos)
+                        .setEndVector(new Vector3(renderPos.x, -200, renderPos.y))
+                        .setDuration(5)
+                        .setCallback(vec => this._boxGroup.setInstancePosition(i, vec))
+                        .start();
                 }, Random.randomInt(100, 1000));
             }
         });

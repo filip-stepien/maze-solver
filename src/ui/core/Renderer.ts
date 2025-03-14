@@ -74,8 +74,8 @@ export class Renderer {
 
             this._scenes.forEach(scene => {
                 const delta = this._clock.getDelta();
-                scene.loop({ camera: this._camera, renderer: this, delta, time });
-                scene.animate({ camera: this._camera, renderer: this, delta, time });
+                scene.loop({ camera: this._camera, delta, time });
+                scene.animate(delta);
                 if (this._camera.lockAt) this._camera.threeObject.lookAt(this._camera.lockAt);
             });
 
@@ -96,7 +96,7 @@ export class Renderer {
     public addScene(...scenes: Scene[]) {
         scenes.forEach(scene => {
             this._scenes.push(scene);
-            this._scenes.forEach(scene => scene.start({ camera: this._camera, renderer: this }));
+            this._scenes.forEach(scene => scene.start({ camera: this._camera }));
             scene.objects.forEach(obj => {
                 this._threeScene.add(obj.threeObject);
             });
