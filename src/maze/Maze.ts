@@ -106,12 +106,16 @@ export class Maze<T extends MazeNode> {
      * perfrom operations on every node
      * @param callback that takes postion and node
      */
-    public forEachNode(callback: ({ pos, node }: { pos: Vec2d; node: T }) => void): void {
+    public forEachNode(
+        callback: ({ pos, node, i }: { pos: Vec2d; node: T; i: number }) => void
+    ): void {
+        let i = 0;
         for (let y = 0; y < this.m_size.y; ++y) {
             for (let x = 0; x < this.m_size.x; ++x) {
                 const pos = new Vec2d({ x, y });
                 const node = this.getNode(pos);
-                callback({ pos, node });
+                callback({ pos, node, i });
+                i++;
             }
         }
     }

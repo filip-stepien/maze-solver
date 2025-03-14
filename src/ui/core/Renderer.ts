@@ -86,6 +86,7 @@ export class Renderer {
     public addScene(...scenes: Scene[]) {
         scenes.forEach(scene => {
             this._scenes.push(scene);
+            this._scenes.forEach(scene => scene.start({ camera: this._camera, renderer: this }));
             scene.objects.forEach(obj => {
                 this._threeScene.add(obj.threeObject);
             });
@@ -112,7 +113,6 @@ export class Renderer {
             );
         }
 
-        this._scenes.forEach(scene => scene.start({ camera: this._camera, renderer: this }));
         this._camera.resize();
         this.initializeRenderer();
     }

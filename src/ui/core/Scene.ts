@@ -2,6 +2,7 @@ import { Vector3 } from 'three';
 import { Camera3D } from './Camera3D';
 import { Object3D } from './Object3D';
 import { Renderer } from './Renderer';
+import { ModelGroup } from './ModelGroup';
 
 export type StartArgs = {
     camera: Camera3D;
@@ -16,7 +17,8 @@ export type LoopArgs = {
 };
 
 export type Animation = {
-    object: Object3D | Camera3D;
+    object: Object3D | Camera3D | ModelGroup;
+    instanceIndex: number | null;
     start: Vector3;
     end: Vector3;
     duration: number;
@@ -41,6 +43,10 @@ export class Scene {
         return (object as Camera3D).threeCamera !== undefined;
     }
 
+    private isInstanced(object: ModelGroup | Object3D | Camera3D): object is ModelGroup {
+        return (object as ModelGroup).getInstancePosition !== undefined;
+    }
+
     /** Retrieve all objects in the scene. */
     public get objects(): Object3D[] {
         return this._objects;
@@ -62,6 +68,9 @@ export class Scene {
 
             if (this.isCamera(anim.object)) {
                 anim.object.threeCamera.position.lerpVectors(anim.start, anim.end, t);
+            } else if (this.isInstanced(anim.object)) {
+                anim.object.lerpInstancePosition(anim.instanceIndex, anim.start, anim.end, t);
+                // console.log(anim.instanceIndex);
             } else {
                 anim.object.threeObject.position.lerpVectors(anim.start, anim.end, t);
             }
@@ -76,13 +85,25 @@ export class Scene {
     }
 
     /** Animates an object's position over a duration. */
-    public animatePosition(object: Object3D | Camera3D, endPos: Vector3, duration: number) {
-        const position = this.isCamera(object)
-            ? object.threeCamera.position
-            : object.threeObject.position;
+    public animatePosition(
+        object: Object3D | Camera3D | ModelGroup,
+        endPos: Vector3,
+        duration: number,
+        instanceIndex: number = null
+    ) {
+        let position;
+
+        if (this.isCamera(object)) {
+            position = object.threeCamera.position;
+        } else if (this.isInstanced(object)) {
+            position = object.getInstancePosition(instanceIndex);
+        } else {
+            position = object.threeObject.position;
+        }
 
         this._animations.push({
             object,
+            instanceIndex,
             start: position.clone(),
             end: endPos.clone(),
             duration,

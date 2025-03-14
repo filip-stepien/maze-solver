@@ -31,8 +31,16 @@ export abstract class Model3D extends Renderable {
         this._geometry = geometry;
     }
 
+    public get geometry() {
+        return this._geometry;
+    }
+
     public set material(material: Material) {
         this._material = material;
+    }
+
+    public get material() {
+        return this._material;
     }
 
     /**
