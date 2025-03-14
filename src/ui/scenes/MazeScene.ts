@@ -52,7 +52,8 @@ export class MazeScene extends Scene {
                     new BezierAnimation(this)
                         .setStartVector(renderPos)
                         .setEndVector(new Vector3(renderPos.x, -100, renderPos.z))
-                        .setDuration(4)
+                        .setDuration(3)
+                        .setEasing(0.01)
                         .setCallback(vec => this._boxGroup.setInstancePosition(i, vec))
                         .start();
                 }, Random.randomInt(100, 1000));

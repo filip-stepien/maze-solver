@@ -42,18 +42,31 @@ export class Scene {
      */
     public loop(args: LoopArgs): void {}
 
+    private bezierEase(t: number, controlY: number): number {
+        const p0 = 0;
+        const p1 = controlY;
+        const p2 = 1;
+        return (1 - t) ** 2 * p0 + 2 * (1 - t) * t * p1 + t ** 2 * p2;
+    }
+
     public animate(delta: number): void {
-        this._animations = this._animations.filter(animation => {
+        this._animations.forEach(animation => {
             animation.elapsedTime += delta;
 
             const alpha = Math.min(animation.elapsedTime / animation.durationSeconds, 1);
-            const vec = animation.animate(alpha);
+            const easedAlpha = this.bezierEase(alpha, animation.easing);
+            const vec = animation.animate(easedAlpha);
 
             animation.callback(vec);
             animation.currentVector = vec;
 
-            return alpha < 1;
+            if (easedAlpha >= 1) {
+                animation.doneCallback();
+                animation.doneRunning = true;
+            }
         });
+
+        this._animations = this._animations.filter(animation => !animation.doneRunning);
     }
 
     /** Adds new objects to the scene. */
