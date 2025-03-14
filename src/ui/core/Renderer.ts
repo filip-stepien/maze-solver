@@ -1,6 +1,7 @@
 import { WebGLRenderer, Scene as ThreeScene, Clock } from 'three';
 import { Scene } from './Scene';
 import { Camera3D } from './Camera3D';
+import Stats from 'three/examples/jsm/libs/stats.module';
 
 /**
  * Abstraction layer for `three.js` WebGL renderer.
@@ -38,11 +39,16 @@ export class Renderer {
      */
     private _clock: Clock;
 
+    private _stats: Stats;
+
     private constructor() {
         this._clock = new Clock();
         this._threeScene = new ThreeScene();
         this._scenes = [];
         this._renderer = new WebGLRenderer({ antialias: true });
+        this._stats = new Stats();
+
+        document.body.appendChild(this._stats.dom);
         document.body.appendChild(this._renderer.domElement);
     }
 
@@ -64,6 +70,8 @@ export class Renderer {
         this._renderer.setSize(window.innerWidth, window.innerHeight);
 
         this._renderer.setAnimationLoop(time => {
+            this._stats.begin();
+
             this._scenes.forEach(scene => {
                 const delta = this._clock.getDelta();
                 scene.loop({ camera: this._camera, renderer: this, delta, time });
@@ -72,6 +80,8 @@ export class Renderer {
             });
 
             this._renderer.render(this._threeScene, this._camera.threeCamera);
+
+            this._stats.end();
         });
 
         window.addEventListener('resize', () => {
