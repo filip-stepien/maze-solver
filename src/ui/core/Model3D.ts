@@ -1,11 +1,12 @@
 import { Mesh, BufferGeometry, Material } from 'three';
 import { Scene } from './Scene';
 import { Renderable } from './Renderable';
+import { Object3D as ThreeObject } from 'three';
 
 /**
  * Renderable mesh with geometry and material.
  */
-export abstract class Model3D extends Renderable {
+export class Model3D<T extends Mesh = Mesh> extends Renderable<T> {
     /**
      * Geometry that defines the shape of the model.
      */
@@ -46,7 +47,7 @@ export abstract class Model3D extends Renderable {
     /**
      * Retrieve a `three.js` mesh.
      */
-    override get threeObjectFactory() {
-        return new Mesh(this._geometry, this._material);
+    protected get threeObjectFactory() {
+        return new Mesh(this._geometry, this._material) as T;
     }
 }

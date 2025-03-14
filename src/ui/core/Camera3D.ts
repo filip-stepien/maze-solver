@@ -1,9 +1,10 @@
-import { Camera, Object3D, Camera as ThreeCamera, Vector3 } from 'three';
+import { Camera, Camera as ThreeCamera, Vector3 } from 'three';
+import { Object3D } from './Object3D';
 
 /**
  * Wrapper for `three.js` camera.
  */
-export class Camera3D {
+export abstract class Camera3D<T extends ThreeCamera = ThreeCamera> extends Object3D<T> {
     /**
      * Near clipping plane distance.
      */
@@ -31,6 +32,8 @@ export class Camera3D {
      * @param far Far clipping plane distance.
      */
     constructor(near: number = 0.1, far: number = 1000) {
+        super();
+
         this._near = near;
         this._far = far;
         this._aspectRatio = window.innerWidth / window.innerHeight;
@@ -39,15 +42,6 @@ export class Camera3D {
             this._aspectRatio = window.innerWidth / window.innerHeight;
             this.resize();
         });
-    }
-
-    /**
-     * Retrieve a `three.js` camera instance.
-     * Camera instance is created when this method is called for the first time.
-     */
-    public get threeCamera(): ThreeCamera {
-        if (!this._threeCamera) this._threeCamera = this.threeCameraFactory;
-        return this._threeCamera;
     }
 
     public set lockAt(pos: Vector3) {
@@ -63,12 +57,4 @@ export class Camera3D {
      * Note: aspect ratio changes are handled by default.
      */
     public resize?(): void;
-
-    /**
-     * Factory method for creating a `three.js` camera.
-     * Subclasses should override this method to return a correct `three.js` camera object.
-     */
-    public get threeCameraFactory(): ThreeCamera {
-        return new Camera();
-    }
 }

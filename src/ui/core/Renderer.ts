@@ -76,10 +76,10 @@ export class Renderer {
                 const delta = this._clock.getDelta();
                 scene.loop({ camera: this._camera, renderer: this, delta, time });
                 scene.animate({ camera: this._camera, renderer: this, delta, time });
-                if (this._camera.lockAt) this._camera.threeCamera.lookAt(this._camera.lockAt);
+                if (this._camera.lockAt) this._camera.threeObject.lookAt(this._camera.lockAt);
             });
 
-            this._renderer.render(this._threeScene, this._camera.threeCamera);
+            this._renderer.render(this._threeScene, this._camera.threeObject);
 
             this._stats.end();
         });

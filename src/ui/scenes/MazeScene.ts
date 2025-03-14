@@ -23,7 +23,7 @@ export class MazeScene extends Scene {
 
     constructor() {
         super();
-        this._mazeSize = new Vec2d([100, 100]);
+        this._mazeSize = new Vec2d([10, 10]);
         this._maze = new MazeFacade();
         this._generationStrategy = new PrimsStrategy();
         this._resetButton = new Button('Reset');
@@ -67,9 +67,9 @@ export class MazeScene extends Scene {
         const position = diagonal * 4;
         const size = diagonal / 2.3;
 
-        camera.threeCamera.position.x = position;
-        camera.threeCamera.position.y = position;
-        camera.threeCamera.position.z = position;
+        camera.threeObject.position.x = position;
+        camera.threeObject.position.y = position;
+        camera.threeObject.position.z = position;
 
         camera.size = size;
         camera.lockAt = new Vector3(centerX, 0, centerZ);

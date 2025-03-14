@@ -4,7 +4,7 @@ import { Camera3D } from './Camera3D';
 /**
  * Camera with orthographic projection.
  */
-export class OrthographicCamera extends Camera3D {
+export class OrthographicCamera extends Camera3D<ThreeOrthographicCamera> {
     /**
      * Camera frustum size.
      */
@@ -51,7 +51,8 @@ export class OrthographicCamera extends Camera3D {
     }
 
     private updateFrustum() {
-        const cam = this._threeCamera as ThreeOrthographicCamera;
+        const cam = this.threeObject;
+
         if (cam) {
             cam.left = this.calculateLeftFrustum();
             cam.right = this.calculateRightFrustum();
@@ -80,7 +81,7 @@ export class OrthographicCamera extends Camera3D {
     /**
      * Retrieve a `three.js` orthographic camera.
      */
-    public override get threeCameraFactory() {
+    protected get threeObjectFactory() {
         return new ThreeOrthographicCamera(
             this._left,
             this._right,
