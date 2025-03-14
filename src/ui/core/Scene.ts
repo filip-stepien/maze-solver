@@ -17,8 +17,8 @@ export type LoopArgs = {
 };
 
 export type Animation = {
-    object: Object3D | Camera3D | ModelGroup;
-    instanceIndex: number | null;
+    callback: (vec: Vector3) => void;
+    current: Vector3;
     start: Vector3;
     end: Vector3;
     duration: number;
@@ -30,21 +30,13 @@ export type Animation = {
  */
 export class Scene {
     /** Objects rendered on this scene. */
-    protected _objects: Object3D[];
+    private _objects: Object3D[];
 
     /** Active animations. */
     private _animations: Animation[] = [];
 
     constructor() {
         this._objects = [];
-    }
-
-    private isCamera(object: Object3D | Camera3D): object is Camera3D {
-        return (object as Camera3D).threeCamera !== undefined;
-    }
-
-    private isInstanced(object: ModelGroup | Object3D | Camera3D): object is ModelGroup {
-        return (object as ModelGroup).getInstancePosition !== undefined;
     }
 
     /** Retrieve all objects in the scene. */
@@ -64,16 +56,14 @@ export class Scene {
     public animate({ delta }: LoopArgs): void {
         this._animations = this._animations.filter(anim => {
             anim.elapsedTime += delta;
-            const t = Math.min(anim.elapsedTime / anim.duration, 1);
 
-            if (this.isCamera(anim.object)) {
-                anim.object.threeCamera.position.lerpVectors(anim.start, anim.end, t);
-            } else if (this.isInstanced(anim.object)) {
-                anim.object.lerpInstancePosition(anim.instanceIndex, anim.start, anim.end, t);
-                // console.log(anim.instanceIndex);
-            } else {
-                anim.object.threeObject.position.lerpVectors(anim.start, anim.end, t);
-            }
+            const t = Math.min(anim.elapsedTime / anim.duration, 1);
+            const v1 = anim.start;
+            const v2 = anim.end;
+            const vec = anim.current.lerpVectors(v1, v2, t);
+
+            anim.callback(vec);
+            anim.current = vec;
 
             return t < 1;
         });
@@ -85,27 +75,17 @@ export class Scene {
     }
 
     /** Animates an object's position over a duration. */
-    public animatePosition(
-        object: Object3D | Camera3D | ModelGroup,
-        endPos: Vector3,
+    public linearAnimation(
+        start: Vector3,
+        end: Vector3,
         duration: number,
-        instanceIndex: number = null
+        callback: (vec: Vector3) => void
     ) {
-        let position;
-
-        if (this.isCamera(object)) {
-            position = object.threeCamera.position;
-        } else if (this.isInstanced(object)) {
-            position = object.getInstancePosition(instanceIndex);
-        } else {
-            position = object.threeObject.position;
-        }
-
         this._animations.push({
-            object,
-            instanceIndex,
-            start: position.clone(),
-            end: endPos.clone(),
+            callback,
+            current: start.clone(),
+            start: start.clone(),
+            end: end.clone(),
             duration,
             elapsedTime: 0
         });

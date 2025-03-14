@@ -3,7 +3,6 @@ import { LoopArgs, Scene, StartArgs } from '../core/Scene';
 import { MazeFacade } from '../../maze/god';
 import { OrthographicCamera } from '../core/OrthographicCamera';
 import { Vector3 } from 'three';
-import { Renderer } from '../core/Renderer';
 import { GenerationStrategy } from '../../strategies/GenerationStrategy';
 import { PrimsStrategy } from '../../strategies/PrimsStrategy';
 import MazePathFinder from '../../maze/MazePathFinder';
@@ -37,20 +36,21 @@ export class MazeScene extends Scene {
         this._boxGroup = new MazeBoxGroup(this, this._mazeSize.x * this._mazeSize.y);
 
         this._mazeFinder.forEachNode(({ pos, node, i }) => {
-            const renderPos = new Vec2d({
-                x: pos.x * MazeBoxGroup.boxSize * 2 * (1 + this._gap),
-                y: pos.y * MazeBoxGroup.boxSize * 2 * (1 + this._gap)
-            });
+            const renderPos = new Vector3(
+                pos.x * MazeBoxGroup.boxSize * 2 * (1 + this._gap),
+                0,
+                pos.y * MazeBoxGroup.boxSize * 2 * (1 + this._gap)
+            );
 
-            this._boxGroup.setInstancePosition(i, new Vector3(renderPos.x, 0, renderPos.y));
+            this._boxGroup.setInstancePosition(i, renderPos);
 
             if (node.isColliding()) {
                 setTimeout(() => {
-                    this.animatePosition(
-                        this._boxGroup,
+                    this.linearAnimation(
+                        renderPos,
                         new Vector3(renderPos.x, -200, renderPos.y),
                         5,
-                        i
+                        vec => this._boxGroup.setInstancePosition(i, vec)
                     );
                 }, Random.randomInt(100, 1000));
             }
