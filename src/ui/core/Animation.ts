@@ -1,7 +1,7 @@
 import { Vector3 } from 'three';
 import { Scene } from './Scene';
 
-export class Animation {
+export abstract class Animation {
     private _scene: Scene;
     private _currentVector: Vector3;
     private _endVector: Vector3;
@@ -76,6 +76,11 @@ export class Animation {
             return;
         }
 
+        this.beforeAnimate();
         this._scene.addAnimation(this);
     }
+
+    public beforeAnimate(): void {}
+
+    public abstract animate(alpha: number): Vector3;
 }

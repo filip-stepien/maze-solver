@@ -46,15 +46,13 @@ export class Scene {
         this._animations = this._animations.filter(animation => {
             animation.elapsedTime += delta;
 
-            const t = Math.min(animation.elapsedTime / animation.durationSeconds, 1);
-            const v1 = animation.startVector;
-            const v2 = animation.endVector;
-            const vec = animation.currentVector.lerpVectors(v1, v2, t);
+            const alpha = Math.min(animation.elapsedTime / animation.durationSeconds, 1);
+            const vec = animation.animate(alpha);
 
             animation.callback(vec);
             animation.currentVector = vec;
 
-            return t < 1;
+            return alpha < 1;
         });
     }
 

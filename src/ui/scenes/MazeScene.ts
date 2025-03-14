@@ -11,6 +11,8 @@ import { Random } from '../../utils/Random';
 import { Button } from '../controls/Button';
 import { MazeBoxGroup } from '../models/MazeBoxGroup';
 import { Animation } from '../core/Animation';
+import { LinearAnimation } from '../core/LinearAnimation';
+import { BezierAnimation } from '../core/BezierAnimation';
 
 export class MazeScene extends Scene {
     private _maze: MazeFacade;
@@ -47,10 +49,10 @@ export class MazeScene extends Scene {
 
             if (node.isColliding()) {
                 setTimeout(() => {
-                    new Animation(this)
+                    new BezierAnimation(this)
                         .setStartVector(renderPos)
-                        .setEndVector(new Vector3(renderPos.x, -200, renderPos.y))
-                        .setDuration(5)
+                        .setEndVector(new Vector3(renderPos.x, -100, renderPos.z))
+                        .setDuration(4)
                         .setCallback(vec => this._boxGroup.setInstancePosition(i, vec))
                         .start();
                 }, Random.randomInt(100, 1000));
