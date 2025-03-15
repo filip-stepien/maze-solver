@@ -12,6 +12,10 @@ import { Button } from '../controls/Button';
 import { MazeBoxGroup } from '../models/MazeBoxGroup';
 import { BezierAnimation } from '../core/BezierAnimation';
 import { NumberInput } from '../controls/NumberInput';
+import { PointLight } from '../core/PointLight';
+import { DirectionalLight } from '../core/DirectionalLight';
+import { AmbientLight } from '../core/AmbientLight';
+import { LightBox } from '../models/LightBox';
 
 export class MazeScene extends Scene {
     private _maze: MazeFacade;
@@ -23,6 +27,10 @@ export class MazeScene extends Scene {
     private _sizeInputY: NumberInput;
     private _boxGroup: MazeBoxGroup;
     private _gap: number;
+
+    private _pointLight: PointLight;
+    private _dirLight: DirectionalLight;
+    private _ambientLight: AmbientLight;
 
     constructor() {
         super();
@@ -64,19 +72,40 @@ export class MazeScene extends Scene {
                 pos.y * MazeBoxGroup.boxSize * 2 * (1 + this._gap)
             );
 
-            this._boxGroup.setInstancePosition(i, renderPos);
+            if (i == 24) {
+                const lPos = renderPos.clone();
+
+                this._boxGroup.setInstancePosition(i, new Vector3(lPos.x, lPos.y, lPos.z));
+
+                const light = new LightBox(this);
+                light.threeObject.position.x = lPos.x;
+                light.threeObject.position.y = lPos.y;
+                light.threeObject.position.z = lPos.z;
+
+                const point1 = new PointLight(this, 0xffffff, 20, 0);
+                point1.threeObject.position.x = lPos.x;
+                point1.threeObject.position.y = lPos.y;
+                point1.threeObject.position.z = lPos.z;
+
+                const point2 = new PointLight(this, 0xffffff, 20, 0);
+                point2.threeObject.position.x = lPos.x;
+                point2.threeObject.position.y = lPos.y + 1;
+                point2.threeObject.position.z = lPos.z;
+            } else {
+                this._boxGroup.setInstancePosition(i, renderPos);
+            }
 
             if (node.isColliding()) {
-                setTimeout(() => {
-                    new BezierAnimation(this)
-                        .setStartVector(renderPos)
-                        .setEndVector(new Vector3(renderPos.x, -150, renderPos.z))
-                        .setDuration(1)
-                        .setEasing(0.01)
-                        .setCallback(vec => this._boxGroup.setInstancePosition(i, vec))
-                        .setDoneCallback(() => (this._resetButton.disabled = false))
-                        .start();
-                }, Random.randomInt(100, 1000));
+                // setTimeout(() => {
+                //     new BezierAnimation(this)
+                //         .setStartVector(renderPos)
+                //         .setEndVector(new Vector3(renderPos.x, -150, renderPos.z))
+                //         .setDuration(1)
+                //         .setEasing(0.01)
+                //         .setCallback(vec => this._boxGroup.setInstancePosition(i, vec))
+                //         .setDoneCallback(() => (this._resetButton.disabled = false))
+                //         .start();
+                // }, Random.randomInt(100, 1000));
             }
         });
     }
@@ -94,6 +123,12 @@ export class MazeScene extends Scene {
         camera.threeObject.position.x = position;
         camera.threeObject.position.y = position;
         camera.threeObject.position.z = position;
+
+        const dir2 = new DirectionalLight(this, 0xffffff, 1);
+        dir2.threeObject.position.x = centerX;
+        dir2.threeObject.position.y = 25;
+        dir2.threeObject.position.z = centerZ / 4;
+        dir2.threeObject.lookAt(centerZ, 0, centerX);
 
         camera.size = size;
         camera.lockAt = new Vector3(centerX, 0, centerZ);
