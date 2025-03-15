@@ -11,7 +11,7 @@ import { Model3D } from '../core/Model3D';
 export class LightBox extends Model3D {
     constructor(scene: Scene) {
         super(scene);
-        this.geometry = new BoxGeometry(1, 1, 1);
+        this.geometry = new BoxGeometry(1.001, 1.001, 1.001);
         this.material = new MeshBasicMaterial({ color: 0xffffff });
     }
 }

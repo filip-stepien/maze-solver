@@ -5,7 +5,7 @@ import { Scene } from './Scene';
 export class PointLight extends Light<ThreePointLight> {
     private _distance: number;
 
-    constructor(scene: Scene, color: number, intensity: number, distance: number) {
+    constructor(scene: Scene, color: number, intensity: number, distance: number = 0) {
         super(scene, color, intensity);
         this._distance = distance;
     }

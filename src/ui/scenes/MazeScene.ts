@@ -101,7 +101,7 @@ export class MazeScene extends Scene {
                         .setStartVector(renderPos)
                         .setEndVector(new Vector3(renderPos.x, -150, renderPos.z))
                         .setDuration(1)
-                        .setEasing(0.01)
+                        .setEasing(0.1)
                         .setCallback(vec => this._boxGroup.setInstancePosition(i, vec))
                         .setDoneCallback(() => (this._resetButton.disabled = false))
                         .start();
@@ -130,6 +130,11 @@ export class MazeScene extends Scene {
         dir2.threeObject.position.z = centerZ / 4;
         dir2.threeObject.lookAt(centerZ, 0, centerX);
 
+        const point = new PointLight(this, 0xffffff, diagonal * 80, diagonal / 1.4);
+        point.threeObject.position.x = centerX;
+        point.threeObject.position.y = diagonal / 2;
+        point.threeObject.position.z = centerZ;
+
         camera.size = size;
         camera.lockAt = new Vector3(centerX, 0, centerZ);
     }
@@ -140,12 +145,14 @@ export class MazeScene extends Scene {
 
         this._resetButton.disabled = true;
         this._resetButton.onChange = () => {
-            if (this._sizeInputX.validate(true) && this._sizeInputY.validate(true))
+            if (this._sizeInputX.validate(true) && this._sizeInputY.validate(true)) {
                 this.reset(renderer);
+            }
         };
 
-        this.generateMazeBoxGroupes();
         this.setupCamera(camera);
+
+        this.generateMazeBoxGroupes();
     }
 
     override loop({ camera }: LoopArgs): void {
