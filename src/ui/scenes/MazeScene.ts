@@ -96,16 +96,16 @@ export class MazeScene extends Scene {
             }
 
             if (node.isColliding()) {
-                // setTimeout(() => {
-                //     new BezierAnimation(this)
-                //         .setStartVector(renderPos)
-                //         .setEndVector(new Vector3(renderPos.x, -150, renderPos.z))
-                //         .setDuration(1)
-                //         .setEasing(0.01)
-                //         .setCallback(vec => this._boxGroup.setInstancePosition(i, vec))
-                //         .setDoneCallback(() => (this._resetButton.disabled = false))
-                //         .start();
-                // }, Random.randomInt(100, 1000));
+                setTimeout(() => {
+                    new BezierAnimation(this)
+                        .setStartVector(renderPos)
+                        .setEndVector(new Vector3(renderPos.x, -150, renderPos.z))
+                        .setDuration(1)
+                        .setEasing(0.01)
+                        .setCallback(vec => this._boxGroup.setInstancePosition(i, vec))
+                        .setDoneCallback(() => (this._resetButton.disabled = false))
+                        .start();
+                }, Random.randomInt(100, 1000));
             }
         });
     }
