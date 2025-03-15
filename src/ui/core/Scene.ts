@@ -3,13 +3,16 @@ import { Camera3D } from './Camera3D';
 import { Object3D } from './Object3D';
 import { Renderer } from './Renderer';
 import { Animation } from './Animation';
+import { Renderable } from './Renderable';
 
 export type StartArgs = {
     camera: Camera3D;
+    renderer: Renderer;
 };
 
 export type LoopArgs = {
     camera: Camera3D;
+    renderer: Renderer;
     delta: number;
     time: number;
 };
@@ -18,7 +21,7 @@ export type LoopArgs = {
  */
 export class Scene {
     /** Objects rendered on this scene. */
-    private _objects: Object3D[];
+    private _objects: Renderable[];
 
     /** Active animations. */
     private _animations: Animation[];
@@ -29,7 +32,7 @@ export class Scene {
     }
 
     /** Retrieve all objects in the scene. */
-    public get objects(): Object3D[] {
+    public get objects(): Renderable[] {
         return this._objects;
     }
 
@@ -69,8 +72,16 @@ export class Scene {
         this._animations = this._animations.filter(animation => !animation.doneRunning);
     }
 
+    public reset(renderer: Renderer) {
+        this._objects.forEach(obj => obj.delete());
+        this._objects = [];
+        this._animations = [];
+        renderer.clear();
+        renderer.addScene(this);
+    }
+
     /** Adds new objects to the scene. */
-    public addToScene(...objects: Object3D[]) {
+    public addToScene(...objects: Renderable[]) {
         this._objects.push(...objects);
     }
 

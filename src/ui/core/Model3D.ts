@@ -44,6 +44,11 @@ export class Model3D<T extends Mesh = Mesh> extends Renderable<T> {
         return this._material;
     }
 
+    public delete() {
+        this._material.dispose();
+        this._geometry.dispose();
+    }
+
     /**
      * Retrieve a `three.js` mesh.
      */

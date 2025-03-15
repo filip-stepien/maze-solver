@@ -65,6 +65,9 @@ export class Control {
      * @param value Event handler function.
      */
     protected addEventListener(eventName: string, handler: (event: Event) => void) {
+        const clone = this._htmlElement.cloneNode(true);
+        this._htmlElement.replaceWith(clone);
+        this._htmlElement = clone as HTMLElement;
         this._htmlElement.addEventListener(eventName, handler);
     }
 

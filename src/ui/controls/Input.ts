@@ -17,6 +17,14 @@ export class Input extends ControlObservable {
         this.setAttribute('placeholder', placeholder);
     }
 
+    public set disabled(disabled: boolean) {
+        if (disabled) {
+            this.setAttribute('disabled', 'disabled');
+        } else {
+            this.removeAttribute('disabled');
+        }
+    }
+
     protected inputType(): string | null {
         return null;
     }

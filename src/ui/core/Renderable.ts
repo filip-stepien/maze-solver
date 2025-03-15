@@ -5,7 +5,7 @@ import { Object3D as ThreeObject } from 'three';
 /**
  * Object that can be rendered in a scene.
  */
-export abstract class Renderable<T extends ThreeObject> extends Object3D<T> {
+export abstract class Renderable<T extends ThreeObject = ThreeObject> extends Object3D<T> {
     /**
      * Calling a constructor (e.g. instantiating class)
      * automatically adds the instance to the specified scene.
@@ -15,4 +15,6 @@ export abstract class Renderable<T extends ThreeObject> extends Object3D<T> {
         super();
         scene.addToScene(this);
     }
+
+    abstract delete(): void;
 }

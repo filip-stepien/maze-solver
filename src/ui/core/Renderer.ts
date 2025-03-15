@@ -44,12 +44,14 @@ export class Renderer {
     private constructor() {
         this._clock = new Clock();
         this._threeScene = new ThreeScene();
-        this._scenes = [];
         this._renderer = new WebGLRenderer({ antialias: true });
         this._stats = new Stats();
 
+        this._stats.dom.style.top = '50%';
         document.body.appendChild(this._stats.dom);
         document.body.appendChild(this._renderer.domElement);
+
+        this._scenes = [];
     }
 
     /**
@@ -74,7 +76,7 @@ export class Renderer {
 
             this._scenes.forEach(scene => {
                 const delta = this._clock.getDelta();
-                scene.loop({ camera: this._camera, delta, time });
+                scene.loop({ camera: this._camera, renderer: this, delta, time });
                 scene.animate(delta);
                 if (this._camera.lockAt) this._camera.threeObject.lookAt(this._camera.lockAt);
             });
@@ -94,11 +96,16 @@ export class Renderer {
      * @param scenes The scenes to be added to the renderer.
      */
     public addScene(...scenes: Scene[]) {
+        this._threeScene.clear();
+        this._renderer.renderLists.dispose();
+
         scenes.forEach(scene => {
+            scene.start({ camera: this._camera, renderer: this });
             this._scenes.push(scene);
-            this._scenes.forEach(scene => scene.start({ camera: this._camera }));
-            scene.objects.forEach(obj => {
-                this._threeScene.add(obj.threeObject);
+            this._scenes.forEach(scene => {
+                scene.objects.forEach(obj => {
+                    this._threeScene.add(obj.threeObject);
+                });
             });
         });
     }
@@ -108,6 +115,12 @@ export class Renderer {
      */
     public set camera(camera: Camera3D) {
         this._camera = camera;
+    }
+
+    public clear() {
+        this._renderer.renderLists.dispose();
+        this._threeScene.clear();
+        this._scenes = [];
     }
 
     /**

@@ -10,8 +10,6 @@ import { MazePathFinderNode } from '../../maze/MazePathFinderNode';
 import { Random } from '../../utils/Random';
 import { Button } from '../controls/Button';
 import { MazeBoxGroup } from '../models/MazeBoxGroup';
-import { Animation } from '../core/Animation';
-import { LinearAnimation } from '../core/LinearAnimation';
 import { BezierAnimation } from '../core/BezierAnimation';
 
 export class MazeScene extends Scene {
@@ -52,9 +50,10 @@ export class MazeScene extends Scene {
                     new BezierAnimation(this)
                         .setStartVector(renderPos)
                         .setEndVector(new Vector3(renderPos.x, -100, renderPos.z))
-                        .setDuration(3)
+                        .setDuration(1)
                         .setEasing(0.01)
                         .setCallback(vec => this._boxGroup.setInstancePosition(i, vec))
+                        .setDoneCallback(() => (this._resetButton.disabled = false))
                         .start();
                 }, Random.randomInt(100, 1000));
             }
@@ -79,17 +78,17 @@ export class MazeScene extends Scene {
         camera.lockAt = new Vector3(centerX, 0, centerZ);
     }
 
-    override start({ camera }: StartArgs): void {
+    override start({ camera, renderer }: StartArgs): void {
         if (!OrthographicCamera.isOrthographic(camera))
             throw new Error('This scene needs an orthographic camera to work properly!');
 
+        this._resetButton.disabled = true;
         this._resetButton.onChange = () => {
-            this.generateMazeBoxGroupes();
+            this.reset(renderer);
         };
 
         this.generateMazeBoxGroupes();
         this.setupCamera(camera);
-        //this.animatePosition(camera, new Vector3(200, 100, 120), 5);
     }
 
     override loop({ camera }: LoopArgs): void {

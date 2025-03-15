@@ -15,5 +15,3 @@ const mazeScene = new MazeScene();
 renderer.camera = new OrthographicCamera(1, 0.1, 1000);
 renderer.addScene(mazeScene);
 renderer.instatiate();
-
-const model = new ModelGroup(mazeScene, 10);
