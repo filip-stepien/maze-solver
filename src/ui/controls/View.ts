@@ -3,7 +3,7 @@ import { Control } from './Control';
 /**
  * Container for other controls.
  */
-export class View extends Control {
+export class View extends Control<HTMLDivElement> {
     /**
      * Sets the [gap](https://developer.mozilla.org/en-US/docs/Web/CSS/gap) of the HTML element.
      * Number is treated as `px` unit.
@@ -22,5 +22,9 @@ export class View extends Control {
      */
     public addChild(...children: Control[]) {
         children.forEach(c => this.appendChild(c));
+    }
+
+    protected htmlElement(): HTMLDivElement {
+        return document.createElement('div');
     }
 }

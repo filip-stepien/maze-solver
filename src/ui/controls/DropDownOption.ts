@@ -28,7 +28,7 @@ export class DropDownOption extends Control {
         this.setInnerText(label);
     }
 
-    protected override htmlTag(): keyof HTMLElementTagNameMap {
-        return 'option';
+    protected override htmlElement() {
+        return document.createElement('option');
     }
 }

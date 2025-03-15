@@ -1,6 +1,6 @@
 import { Control } from './Control';
 
-export class Text extends Control {
+export class Text extends Control<HTMLDivElement> {
     constructor(text?: string) {
         super();
         this.content = text ?? '';
@@ -20,5 +20,9 @@ export class Text extends Control {
 
     public set fontSize(fontSize: string | number) {
         this.setStyle('fontSize', fontSize);
+    }
+
+    protected htmlElement() {
+        return document.createElement('div');
     }
 }

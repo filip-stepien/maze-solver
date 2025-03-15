@@ -1,17 +1,17 @@
 /**
  * Base class for HTML controls of user interface.
  */
-export class Control {
+export abstract class Control<T extends HTMLElement = HTMLElement> {
     /**
      * HTML DOM element.
      */
-    private _htmlElement: HTMLElement;
+    private _htmlElement: T;
 
     /**
      * Creates HTML element and appends it to DOM.
      */
     constructor() {
-        this._htmlElement = document.createElement(this.htmlTag());
+        this._htmlElement = this.htmlElement();
         this.applyStyles();
         this.appendDomElement();
     }
@@ -59,15 +59,31 @@ export class Control {
         this._htmlElement.removeAttribute(property);
     }
 
+    protected checkValidity(showWarning: boolean): boolean | null {
+        const input = this._htmlElement as unknown as HTMLInputElement;
+        if (input.checkValidity) {
+            const valid = input.checkValidity();
+
+            if (!valid && showWarning) {
+                input.reportValidity();
+                return false;
+            }
+
+            return true;
+        }
+
+        return null;
+    }
+
     /**
      * Adds event listener to the HTML element.
      * @param property Name of HTML event.
      * @param value Event handler function.
      */
     protected addEventListener(eventName: string, handler: (event: Event) => void) {
-        const clone = this._htmlElement.cloneNode(true);
+        const clone = this._htmlElement.cloneNode(true) as T;
         this._htmlElement.replaceWith(clone);
-        this._htmlElement = clone as HTMLElement;
+        this._htmlElement = clone;
         this._htmlElement.addEventListener(eventName, handler);
     }
 
@@ -98,9 +114,7 @@ export class Control {
      * Method which can be overridden in subclasses to create different tags in the DOM.
      * @returns HTML tag name for the element.
      */
-    protected htmlTag(): keyof HTMLElementTagNameMap {
-        return 'div';
-    }
+    protected abstract htmlElement(): T;
 
     /**
      * Method which can be overridden in subclasses to set the initial CSS style of the HTML element.

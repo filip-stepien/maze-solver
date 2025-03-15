@@ -1,7 +1,7 @@
 import { Control } from './Control';
 import { ControlObservable } from './ControlObservable';
 
-export class Input extends ControlObservable {
+export class Input extends ControlObservable<HTMLInputElement> {
     constructor() {
         super();
 
@@ -25,6 +25,10 @@ export class Input extends ControlObservable {
         }
     }
 
+    public validate(showWarning: boolean) {
+        return this.checkValidity(showWarning) ?? false;
+    }
+
     protected inputType(): string | null {
         return null;
     }
@@ -33,8 +37,8 @@ export class Input extends ControlObservable {
         return eventTarget.value;
     }
 
-    protected override htmlTag(): keyof HTMLElementTagNameMap {
-        return 'input';
+    protected override htmlElement() {
+        return document.createElement('input');
     }
 
     public override set onChange(handler: (value: string) => void) {

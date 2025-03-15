@@ -11,6 +11,7 @@ import { Random } from '../../utils/Random';
 import { Button } from '../controls/Button';
 import { MazeBoxGroup } from '../models/MazeBoxGroup';
 import { BezierAnimation } from '../core/BezierAnimation';
+import { NumberInput } from '../controls/NumberInput';
 
 export class MazeScene extends Scene {
     private _maze: MazeFacade;
@@ -18,6 +19,8 @@ export class MazeScene extends Scene {
     private _mazeSize: Vec2d;
     private _mazeFinder: MazePathFinder<MazePathFinderNode>;
     private _resetButton: Button;
+    private _sizeInputX: NumberInput;
+    private _sizeInputY: NumberInput;
     private _boxGroup: MazeBoxGroup;
     private _gap: number;
 
@@ -26,8 +29,26 @@ export class MazeScene extends Scene {
         this._mazeSize = new Vec2d([10, 10]);
         this._maze = new MazeFacade();
         this._generationStrategy = new PrimsStrategy();
+        this._sizeInputX = new NumberInput();
+        this._sizeInputY = new NumberInput();
         this._resetButton = new Button('Reset');
         this._gap = 0.2;
+
+        this._sizeInputX.value = 10;
+        this._sizeInputX.min = 3;
+        this._sizeInputX.max = 100;
+
+        this._sizeInputY.value = 10;
+        this._sizeInputY.min = 3;
+        this._sizeInputY.max = 100;
+
+        this._sizeInputX.onChange = value => {
+            this._mazeSize.x = parseInt(value);
+        };
+
+        this._sizeInputY.onChange = value => {
+            this._mazeSize.y = parseInt(value);
+        };
     }
 
     private generateMazeBoxGroupes() {
@@ -49,7 +70,7 @@ export class MazeScene extends Scene {
                 setTimeout(() => {
                     new BezierAnimation(this)
                         .setStartVector(renderPos)
-                        .setEndVector(new Vector3(renderPos.x, -100, renderPos.z))
+                        .setEndVector(new Vector3(renderPos.x, -150, renderPos.z))
                         .setDuration(1)
                         .setEasing(0.01)
                         .setCallback(vec => this._boxGroup.setInstancePosition(i, vec))
@@ -84,7 +105,8 @@ export class MazeScene extends Scene {
 
         this._resetButton.disabled = true;
         this._resetButton.onChange = () => {
-            this.reset(renderer);
+            if (this._sizeInputX.validate(true) && this._sizeInputY.validate(true))
+                this.reset(renderer);
         };
 
         this.generateMazeBoxGroupes();
