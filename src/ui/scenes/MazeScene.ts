@@ -16,6 +16,7 @@ import { PointLight } from '../core/PointLight';
 import { DirectionalLight } from '../core/DirectionalLight';
 import { AmbientLight } from '../core/AmbientLight';
 import { LightBox } from '../models/LightBox';
+import { LinearAnimation } from '../core/LinearAnimation';
 
 export class MazeScene extends Scene {
     private _maze: MazeFacade;
@@ -82,15 +83,61 @@ export class MazeScene extends Scene {
                 light.threeObject.position.y = lPos.y;
                 light.threeObject.position.z = lPos.z;
 
-                const point1 = new PointLight(this, 0xffffff, 20, 0);
+                const point1 = new PointLight(this, 0xffffff, 0, 0);
                 point1.threeObject.position.x = lPos.x;
                 point1.threeObject.position.y = lPos.y;
                 point1.threeObject.position.z = lPos.z;
 
-                const point2 = new PointLight(this, 0xffffff, 20, 0);
+                const point2 = new PointLight(this, 0xffffff, 0, 0);
                 point2.threeObject.position.x = lPos.x;
                 point2.threeObject.position.y = lPos.y + 1;
                 point2.threeObject.position.z = lPos.z;
+
+                new BezierAnimation(this)
+                    .setStartVector(new Vector3(0, 0, 0))
+                    .setEndVector(new Vector3(30, 30, 30))
+                    .setDuration(0.3)
+                    .setCallback(vec => {
+                        point1.threeObject.intensity = vec.x;
+                        point2.threeObject.intensity = vec.x;
+                    })
+                    .setDoneCallback(() => {
+                        new BezierAnimation(this)
+                            .setStartVector(new Vector3(30, 30, 30))
+                            .setEndVector(new Vector3(10, 10, 10))
+                            .setDuration(0.3)
+                            .setCallback(vec => {
+                                point1.threeObject.intensity = vec.x;
+                                point2.threeObject.intensity = vec.x;
+                            })
+                            .start();
+                    })
+                    .start();
+
+                new BezierAnimation(this)
+                    .setStartVector(new Vector3(1, 1, 1))
+                    .setEndVector(new Vector3(1.15, 1.15, 1.15))
+                    .setDuration(0.3)
+                    .setEasing(0.5)
+                    .setCallback(vec => {
+                        light.threeObject.scale.x = vec.x;
+                        light.threeObject.scale.y = vec.y;
+                        light.threeObject.scale.z = vec.z;
+                    })
+                    .setDoneCallback(() => {
+                        new BezierAnimation(this)
+                            .setStartVector(new Vector3(1.15, 1.15, 1.15))
+                            .setEndVector(new Vector3(1, 1, 1))
+                            .setDuration(0.3)
+                            .setEasing(0.5)
+                            .setCallback(vec => {
+                                light.threeObject.scale.x = vec.x;
+                                light.threeObject.scale.y = vec.y;
+                                light.threeObject.scale.z = vec.z;
+                            })
+                            .start();
+                    })
+                    .start();
             } else {
                 this._boxGroup.setInstancePosition(i, renderPos);
             }
