@@ -19,15 +19,15 @@ export abstract class Model3D<T extends Mesh = Mesh> extends Renderable<T> {
 
     constructor(scene: Scene) {
         super(scene);
-        this._geometry = this.geometryFactory();
-        this._material = this.materialFactory();
     }
 
-    public get geometry() {
+    protected get geometry() {
+        if (!this._geometry) this._geometry = this.geometryFactory();
         return this._geometry;
     }
 
-    public get material() {
+    protected get material() {
+        if (!this._material) this._material = this.materialFactory();
         return this._material;
     }
 
@@ -40,7 +40,7 @@ export abstract class Model3D<T extends Mesh = Mesh> extends Renderable<T> {
      * Retrieve a `three.js` mesh.
      */
     protected get threeObjectFactory() {
-        return new Mesh(this._geometry, this._material) as T;
+        return new Mesh(this.geometry, this.material) as T;
     }
 
     protected abstract materialFactory(): Material;
