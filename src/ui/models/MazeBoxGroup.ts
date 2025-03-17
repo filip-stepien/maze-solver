@@ -1,4 +1,4 @@
-import { BufferGeometry, BufferAttribute, MeshPhysicalMaterial } from 'three';
+import { BufferGeometry, BufferAttribute, MeshPhysicalMaterial, Material } from 'three';
 import { ModelGroup } from '../core/ModelGroup';
 import { Scene } from '../core/Scene';
 
@@ -6,18 +6,6 @@ import { Scene } from '../core/Scene';
  * Box that forms part of the path in a maze.
  */
 export class MazeBoxGroup extends ModelGroup {
-    constructor(scene: Scene, count: number = 1) {
-        super(scene, count);
-
-        const size = MazeBoxGroup.boxSize;
-        this.geometry = this.createHalfBoxGeometry(size);
-        this.material = new MeshPhysicalMaterial({
-            color: 0x4c566a,
-            metalness: 1.0,
-            roughness: 0.8,
-          });
-    }
-
     private createHalfBoxGeometry(s: number) {
         const vertices = new Float32Array([
             -s,  s, -s,
@@ -45,11 +33,23 @@ export class MazeBoxGroup extends ModelGroup {
         ];
         
         const geometry = new BufferGeometry();
-        geometry.setIndex( indices );
-        geometry.setAttribute( 'position', new BufferAttribute( vertices, 3 ) );
+        geometry.setIndex(indices);
+        geometry.setAttribute('position', new BufferAttribute(vertices, 3));
         geometry.computeVertexNormals();
 
         return geometry;
+    }
+
+    protected materialFactory(): Material {
+        return new MeshPhysicalMaterial({
+            color: 0x4c566a,
+            metalness: 1.0,
+            roughness: 0.8,
+        });
+    }
+    
+    protected geometryFactory(): BufferGeometry {
+        return this.createHalfBoxGeometry(MazeBoxGroup.boxSize);
     }
 
     public static get boxSize() {

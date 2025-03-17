@@ -6,7 +6,7 @@ import { Object3D as ThreeObject } from 'three';
 /**
  * Renderable mesh with geometry and material.
  */
-export class Model3D<T extends Mesh = Mesh> extends Renderable<T> {
+export abstract class Model3D<T extends Mesh = Mesh> extends Renderable<T> {
     /**
      * Geometry that defines the shape of the model.
      */
@@ -17,27 +17,14 @@ export class Model3D<T extends Mesh = Mesh> extends Renderable<T> {
      */
     private _material: Material;
 
-    /**
-     * @param geometry Geometry that defines the shape of the model.
-     * @param material Material that defines the appearance of the model.
-     * @param scene Scene to which the model will be added.
-     */
-    constructor(scene: Scene, material?: Material, geometry?: BufferGeometry) {
+    constructor(scene: Scene) {
         super(scene);
-        this._geometry = geometry;
-        this._material = material;
-    }
-
-    public set geometry(geometry: BufferGeometry) {
-        this._geometry = geometry;
+        this._geometry = this.geometryFactory();
+        this._material = this.materialFactory();
     }
 
     public get geometry() {
         return this._geometry;
-    }
-
-    public set material(material: Material) {
-        this._material = material;
     }
 
     public get material() {
@@ -55,4 +42,7 @@ export class Model3D<T extends Mesh = Mesh> extends Renderable<T> {
     protected get threeObjectFactory() {
         return new Mesh(this._geometry, this._material) as T;
     }
+
+    protected abstract materialFactory(): Material;
+    protected abstract geometryFactory(): BufferGeometry;
 }
