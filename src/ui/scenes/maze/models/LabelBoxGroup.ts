@@ -1,11 +1,18 @@
 import { BufferGeometry, BufferAttribute, MeshPhysicalMaterial, Material } from 'three';
-import { ModelGroup } from '../core/ModelGroup';
-import { Scene } from '../core/Scene';
+import { ModelGroup } from '../../../core/ModelGroup';
+import { Scene } from '../../../core/Scene';
 
 /**
  * Box that forms part of the path in a maze.
  */
-export class MazeBoxGroup extends ModelGroup {
+export class LabelBoxGroup extends ModelGroup {
+    private _color: number;
+
+    constructor(scene: Scene, count: number, color: number) {
+        super(scene, count);
+        this._color = color;
+    }
+
     private createHalfBoxGeometry(s: number) {
         const vertices = new Float32Array([
             -s,  s, -s,
@@ -42,14 +49,14 @@ export class MazeBoxGroup extends ModelGroup {
 
     protected materialFactory(): Material {
         return new MeshPhysicalMaterial({
-            color: 0x4c566a,
+            color: this._color,
             metalness: 1.0,
             roughness: 0.8,
         });
     }
     
     protected geometryFactory(): BufferGeometry {
-        return this.createHalfBoxGeometry(MazeBoxGroup.boxSize);
+        return this.createHalfBoxGeometry(LabelBoxGroup.boxSize);
     }
 
     public static get boxSize() {

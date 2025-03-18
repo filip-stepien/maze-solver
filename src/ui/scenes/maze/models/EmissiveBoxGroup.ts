@@ -1,14 +1,8 @@
-import {
-    Material,
-    BufferGeometry,
-    BoxGeometry,
-    MeshStandardMaterial,
-    MeshBasicMaterial
-} from 'three';
-import { Scene } from '../core/Scene';
-import { Model3D } from '../core/Model3D';
+import { Material, BufferGeometry, BoxGeometry, MeshBasicMaterial } from 'three';
+import { Model3D } from '../../../core/Model3D';
+import { Scene } from '../../../core/Scene';
 
-export class LightBox extends Model3D {
+export class EmissiveBox extends Model3D {
     private _color: number;
 
     constructor(scene: Scene, color: number = 0xffffff) {
@@ -17,7 +11,9 @@ export class LightBox extends Model3D {
     }
 
     protected materialFactory(): Material {
-        return new MeshBasicMaterial({ color: this._color });
+        return new MeshBasicMaterial({
+            color: this._color
+        });
     }
 
     protected geometryFactory(): BufferGeometry {

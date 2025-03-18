@@ -2,7 +2,7 @@ import { Renderable } from './Renderable';
 import { Light as ThreeLight } from 'three';
 import { Scene } from './Scene';
 
-export abstract class Light<T extends ThreeLight> extends Renderable<T> {
+export abstract class Light<T extends ThreeLight = ThreeLight> extends Renderable<T> {
     private _color: number;
     private _intensity: number;
 
