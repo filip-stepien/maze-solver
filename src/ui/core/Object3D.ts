@@ -15,12 +15,17 @@ export abstract class Object3D<T extends ThreeObject = ThreeObject> {
      */
     protected abstract get threeObjectFactory(): T;
 
+    afterThreeObject() {}
+
     /**
      * Retrieve a `three.js` object instance.
      * Object instance is created when this method is called for the first time.
      */
     public get threeObject(): T {
-        if (!this._threeObject) this._threeObject = this.threeObjectFactory;
+        if (!this._threeObject) {
+            this._threeObject = this.threeObjectFactory;
+            this.afterThreeObject();
+        }
         return this._threeObject;
     }
 }

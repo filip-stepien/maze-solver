@@ -13,9 +13,9 @@ import { call } from 'three/src/Three.TSL';
 /**
  * adds position
  */
-type MPFLabelChangeCallbackParams = MPFNodeLabelCallBackParams & { pos: Vec2d };
+export type MPFLabelChangeCallbackParams = MPFNodeLabelCallBackParams & { pos: Vec2d };
 
-type MPFLabelChangeCallback = (args: MPFLabelChangeCallbackParams) => void;
+export type MPFLabelChangeCallback = (args: MPFLabelChangeCallbackParams) => void;
 
 /**
  * Extends Maze giving it pathfinding abilities

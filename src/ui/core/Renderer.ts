@@ -1,7 +1,8 @@
-import { WebGLRenderer, Scene as ThreeScene, Clock } from 'three';
+import { WebGLRenderer, Scene as ThreeScene, Clock, Object3D as ThreeObject } from 'three';
 import { Scene } from './Scene';
 import { Camera3D } from './Camera3D';
 import Stats from 'three/examples/jsm/libs/stats.module';
+import { Renderable } from './Renderable';
 
 /**
  * Abstraction layer for `three.js` WebGL renderer.
@@ -14,11 +15,6 @@ export class Renderer {
     private static _instance: Renderer;
 
     /**
-     * Actual `three.js` renderer.
-     */
-    private _renderer: WebGLRenderer;
-
-    /**
      * Camera that views the rendered scene.
      */
     private _camera: Camera3D;
@@ -26,37 +22,80 @@ export class Renderer {
     /**
      * Scenes to render.
      */
-    private _scenes: Scene[];
+    private _scene: Scene;
+
+    /**
+     * Actual `three.js` renderer.
+     */
+    private _renderer = new WebGLRenderer({ antialias: true });
 
     /**
      * The actual `three.js` canvas where objects are rendered.
      * All objects from the provided scenes will be displayed on this canvas.
      */
-    private _threeScene: ThreeScene;
+    private _threeScene = new ThreeScene();
 
     /**
      * Clock for measuring time between frames.
      */
-    private _clock: Clock;
+    private _clock = new Clock();
 
-    private _stats: Stats;
+    private _stats = new Stats();
+
+    private _debugMode = false;
 
     private constructor() {
-        this._clock = new Clock();
-        this._threeScene = new ThreeScene();
-        this._renderer = new WebGLRenderer({ antialias: true });
-        this._stats = new Stats();
-
-        this._stats.dom.style.top = '50%';
-        document.body.appendChild(this._stats.dom);
-        document.body.appendChild(this._renderer.domElement);
-
-        this._scenes = [];
+        this.appendElements();
+        this.setResizeListener();
     }
 
-    /**
-     * Retrieve a singleton renderer instance.
-     */
+    private appendElements() {
+        document.body.appendChild(this._renderer.domElement);
+        document.body.appendChild(this._stats.dom);
+        this.setDebugMeterDisplay();
+    }
+
+    private setResizeListener() {
+        this._renderer.setSize(window.innerWidth, window.innerHeight);
+        window.addEventListener('resize', () => {
+            this._renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    }
+
+    private animationLoop(time: number) {
+        const delta = this._clock.getDelta();
+        this._scene.loop({ camera: this._camera, renderer: this, delta, time });
+        this._scene.animate(delta);
+        this._camera.loop();
+        this._renderer.render(this._threeScene, this._camera.threeObject);
+    }
+
+    private setDebugMeterDisplay() {
+        this._stats.dom.style.top = '50%';
+        this._stats.dom.style.display = this._debugMode ? 'block' : 'none';
+    }
+
+    public set camera(camera: Camera3D) {
+        this._camera = camera;
+    }
+
+    public get camera() {
+        return this._camera;
+    }
+
+    public set scene(scene: Scene) {
+        this._scene = scene;
+    }
+
+    public get scene() {
+        return this.scene;
+    }
+
+    public set debugMode(debugMode: boolean) {
+        this._debugMode = debugMode;
+        this.setDebugMeterDisplay();
+    }
+
     public static get instance(): Renderer {
         if (!Renderer._instance) {
             Renderer._instance = new Renderer();
@@ -65,78 +104,27 @@ export class Renderer {
         return Renderer._instance;
     }
 
-    /**
-     * Sets size of renderer window, sets animations loop and appends canvas tag to the HTML.
-     */
-    private initializeRenderer() {
-        this._renderer.setSize(window.innerWidth, window.innerHeight);
-
-        this._renderer.setAnimationLoop(time => {
-            this._stats.begin();
-
-            this._scenes.forEach(scene => {
-                const delta = this._clock.getDelta();
-                scene.loop({ camera: this._camera, renderer: this, delta, time });
-                scene.animate(delta);
-                if (this._camera.lockAt) this._camera.threeObject.lookAt(this._camera.lockAt);
-            });
-
-            this._renderer.render(this._threeScene, this._camera.threeObject);
-
-            this._stats.end();
-        });
-
-        window.addEventListener('resize', () => {
-            this._renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-    }
-
-    /**
-     * Adds scenes to be handled and rendered by the renderer.
-     * @param scenes The scenes to be added to the renderer.
-     */
-    public addScene(...scenes: Scene[]) {
-        this._threeScene.clear();
-        this._renderer.renderLists.dispose();
-
-        scenes.forEach(scene => {
-            scene.start({ camera: this._camera, renderer: this });
-            this._scenes.push(scene);
-            this._scenes.forEach(scene => {
-                scene.objects.forEach(obj => {
-                    this._threeScene.add(obj.threeObject);
-                });
-            });
-        });
-    }
-
-    /**
-     * Retrieve a camera that views the scene.
-     */
-    public set camera(camera: Camera3D) {
-        this._camera = camera;
+    public addToThreeScene(...obj: ThreeObject[]) {
+        this._threeScene.add(...obj);
     }
 
     public clear() {
         this._renderer.renderLists.dispose();
         this._threeScene.clear();
-        this._scenes = [];
     }
 
-    /**
-     * Instantiates the renderer, which, due to the lack of a public constructor
-     * in the singleton, must be done after initializing crucial properties.
-     * Camera property and at least one Scene object must be specified,
-     * in order to successfully instatiate the render.
-     */
-    public instatiate() {
-        if (!this._camera) {
+    public start() {
+        if (!this._camera || !this._scene) {
             throw new Error(
-                'Unable to append partially initialized Renderer object. Make sure you are specifying Camera object.'
+                'Unable to append partially initialized Renderer object. Make sure you are specifying Camera and Scene object.'
             );
         }
 
-        this._camera.resize();
-        this.initializeRenderer();
+        this._scene.start({ camera: this._camera, renderer: this });
+        this._renderer.setAnimationLoop(time => {
+            this._stats.begin();
+            this.animationLoop(time);
+            this._stats.end();
+        });
     }
 }

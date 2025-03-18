@@ -21,15 +21,10 @@ export type LoopArgs = {
  */
 export class Scene {
     /** Objects rendered on this scene. */
-    private _objects: Renderable[];
+    private _objects: Renderable[] = [];
 
     /** Active animations. */
-    private _animations: Animation[];
-
-    constructor() {
-        this._objects = [];
-        this._animations = [];
-    }
+    public _animations: Animation[] = [];
 
     /** Retrieve all objects in the scene. */
     public get objects(): Renderable[] {
@@ -77,12 +72,14 @@ export class Scene {
         this._objects = [];
         this._animations = [];
         renderer.clear();
-        renderer.addScene(this);
+
+        this.start({ camera: renderer.camera, renderer });
     }
 
     /** Adds new objects to the scene. */
     public addToScene(...objects: Renderable[]) {
         this._objects.push(...objects);
+        Renderer.instance.addToThreeScene(...objects.map(obj => obj.threeObject));
     }
 
     public addAnimation(...animatons: Animation[]) {

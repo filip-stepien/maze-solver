@@ -52,6 +52,10 @@ export abstract class Camera3D<T extends ThreeCamera = ThreeCamera> extends Obje
         return this._lockAt;
     }
 
+    public loop() {
+        if (this._lockAt) this.threeObject.lookAt(this.lockAt);
+    }
+
     /**
      * Handles camera resize events.
      * Note: aspect ratio changes are handled by default.

@@ -11,7 +11,7 @@ import { Model3D } from './ui/core/Model3D';
 import { ModelGroup } from './ui/core/ModelGroup';
 
 const renderer = Renderer.instance;
-const mazeScene = new MazeScene();
 renderer.camera = new OrthographicCamera(1, 0.1, 1000);
-renderer.addScene(mazeScene);
-renderer.instatiate();
+renderer.scene = new MazeScene();
+renderer.debugMode = true;
+renderer.start();

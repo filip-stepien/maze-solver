@@ -1,5 +1,5 @@
 import { Vec2d } from '../../types';
-import { LoopArgs, Scene, StartArgs } from '../core/Scene';
+import { Scene, StartArgs } from '../core/Scene';
 import { MazeFacade } from '../../maze/god';
 import { OrthographicCamera } from '../core/OrthographicCamera';
 import { Vector3 } from 'three';
@@ -13,8 +13,96 @@ import { DirectionalLight } from '../core/DirectionalLight';
 import { LightBox } from '../models/LightBox';
 import { LinearAnimation } from '../core/LinearAnimation';
 import { Renderer } from '../core/Renderer';
-import { MazePathFinderNode } from '../../maze/MazePathFinderNode';
+import {
+    MPFNodeLabelCallBackParams,
+    MPFNodeLabelChangeCallback
+} from '../../maze/MazePathFinderNode';
 import { BFSStrategy } from '../../strategies/MazePathFindStrategy/BFSStrategy';
+import { MPFLabelChangeCallbackParams } from '../../maze/MazePathFinder';
+
+class GlowingBox {
+    private _scene: Scene;
+    private _box: LightBox;
+    private _pointLights: PointLight[];
+    private _withLight: boolean;
+    private _afterSpawn: () => void;
+
+    constructor(
+        scene: Scene,
+        pos: Vector3,
+        color: number,
+        withLight: boolean = false,
+        afterSpawn: () => void = () => {}
+    ) {
+        this._scene = scene;
+        this._box = new LightBox(scene, color);
+        this._withLight = withLight;
+        this._afterSpawn = afterSpawn;
+
+        if (withLight)
+            this._pointLights = [new PointLight(scene, color, 0), new PointLight(scene, color, 0)];
+
+        this.position = pos;
+        this.playSpawnAnimation();
+    }
+
+    public set position(pos: Vector3) {
+        const { x, y, z } = pos;
+        this._box.threeObject.position.set(x, y, z);
+
+        if (this._withLight) {
+            this._pointLights[0].threeObject.position.set(x, y, z);
+            this._pointLights[1].threeObject.position.set(x, y + 1, z);
+        }
+    }
+
+    public delete() {
+        this._box.delete();
+        this._pointLights.forEach(light => light.delete());
+    }
+
+    public playSpawnAnimation() {
+        //light pop animation
+        if (this._withLight)
+            new LinearAnimation(this._scene)
+                .setStartVector(new Vector3(0))
+                .setEndVector(new Vector3(30))
+                .setDuration(0.2)
+                .setCallback(vec =>
+                    this._pointLights.forEach(light => (light.threeObject.intensity = vec.x))
+                )
+                .setDoneCallback(() => {
+                    new LinearAnimation(this._scene)
+                        .setStartVector(new Vector3(30))
+                        .setEndVector(new Vector3(10))
+                        .setDuration(0.2)
+                        .setCallback(vec =>
+                            this._pointLights.forEach(
+                                light => (light.threeObject.intensity = vec.x)
+                            )
+                        )
+                        .start();
+                })
+                .start();
+
+        // cube pop animation
+        new LinearAnimation(this._scene)
+            .setStartVector(new Vector3(1, 1, 1))
+            .setEndVector(new Vector3(1.15, 1.15, 1.15))
+            .setDuration(0.2)
+            .setCallback(({ x, y, z }) => this._box.threeObject.scale.set(x, y, z))
+            .setDoneCallback(() => {
+                new LinearAnimation(this._scene)
+                    .setStartVector(new Vector3(1.15, 1.15, 1.15))
+                    .setEndVector(new Vector3(1, 1, 1))
+                    .setDuration(0.2)
+                    .setCallback(({ x, y, z }) => this._box.threeObject.scale.set(x, y, z))
+                    .setDoneCallback(this._afterSpawn)
+                    .start();
+            })
+            .start();
+    }
+}
 
 export class MazeScene extends Scene {
     private _generationStrategy = new PrimsStrategy();
@@ -23,52 +111,7 @@ export class MazeScene extends Scene {
     private _sizeInputY = new NumberInput();
     private _resetButton = new Button('Reset');
     private _gap = 0.2;
-
-    private createGlowingBox(pos: Vector3, color: number = 0xffffff) {
-        const light = new LightBox(this, color);
-        const point1 = new PointLight(this, color, 0);
-        const point2 = new PointLight(this, color, 0);
-        const { x, y, z } = pos;
-
-        // create light box and point lights to imitate glowing
-        // one light is positioned inside light box,
-        // other one is little above
-        light.threeObject.position.set(x, y, z);
-        point1.threeObject.position.set(x, y, z);
-        point2.threeObject.position.set(x, y + 1, z);
-
-        // light pop animation
-        new LinearAnimation(this)
-            .setStartVector(new Vector3(0))
-            .setEndVector(new Vector3(30))
-            .setDuration(0.2)
-            .setCallback(vec => (point1.threeObject.intensity = vec.x))
-            .setDoneCallback(() => {
-                new LinearAnimation(this)
-                    .setStartVector(new Vector3(30))
-                    .setEndVector(new Vector3(10))
-                    .setDuration(0.2)
-                    .setCallback(vec => (point1.threeObject.intensity = vec.x))
-                    .start();
-            })
-            .start();
-
-        // cube pop animation
-        new LinearAnimation(this)
-            .setStartVector(new Vector3(1, 1, 1))
-            .setEndVector(new Vector3(1.15, 1.15, 1.15))
-            .setDuration(0.2)
-            .setCallback(({ x, y, z }) => light.threeObject.scale.set(x, y, z))
-            .setDoneCallback(() => {
-                new LinearAnimation(this)
-                    .setStartVector(new Vector3(1.15, 1.15, 1.15))
-                    .setEndVector(new Vector3(1, 1, 1))
-                    .setDuration(0.2)
-                    .setCallback(({ x, y, z }) => light.threeObject.scale.set(x, y, z))
-                    .start();
-            })
-            .start();
-    }
+    private _renderedLabelBoxes = new Map<Vec2d, GlowingBox>();
 
     private setupCameraAndLights(camera: OrthographicCamera) {
         const camLookAt = (dimension: number) =>
@@ -156,11 +199,33 @@ export class MazeScene extends Scene {
         const { start, end } = maze.randomizeStartEndPositions();
         const startVec = new Vector3(boxPos(start.x), 0, boxPos(start.y));
         const endVec = new Vector3(boxPos(end.x), 0, boxPos(end.x));
-        this.createGlowingBox(startVec);
-        this.createGlowingBox(endVec, 0xff0000);
 
-        mazeFinder.addNodeLabelChangeObserver(console.log);
+        this._renderedLabelBoxes.set(start, new GlowingBox(this, startVec, 0xffffff, true));
+        this._renderedLabelBoxes.set(end, new GlowingBox(this, endVec, 0xffffff, true));
+
+        const algorithmSteps: MPFLabelChangeCallbackParams[] = [];
+        mazeFinder.addNodeLabelChangeObserver(step => algorithmSteps.push(step));
+
         mazeFinder.findPath(new BFSStrategy(), start, end);
+
+        algorithmSteps.reduce(
+            (next, { pos, labelChanged }) => {
+                return () => {
+                    if (this._renderedLabelBoxes.has(pos)) {
+                        this._renderedLabelBoxes.get(pos).delete();
+                    }
+
+                    if (labelChanged === 'queued') {
+                        const boxPosVec = new Vector3(boxPos(pos.x), 0, boxPos(pos.y));
+                        const box = new GlowingBox(this, boxPosVec, 0xffff00, false, next);
+                        box.position = boxPosVec;
+                    } else {
+                        next();
+                    }
+                };
+            },
+            () => {}
+        )();
     }
 
     override start({ camera, renderer }: StartArgs): void {
