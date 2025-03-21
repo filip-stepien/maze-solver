@@ -31,6 +31,7 @@ export class MazeScene extends Scene {
     private _sizeInputX = new NumberInput();
     private _sizeInputY = new NumberInput();
     private _resetButton = new Button('Reset');
+    private _startButton = new Button('Start');
     private _gap = 0.2;
     private _boxNodes: BoxNode[] = [];
     private _labelGroups = new Map<LabelGroup, LabelBox>();
@@ -72,12 +73,19 @@ export class MazeScene extends Scene {
     }
 
     private handleResetButton(renderer: Renderer) {
-        this._resetButton.disabled = true;
         this._resetButton.onChange = () => {
             if (this._sizeInputX.validate(true) && this._sizeInputY.validate(true)) {
                 this._boxNodes = [];
+                this._startButton.disabled = false;
                 this.reset(renderer);
             }
+        };
+    }
+
+    private handleStartButton(steps: MPFLabelChangeCallbackParams[]) {
+        this._startButton.onChange = () => {
+            this.visualizeAlgorithm(steps);
+            this._startButton.disabled = true;
         };
     }
 
@@ -173,13 +181,7 @@ export class MazeScene extends Scene {
 
             if (node.isColliding()) {
                 setTimeout(
-                    () =>
-                        playGroupFallAnimation(
-                            this,
-                            defaultBoxGroup,
-                            i,
-                            () => (this._resetButton.disabled = false)
-                        ),
+                    () => playGroupFallAnimation(this, defaultBoxGroup, i),
                     Random.randomInt(100, 1000)
                 );
             }
@@ -235,6 +237,6 @@ export class MazeScene extends Scene {
         this.createBoxInstanceGroups();
         const { start, end, steps } = this.spawnMaze();
         this.createStartFinishBoxes(start, end);
-        this.visualizeAlgorithm(steps);
+        this.handleStartButton(steps);
     }
 }
