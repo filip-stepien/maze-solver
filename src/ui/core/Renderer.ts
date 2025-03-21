@@ -2,7 +2,7 @@ import { WebGLRenderer, Scene as ThreeScene, Clock, Object3D as ThreeObject } fr
 import { Scene } from './Scene';
 import { Camera3D } from './Camera3D';
 import Stats from 'three/examples/jsm/libs/stats.module';
-import { Renderable } from './Renderable';
+import { Mouse } from './Mouse';
 
 /**
  * Abstraction layer for `three.js` WebGL renderer.
@@ -64,9 +64,16 @@ export class Renderer {
 
     private animationLoop(time: number) {
         const delta = this._clock.getDelta();
-        this._scene.loop({ camera: this._camera, renderer: this, delta, time });
+        this._scene.loop({
+            camera: this._camera,
+            renderer: this,
+            delta,
+            time,
+            mouse: Mouse.instance
+        });
         this._scene.animate(delta);
         this._camera.loop();
+        Mouse.instance.loop(this._threeScene, this._camera.threeObject);
         this._renderer.render(this._threeScene, this._camera.threeObject);
     }
 
@@ -120,7 +127,7 @@ export class Renderer {
             );
         }
 
-        this._scene.start({ camera: this._camera, renderer: this });
+        this._scene.start({ camera: this._camera, renderer: this, mouse: Mouse.instance });
         this._renderer.setAnimationLoop(time => {
             this._stats.begin();
             this.animationLoop(time);

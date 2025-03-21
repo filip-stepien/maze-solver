@@ -4,15 +4,18 @@ import { Object3D } from './Object3D';
 import { Renderer } from './Renderer';
 import { Animation } from './Animation';
 import { Renderable } from './Renderable';
+import { Mouse } from './Mouse';
 
 export type StartArgs = {
     camera: Camera3D;
     renderer: Renderer;
+    mouse: Mouse;
 };
 
 export type LoopArgs = {
     camera: Camera3D;
     renderer: Renderer;
+    mouse: Mouse;
     delta: number;
     time: number;
 };
@@ -73,7 +76,7 @@ export class Scene {
         this._animations = [];
         renderer.clear();
 
-        this.start({ camera: renderer.camera, renderer });
+        this.start({ camera: renderer.camera, renderer, mouse: Mouse.instance });
     }
 
     /** Adds new objects to the scene. */

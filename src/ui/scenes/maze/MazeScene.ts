@@ -1,8 +1,8 @@
 import { Vec2d } from '../../../types';
-import { Scene, StartArgs } from '../../core/Scene';
+import { LoopArgs, Scene, StartArgs } from '../../core/Scene';
 import { MazeFacade } from '../../../maze/god';
 import { OrthographicCamera } from '../../core/OrthographicCamera';
-import { Vector3 } from 'three';
+import { InstancedMesh, Object3D as ThreeObject, Vector3 } from 'three';
 import { PrimsStrategy } from '../../../strategies/PrimsStrategy';
 import { Random } from '../../../utils/Random';
 import { Button } from '../../controls/Button';
@@ -19,6 +19,8 @@ import { ModelGroup } from '../../core/ModelGroup';
 import { MazePathFinderNodeLabel } from '../../../maze/MazePathFinderNode';
 import { AStarStrategy } from '../../../strategies/MazePathFindStrategy/AStarStrategy';
 import { EmissiveBox } from './models/EmissiveBoxGroup';
+import { Mouse } from '../../core/Mouse';
+import playGroupSpawnAnimation from './animations/playGroupSpawnAnimation';
 
 type BoxNode = { pos: Vec2d; activeGroup: ModelGroup; index: number };
 type LabelGroup = MazePathFinderNodeLabel | 'default';
@@ -155,7 +157,7 @@ export class MazeScene extends Scene {
         new GlowingBox(this, endVec, 0xffffff);
     }
 
-    private spawnMaze() {
+    private spawnMaze(animateWalls: boolean = true) {
         const maze = new MazeFacade();
         maze.setGeneratorStrategy(this._generationStrategy);
         maze.generateMaze(this._mazeSize);
@@ -179,7 +181,7 @@ export class MazeScene extends Scene {
 
             this._boxNodes.push({ pos, activeGroup: defaultBoxGroup, index: i });
 
-            if (node.isColliding()) {
+            if (node.isColliding() && animateWalls) {
                 setTimeout(
                     () => playGroupFallAnimation(this, defaultBoxGroup, i),
                     Random.randomInt(100, 1000)
@@ -226,6 +228,24 @@ export class MazeScene extends Scene {
         )();
     }
 
+    private handleMouse(mouse: Mouse) {
+        const isInstancedMesh = (obj: ThreeObject): obj is InstancedMesh => {
+            return (obj as InstancedMesh).isInstancedMesh !== undefined;
+        };
+
+        const intersection = mouse.intersects[0];
+        const hoverObject = intersection?.object;
+        const instanceIndex = intersection?.instanceId;
+
+        if (hoverObject && isInstancedMesh(hoverObject)) {
+            const group = Array.from(this._labelGroups)
+                .map(group => group[1].group)
+                .find(group => group.threeObject == hoverObject);
+
+            playGroupFallAnimation(this, group, instanceIndex);
+        }
+    }
+
     override start({ camera, renderer }: StartArgs): void {
         if (!OrthographicCamera.isOrthographic(camera))
             throw new Error('This scene needs an orthographic camera to work properly!');
@@ -235,8 +255,12 @@ export class MazeScene extends Scene {
         this.handleResetButton(renderer);
 
         this.createBoxInstanceGroups();
-        const { start, end, steps } = this.spawnMaze();
+        const { start, end, steps } = this.spawnMaze(false);
         this.createStartFinishBoxes(start, end);
         this.handleStartButton(steps);
+    }
+
+    override loop({ mouse }: LoopArgs): void {
+        this.handleMouse(mouse);
     }
 }
