@@ -1,4 +1,4 @@
-import { GenerationStrategy } from '../strategies/GenerationStrategy';
+import { GenerationStrategy } from '../strategies/generation/GenerationStrategy';
 import { PrimsStrategy } from '../strategies/PrimsStrategy';
 
 export class MazeGenerator<T extends GenerationStrategy> {

@@ -1,5 +1,5 @@
-import { Random } from '../utils/Random';
-import { Vec2d as Vec2d } from '../types';
+import { Vec2d } from '../../types';
+import { Random } from '../../utils/Random';
 import { GenerationStrategy } from './GenerationStrategy';
 
 /**
@@ -69,6 +69,5 @@ export class PrimsStrategy implements GenerationStrategy {
         }
 
         return maze.map(row => row.map(e => e !== 0));
-        // console.table(maze);
     }
 }

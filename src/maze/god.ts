@@ -1,4 +1,4 @@
-import { GenerationStrategy } from '../strategies/GenerationStrategy';
+import { GenerationStrategy } from '../strategies/generation/GenerationStrategy';
 import { MazePathFindStrategy } from '../strategies/MazePathFindStrategy/MazePathFindStrategy';
 import { Vec2d } from '../types';
 import { Random } from '../utils/Random';

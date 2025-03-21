@@ -3,31 +3,31 @@ import { LoopArgs, Scene, StartArgs } from '../../core/Scene';
 import { MazeFacade } from '../../../maze/god';
 import { OrthographicCamera } from '../../core/OrthographicCamera';
 import { InstancedMesh, Object3D as ThreeObject, Vector3 } from 'three';
-import { PrimsStrategy } from '../../../strategies/PrimsStrategy';
 import { Random } from '../../../utils/Random';
 import { Button } from '../../controls/Button';
 import { NumberInput } from '../../controls/NumberInput';
 import { PointLight } from '../../core/PointLight';
 import { DirectionalLight } from '../../core/DirectionalLight';
 import { Renderer } from '../../core/Renderer';
-import { MPFLabelChangeCallbackParams } from '../../../maze/MazePathFinder';
+import MazePathFinder, { MPFLabelChangeCallbackParams } from '../../../maze/MazePathFinder';
 import { GlowingBox } from './models/GlowingBox';
 import { LabelBoxGroup } from './models/LabelBoxGroup';
 import playBoxSpawnAnimation from './animations/playBoxSpawnAnimation';
 import playGroupFallAnimation from './animations/playGroupFallAnimation';
 import { ModelGroup } from '../../core/ModelGroup';
-import { MazePathFinderNodeLabel } from '../../../maze/MazePathFinderNode';
+import { MazePathFinderNode, MazePathFinderNodeLabel } from '../../../maze/MazePathFinderNode';
 import { AStarStrategy } from '../../../strategies/MazePathFindStrategy/AStarStrategy';
 import { EmissiveBox } from './models/EmissiveBoxGroup';
 import { Mouse } from '../../core/Mouse';
-import playGroupSpawnAnimation from './animations/playGroupSpawnAnimation';
+import { PrimsStrategy } from '../../../strategies/generation/PrimsStrategy';
+import { BlankMazeStrategy } from '../../../strategies/generation/BlankMazeStrategy';
 
-type BoxNode = { pos: Vec2d; activeGroup: ModelGroup; index: number };
+type BoxNode = { pos: Vec2d; node: MazePathFinderNode; activeGroup: ModelGroup; index: number };
 type LabelGroup = MazePathFinderNodeLabel | 'default';
 type LabelBox = { label?: LabelGroup; group: ModelGroup; color: number; emissive: EmissiveBox };
 
 export class MazeScene extends Scene {
-    private _generationStrategy = new PrimsStrategy();
+    private _generationStrategy = new BlankMazeStrategy();
     private _pathFindStrategy = new AStarStrategy();
     private _mazeSize = new Vec2d([10, 10]);
     private _sizeInputX = new NumberInput();
@@ -38,6 +38,11 @@ export class MazeScene extends Scene {
     private _boxNodes: BoxNode[] = [];
     private _labelGroups = new Map<LabelGroup, LabelBox>();
 
+    private _start: Vec2d;
+    private _end: Vec2d;
+    private _steps: MPFLabelChangeCallbackParams[] = [];
+    private _mazeFinder: MazePathFinder<MazePathFinderNode>;
+
     private getBoxPositions(pos: Vec2d) {
         const toBoxPos = (dimension: number) =>
             dimension * LabelBoxGroup.boxSize * 2 * (1 + this._gap);
@@ -47,6 +52,13 @@ export class MazeScene extends Scene {
             inactive: new Vector3(toBoxPos(pos.x), 1000, toBoxPos(pos.y)),
             up: new Vector3(toBoxPos(pos.x), 1, toBoxPos(pos.y))
         };
+    }
+
+    private getMazeNodePos(renderedBoxPos: Vector3): Vec2d {
+        const fromBoxPos = (value: number) =>
+            Math.round(value / (LabelBoxGroup.boxSize * 2 * (1 + this._gap)));
+
+        return new Vec2d([fromBoxPos(renderedBoxPos.x), fromBoxPos(renderedBoxPos.z)]);
     }
 
     private setupCameraAndLights(camera: OrthographicCamera) {
@@ -84,9 +96,9 @@ export class MazeScene extends Scene {
         };
     }
 
-    private handleStartButton(steps: MPFLabelChangeCallbackParams[]) {
+    private handleStartButton() {
         this._startButton.onChange = () => {
-            this.visualizeAlgorithm(steps);
+            this.visualizeAlgorithm();
             this._startButton.disabled = true;
         };
     }
@@ -157,31 +169,31 @@ export class MazeScene extends Scene {
         new GlowingBox(this, endVec, 0xffffff);
     }
 
-    private spawnMaze(animateWalls: boolean = true) {
+    private spawnMaze() {
         const maze = new MazeFacade();
         maze.setGeneratorStrategy(this._generationStrategy);
         maze.generateMaze(this._mazeSize);
 
-        const mazeFinder = maze.getMazePathFinder();
+        this._mazeFinder = maze.getMazePathFinder();
         const { start, end } = maze.randomizeStartEndPositions();
 
-        const steps: MPFLabelChangeCallbackParams[] = [];
-        mazeFinder.addNodeLabelChangeObserver(step => {
-            if (step.node.hasLabel(step.labelChanged)) steps.push(step);
+        this._start = start;
+        this._end = end;
+
+        this._mazeFinder.addNodeLabelChangeObserver(step => {
+            if (step.node.hasLabel(step.labelChanged)) this._steps.push(step);
         });
 
-        mazeFinder.findPath(this._pathFindStrategy, start, end);
-
-        mazeFinder.forEachNode(({ pos, node, i }) => {
+        this._mazeFinder.forEachNode(({ pos, node, i }) => {
             const { active, inactive } = this.getBoxPositions(pos);
             const defaultBoxGroup = this._labelGroups.get('default').group;
 
             this._labelGroups.forEach(label => label.group.setInstancePosition(i, inactive));
             defaultBoxGroup.setInstancePosition(i, active);
 
-            this._boxNodes.push({ pos, activeGroup: defaultBoxGroup, index: i });
+            this._boxNodes.push({ pos, node, activeGroup: defaultBoxGroup, index: i });
 
-            if (node.isColliding() && animateWalls) {
+            if (node.isColliding()) {
                 setTimeout(
                     () => playGroupFallAnimation(this, defaultBoxGroup, i),
                     Random.randomInt(100, 1000)
@@ -189,13 +201,14 @@ export class MazeScene extends Scene {
             }
         });
 
-        return { start, end, steps };
+        this._steps = [];
+        this._mazeFinder.findPath(this._pathFindStrategy, this._start, this._end);
     }
 
-    private visualizeAlgorithm(steps: MPFLabelChangeCallbackParams[]) {
+    private visualizeAlgorithm() {
         const lightIndicator = new PointLight(this, 0xff00ff, 20);
 
-        steps.reverse().reduce(
+        this._steps.reverse().reduce(
             (next, { pos, labelChanged, node }) => {
                 return () => {
                     if (node.hasLabel('start') || node.hasLabel('finish')) {
@@ -219,7 +232,7 @@ export class MazeScene extends Scene {
                     group.setInstancePosition(boxIndex, active);
                     oldGroup.setInstancePosition(boxIndex, inactive);
 
-                    this._boxNodes[boxIndex] = { activeGroup: group, pos, index: boxIndex };
+                    this._boxNodes[boxIndex] = { node, activeGroup: group, pos, index: boxIndex };
 
                     playBoxSpawnAnimation(this, emissive, next);
                 };
@@ -242,6 +255,16 @@ export class MazeScene extends Scene {
                 .map(group => group[1].group)
                 .find(group => group.threeObject == hoverObject);
 
+            const boxPos = group.getInstancePosition(instanceIndex);
+            const nodePos = this.getMazeNodePos(boxPos);
+            const boxNode = this._boxNodes.find(boxNode => boxNode.pos.equals(nodePos));
+
+            if (boxNode.pos !== this._start && boxNode.pos !== this._end)
+                boxNode.node.makeColliding();
+
+            this._steps = [];
+            this._mazeFinder.findPath(this._pathFindStrategy, this._start, this._end);
+
             playGroupFallAnimation(this, group, instanceIndex);
         }
     }
@@ -255,9 +278,9 @@ export class MazeScene extends Scene {
         this.handleResetButton(renderer);
 
         this.createBoxInstanceGroups();
-        const { start, end, steps } = this.spawnMaze(false);
-        this.createStartFinishBoxes(start, end);
-        this.handleStartButton(steps);
+        this.spawnMaze();
+        this.createStartFinishBoxes(this._start, this._end);
+        this.handleStartButton();
     }
 
     override loop({ mouse }: LoopArgs): void {
