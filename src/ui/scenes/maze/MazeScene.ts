@@ -1,17 +1,15 @@
 import { Vec2d } from '../../../types';
-import { LoopArgs, Scene, StartArgs } from '../../core/Scene';
+import { Scene, StartArgs } from '../../core/Scene';
 import { MazeFacade } from '../../../maze/god';
 import { OrthographicCamera } from '../../core/OrthographicCamera';
-import { Color, Vector3 } from 'three';
+import { Vector3 } from 'three';
 import { PrimsStrategy } from '../../../strategies/PrimsStrategy';
 import { Random } from '../../../utils/Random';
 import { Button } from '../../controls/Button';
 import { NumberInput } from '../../controls/NumberInput';
 import { PointLight } from '../../core/PointLight';
 import { DirectionalLight } from '../../core/DirectionalLight';
-import { LinearAnimation } from '../../core/LinearAnimation';
 import { Renderer } from '../../core/Renderer';
-import { BFSStrategy } from '../../../strategies/MazePathFindStrategy/BFSStrategy';
 import { MPFLabelChangeCallbackParams } from '../../../maze/MazePathFinder';
 import { GlowingBox } from './models/GlowingBox';
 import { LabelBoxGroup } from './models/LabelBoxGroup';
@@ -19,19 +17,17 @@ import playBoxSpawnAnimation from './animations/playBoxSpawnAnimation';
 import playGroupFallAnimation from './animations/playGroupFallAnimation';
 import { ModelGroup } from '../../core/ModelGroup';
 import { MazePathFinderNodeLabel } from '../../../maze/MazePathFinderNode';
-import playGroupSpawnAnimation from './animations/playGroupSpawnAnimation';
-import { DFSStrategy } from '../../../strategies/MazePathFindStrategy/DFSStrategy';
 import { AStarStrategy } from '../../../strategies/MazePathFindStrategy/AStarStrategy';
 import { EmissiveBox } from './models/EmissiveBoxGroup';
-import playLightSpawnAnimation from './animations/playLightSpawnAnimation';
 
 type BoxNode = { pos: Vec2d; activeGroup: ModelGroup; index: number };
 type LabelGroup = MazePathFinderNodeLabel | 'default';
-type LabelBox = { group: ModelGroup; color: number; emissive: EmissiveBox };
+type LabelBox = { label?: LabelGroup; group: ModelGroup; color: number; emissive: EmissiveBox };
 
 export class MazeScene extends Scene {
     private _generationStrategy = new PrimsStrategy();
-    private _mazeSize = new Vec2d([100, 100]);
+    private _pathFindStrategy = new AStarStrategy();
+    private _mazeSize = new Vec2d([10, 10]);
     private _sizeInputX = new NumberInput();
     private _sizeInputY = new NumberInput();
     private _resetButton = new Button('Reset');
@@ -79,6 +75,7 @@ export class MazeScene extends Scene {
         this._resetButton.disabled = true;
         this._resetButton.onChange = () => {
             if (this._sizeInputX.validate(true) && this._sizeInputY.validate(true)) {
+                this._boxNodes = [];
                 this.reset(renderer);
             }
         };
@@ -102,57 +99,69 @@ export class MazeScene extends Scene {
         };
     }
 
-    private generateMazeBoxes() {
+    private createBoxInstanceGroups() {
+        const boxCount = this._mazeSize.x * this._mazeSize.y;
+        const labels: LabelBox[] = [
+            {
+                label: 'candidate',
+                color: 0xffff00,
+                group: new LabelBoxGroup(this, boxCount, 0xffff00),
+                emissive: new EmissiveBox(this, 0xffff00)
+            },
+            {
+                label: 'forsaken',
+                color: 0xff0000,
+                group: new LabelBoxGroup(this, boxCount, 0xff0000),
+                emissive: new EmissiveBox(this, 0xff0000)
+            },
+            {
+                label: 'queued',
+                color: 0xffa500,
+                group: new LabelBoxGroup(this, boxCount, 0xffa500),
+                emissive: new EmissiveBox(this, 0xffa500)
+            },
+            {
+                label: 'selected',
+                color: 0x00ff00,
+                group: new LabelBoxGroup(this, boxCount, 0x00ff00),
+                emissive: new EmissiveBox(this, 0x00ff00)
+            },
+            {
+                label: 'default',
+                color: 0x4c566a,
+                group: new LabelBoxGroup(this, boxCount, 0x4c566a),
+                emissive: new EmissiveBox(this, 0x4c566a)
+            }
+        ];
+
+        labels.forEach(({ label, color, group, emissive }) => {
+            this._labelGroups.set(label, { color, group, emissive });
+        });
+    }
+
+    private createStartFinishBoxes(startPos: Vec2d, finishPos: Vec2d) {
+        const startVec = this.getBoxPositions(startPos).active;
+        const endVec = this.getBoxPositions(finishPos).active;
+
+        new GlowingBox(this, startVec, 0xffffff);
+        new GlowingBox(this, endVec, 0xffffff);
+    }
+
+    private spawnMaze() {
         const maze = new MazeFacade();
         maze.setGeneratorStrategy(this._generationStrategy);
         maze.generateMaze(this._mazeSize);
 
         const mazeFinder = maze.getMazePathFinder();
-        const boxCount = this._mazeSize.x * this._mazeSize.y;
-
-        this._labelGroups.set('candidate', {
-            color: 0xffff00,
-            group: new LabelBoxGroup(this, boxCount, 0xffff00),
-            emissive: new EmissiveBox(this, 0xffff00)
-        });
-        this._labelGroups.set('forsaken', {
-            color: 0xff0000,
-            group: new LabelBoxGroup(this, boxCount, 0xff0000),
-            emissive: new EmissiveBox(this, 0xff0000)
-        });
-        this._labelGroups.set('queued', {
-            color: 0xffa500,
-            group: new LabelBoxGroup(this, boxCount, 0xffa500),
-            emissive: new EmissiveBox(this, 0xffa500)
-        });
-        this._labelGroups.set('selected', {
-            color: 0x00ff00,
-            group: new LabelBoxGroup(this, boxCount, 0x00ff00),
-            emissive: new EmissiveBox(this, 0x00ff00)
-        });
-        this._labelGroups.set('default', {
-            color: 0x4c566a,
-            group: new LabelBoxGroup(this, boxCount, 0x4c566a),
-            emissive: new EmissiveBox(this, 0x4c566a)
-        });
-
-        // spawn start and end point of the maze
         const { start, end } = maze.randomizeStartEndPositions();
-        const startVec = this.getBoxPositions(start).active;
-        const endVec = this.getBoxPositions(end).active;
 
-        new GlowingBox(this, startVec, 0xffffff);
-        new GlowingBox(this, endVec, 0xffffff);
-
-        const algorithmSteps: MPFLabelChangeCallbackParams[] = [];
+        const steps: MPFLabelChangeCallbackParams[] = [];
         mazeFinder.addNodeLabelChangeObserver(step => {
-            if (step.node.hasLabel(step.labelChanged)) algorithmSteps.push(step);
+            if (step.node.hasLabel(step.labelChanged)) steps.push(step);
         });
-        //mazeFinder.findPath(new DFSStrategy(), start, end);
-        //mazeFinder.findPath(new BFSStrategy(), start, end);
-        mazeFinder.findPath(new AStarStrategy(), start, end);
 
-        // spawn maze
+        mazeFinder.findPath(this._pathFindStrategy, start, end);
+
         mazeFinder.forEachNode(({ pos, node, i }) => {
             const { active, inactive } = this.getBoxPositions(pos);
             const defaultBoxGroup = this._labelGroups.get('default').group;
@@ -163,7 +172,6 @@ export class MazeScene extends Scene {
             this._boxNodes.push({ pos, activeGroup: defaultBoxGroup, index: i });
 
             if (node.isColliding()) {
-                // falling animation
                 setTimeout(
                     () =>
                         playGroupFallAnimation(
@@ -177,9 +185,13 @@ export class MazeScene extends Scene {
             }
         });
 
-        const light = new PointLight(this, 0xff00ff, 20);
+        return { start, end, steps };
+    }
 
-        algorithmSteps.reverse().reduce(
+    private visualizeAlgorithm(steps: MPFLabelChangeCallbackParams[]) {
+        const lightIndicator = new PointLight(this, 0xff00ff, 20);
+
+        steps.reverse().reduce(
             (next, { pos, labelChanged, node }) => {
                 return () => {
                     if (node.hasLabel('start') || node.hasLabel('finish')) {
@@ -196,8 +208,8 @@ export class MazeScene extends Scene {
                         label.emissive.threeObject.position.set(inactive.x, inactive.y, inactive.z)
                     );
 
-                    light.threeObject.color.set(color);
-                    light.threeObject.position.set(up.x, up.y, up.z);
+                    lightIndicator.threeObject.color.set(color);
+                    lightIndicator.threeObject.position.set(up.x, up.y, up.z);
                     emissive.threeObject.position.set(active.x, active.y, active.z);
 
                     group.setInstancePosition(boxIndex, active);
@@ -205,7 +217,6 @@ export class MazeScene extends Scene {
 
                     this._boxNodes[boxIndex] = { activeGroup: group, pos, index: boxIndex };
 
-                    //playLightSpawnAnimation(this, light);
                     playBoxSpawnAnimation(this, emissive, next);
                 };
             },
@@ -220,8 +231,10 @@ export class MazeScene extends Scene {
         this.setupCameraAndLights(camera);
         this.handleNumberInput();
         this.handleResetButton(renderer);
-        this.generateMazeBoxes();
-    }
 
-    public loop(args: LoopArgs): void {}
+        this.createBoxInstanceGroups();
+        const { start, end, steps } = this.spawnMaze();
+        this.createStartFinishBoxes(start, end);
+        this.visualizeAlgorithm(steps);
+    }
 }
