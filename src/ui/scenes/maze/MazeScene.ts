@@ -237,7 +237,7 @@ export class MazeScene extends Scene {
         const hoverObject = intersection?.object;
         const instanceIndex = intersection?.instanceId;
 
-        if (hoverObject && isInstancedMesh(hoverObject)) {
+        if (hoverObject && isInstancedMesh(hoverObject) && mouse.buttonDown === 'left') {
             const group = Array.from(this._labelGroups)
                 .map(group => group[1].group)
                 .find(group => group.threeObject == hoverObject);
@@ -246,7 +246,7 @@ export class MazeScene extends Scene {
         }
     }
 
-    override start({ camera, renderer }: StartArgs): void {
+    override start({ camera, renderer, mouse }: StartArgs): void {
         if (!OrthographicCamera.isOrthographic(camera))
             throw new Error('This scene needs an orthographic camera to work properly!');
 
