@@ -10,7 +10,7 @@ export default function (
     doneCallback: () => void = () => {}
 ) {
     const startVec = group.getInstancePosition(index);
-    const endVec = new Vector3(startVec.x, -150, startVec.y);
+    const endVec = new Vector3(startVec.x, -150, startVec.z);
     new LinearAnimation(scene)
         .setStartVector(startVec)
         .setEndVector(endVec)
