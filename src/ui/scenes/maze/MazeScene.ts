@@ -21,19 +21,14 @@ import { EmissiveBox } from './models/EmissiveBoxGroup';
 import { Mouse } from '../../core/Mouse';
 import { PrimsStrategy } from '../../../strategies/generation/PrimsStrategy';
 import { BlankMazeStrategy } from '../../../strategies/generation/BlankMazeStrategy';
+import { MazeSceneUserInterface } from './MazeSceneUserInterface';
 
 type BoxNode = { pos: Vec2d; node: MazePathFinderNode; activeGroup: ModelGroup; index: number };
 type LabelGroup = MazePathFinderNodeLabel | 'default';
 type LabelBox = { label?: LabelGroup; group: ModelGroup; color: number; emissive: EmissiveBox };
 
 export class MazeScene extends Scene {
-    private _generationStrategy = new BlankMazeStrategy();
-    private _pathFindStrategy = new AStarStrategy();
-    private _mazeSize = new Vec2d([10, 10]);
-    private _sizeInputX = new NumberInput();
-    private _sizeInputY = new NumberInput();
-    private _resetButton = new Button('Reset');
-    private _startButton = new Button('Start');
+    private ui = new MazeSceneUserInterface();
     private _gap = 0.2;
     private _boxNodes: BoxNode[] = [];
     private _labelGroups = new Map<LabelGroup, LabelBox>();
@@ -61,15 +56,23 @@ export class MazeScene extends Scene {
         return new Vec2d([fromBoxPos(renderedBoxPos.x), fromBoxPos(renderedBoxPos.z)]);
     }
 
+    private setupUserInterface(renderer: Renderer) {
+        this.ui.onStart = () => this.visualizeAlgorithm();
+        this.ui.onRestart = () => {
+            this._boxNodes = [];
+            this.reset(renderer);
+        };
+    }
+
     private setupCameraAndLights(camera: OrthographicCamera) {
         const camLookAt = (dimension: number) =>
             ((dimension - 1) * (LabelBoxGroup.boxSize + this._gap)) / 2 + dimension / 4.5;
 
-        const mazeDiagonal = Math.sqrt(this._mazeSize.x ** 2 + this._mazeSize.y ** 2);
+        const mazeDiagonal = Math.sqrt(this.ui.mazeSize.x ** 2 + this.ui.mazeSize.y ** 2);
         const camPos = mazeDiagonal * 4;
         const camSize = mazeDiagonal / 2.3;
-        const lookAtX = camLookAt(this._mazeSize.x);
-        const lookAtZ = camLookAt(this._mazeSize.y);
+        const lookAtX = camLookAt(this.ui.mazeSize.x);
+        const lookAtZ = camLookAt(this.ui.mazeSize.y);
 
         // initial camera parameters
         camera.size = camSize;
@@ -86,43 +89,8 @@ export class MazeScene extends Scene {
         pointLight.threeObject.position.set(lookAtX, mazeDiagonal / 2, lookAtZ);
     }
 
-    private handleResetButton(renderer: Renderer) {
-        this._resetButton.onChange = () => {
-            if (this._sizeInputX.validate(true) && this._sizeInputY.validate(true)) {
-                this._boxNodes = [];
-                this._startButton.disabled = false;
-                this.reset(renderer);
-            }
-        };
-    }
-
-    private handleStartButton() {
-        this._startButton.onChange = () => {
-            this.visualizeAlgorithm();
-            this._startButton.disabled = true;
-        };
-    }
-
-    private handleNumberInput() {
-        this._sizeInputX.value = 10;
-        this._sizeInputX.min = 3;
-        this._sizeInputX.max = 100;
-
-        this._sizeInputY.value = 10;
-        this._sizeInputY.min = 3;
-        this._sizeInputY.max = 100;
-
-        this._sizeInputX.onChange = value => {
-            this._mazeSize.x = parseInt(value);
-        };
-
-        this._sizeInputY.onChange = value => {
-            this._mazeSize.y = parseInt(value);
-        };
-    }
-
     private createBoxInstanceGroups() {
-        const boxCount = this._mazeSize.x * this._mazeSize.y;
+        const boxCount = this.ui.mazeSize.x * this.ui.mazeSize.y;
         const labels: LabelBox[] = [
             {
                 label: 'candidate',
@@ -171,8 +139,8 @@ export class MazeScene extends Scene {
 
     private spawnMaze() {
         const maze = new MazeFacade();
-        maze.setGeneratorStrategy(this._generationStrategy);
-        maze.generateMaze(this._mazeSize);
+        maze.setGeneratorStrategy(this.ui.generationStrategy);
+        maze.generateMaze(this.ui.mazeSize);
 
         this._mazeFinder = maze.getMazePathFinder();
         const { start, end } = maze.randomizeStartEndPositions();
@@ -202,7 +170,7 @@ export class MazeScene extends Scene {
         });
 
         this._steps = [];
-        this._mazeFinder.findPath(this._pathFindStrategy, this._start, this._end);
+        this._mazeFinder.findPath(this.ui.pathFindStrategy, this._start, this._end);
     }
 
     private visualizeAlgorithm() {
@@ -263,7 +231,7 @@ export class MazeScene extends Scene {
                 boxNode.node.makeColliding();
 
             this._steps = [];
-            this._mazeFinder.findPath(this._pathFindStrategy, this._start, this._end);
+            this._mazeFinder.findPath(this.ui.pathFindStrategy, this._start, this._end);
 
             playGroupFallAnimation(this, group, instanceIndex);
         }
@@ -274,13 +242,10 @@ export class MazeScene extends Scene {
             throw new Error('This scene needs an orthographic camera to work properly!');
 
         this.setupCameraAndLights(camera);
-        this.handleNumberInput();
-        this.handleResetButton(renderer);
-
+        this.setupUserInterface(renderer);
         this.createBoxInstanceGroups();
         this.spawnMaze();
         this.createStartFinishBoxes(this._start, this._end);
-        this.handleStartButton();
     }
 
     override loop({ mouse }: LoopArgs): void {
