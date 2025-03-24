@@ -38,7 +38,7 @@ export class DropDown extends Input {
         }
     }
 
-    protected override htmlElement(): keyof HTMLElementTagNameMap {
-        return 'select';
+    protected override htmlElement() {
+        return document.createElement('select');
     }
 }

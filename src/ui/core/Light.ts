@@ -1,6 +1,7 @@
 import { Renderable } from './Renderable';
 import { Light as ThreeLight } from 'three';
 import { Scene } from './Scene';
+import { Renderer } from './Renderer';
 
 export abstract class Light<T extends ThreeLight = ThreeLight> extends Renderable<T> {
     private _color: number;
@@ -22,5 +23,6 @@ export abstract class Light<T extends ThreeLight = ThreeLight> extends Renderabl
 
     delete(): void {
         this.threeObject.dispose();
+        Renderer.instance.removeFromThreeScene(this.threeObject);
     }
 }

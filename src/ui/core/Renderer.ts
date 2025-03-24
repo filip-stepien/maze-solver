@@ -95,7 +95,7 @@ export class Renderer {
     }
 
     public get scene() {
-        return this.scene;
+        return this._scene;
     }
 
     public set debugMode(debugMode: boolean) {
@@ -113,6 +113,10 @@ export class Renderer {
 
     public addToThreeScene(...obj: ThreeObject[]) {
         this._threeScene.add(...obj);
+    }
+
+    public removeFromThreeScene(...obj: ThreeObject[]) {
+        obj.forEach(o => this._threeScene.remove(o));
     }
 
     public clear() {

@@ -1,7 +1,7 @@
 import { Control } from './Control';
 import { ControlObservable } from './ControlObservable';
 
-export class Input extends ControlObservable<HTMLInputElement> {
+export class Input extends ControlObservable<HTMLInputElement | HTMLSelectElement> {
     constructor() {
         super();
 
@@ -37,7 +37,7 @@ export class Input extends ControlObservable<HTMLInputElement> {
         return eventTarget.value;
     }
 
-    protected override htmlElement() {
+    protected override htmlElement(): HTMLInputElement | HTMLSelectElement {
         return document.createElement('input');
     }
 

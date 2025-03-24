@@ -2,6 +2,7 @@ import { Mesh, BufferGeometry, Material } from 'three';
 import { Scene } from './Scene';
 import { Renderable } from './Renderable';
 import { Object3D as ThreeObject } from 'three';
+import { Renderer } from './Renderer';
 
 /**
  * Renderable mesh with geometry and material.

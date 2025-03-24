@@ -28,15 +28,16 @@ type LabelGroup = MazePathFinderNodeLabel | 'default';
 type LabelBox = { label?: LabelGroup; group: ModelGroup; color: number; emissive: EmissiveBox };
 
 export class MazeScene extends Scene {
-    private ui = new MazeSceneUserInterface();
     private _gap = 0.2;
+    private _ui = new MazeSceneUserInterface();
     private _boxNodes: BoxNode[] = [];
     private _labelGroups = new Map<LabelGroup, LabelBox>();
 
-    private _start: Vec2d;
-    private _end: Vec2d;
-    private _steps: MPFLabelChangeCallbackParams[] = [];
+    private _maze = new MazeFacade();
     private _mazeFinder: MazePathFinder<MazePathFinderNode>;
+    private _steps: MPFLabelChangeCallbackParams[] = [];
+    private _start: Vec2d;
+    private _finish: Vec2d;
 
     private getBoxPositions(pos: Vec2d) {
         const toBoxPos = (dimension: number) =>
@@ -57,10 +58,12 @@ export class MazeScene extends Scene {
     }
 
     private setupUserInterface(renderer: Renderer) {
-        this.ui.onStart = () => this.visualizeAlgorithm();
-        this.ui.onRestart = () => {
-            this._boxNodes = [];
-            this.reset(renderer);
+        this._ui.onStart = () => this.visualizeAlgorithm();
+        this._ui.onRestart = () => this.reset(renderer);
+        this._ui.onGenerationChange = () => this.reset(renderer);
+        this._ui.onPathFindChange = () => {
+            this.setBoxesToInitialPosition(false);
+            this.generatePathAlgorithmSteps();
         };
     }
 
@@ -68,11 +71,11 @@ export class MazeScene extends Scene {
         const camLookAt = (dimension: number) =>
             ((dimension - 1) * (LabelBoxGroup.boxSize + this._gap)) / 2 + dimension / 4.5;
 
-        const mazeDiagonal = Math.sqrt(this.ui.mazeSize.x ** 2 + this.ui.mazeSize.y ** 2);
+        const mazeDiagonal = this._ui.maze.diagonal;
         const camPos = mazeDiagonal * 4;
         const camSize = mazeDiagonal / 2.3;
-        const lookAtX = camLookAt(this.ui.mazeSize.x);
-        const lookAtZ = camLookAt(this.ui.mazeSize.y);
+        const lookAtX = camLookAt(this._ui.maze.size.x);
+        const lookAtZ = camLookAt(this._ui.maze.size.y);
 
         // initial camera parameters
         camera.size = camSize;
@@ -90,7 +93,7 @@ export class MazeScene extends Scene {
     }
 
     private createBoxInstanceGroups() {
-        const boxCount = this.ui.mazeSize.x * this.ui.mazeSize.y;
+        const boxCount = this._ui.maze.area;
         const labels: LabelBox[] = [
             {
                 label: 'candidate',
@@ -129,48 +132,89 @@ export class MazeScene extends Scene {
         });
     }
 
-    private createStartFinishBoxes(startPos: Vec2d, finishPos: Vec2d) {
-        const startVec = this.getBoxPositions(startPos).active;
-        const endVec = this.getBoxPositions(finishPos).active;
+    private generateRandomStartFinishPoints() {
+        const { start, end } = this._maze.randomizeStartEndPositions();
+        this._start = start;
+        this._finish = end;
+    }
+
+    private createStartFinishBoxes() {
+        if (!this._start || !this._finish) {
+            console.error('Start and finish points are not set!');
+            return;
+        }
+
+        const startVec = this.getBoxPositions(this._start).active;
+        const endVec = this.getBoxPositions(this._finish).active;
 
         new GlowingBox(this, startVec, 0xffffff);
         new GlowingBox(this, endVec, 0xffffff);
     }
 
-    private spawnMaze() {
-        const maze = new MazeFacade();
-        maze.setGeneratorStrategy(this.ui.generationStrategy);
-        maze.generateMaze(this.ui.mazeSize);
+    private generatePathAlgorithmSteps() {
+        if (!this._start || !this._finish) {
+            console.error('Start and finish points are not set!');
+            return;
+        }
 
-        this._mazeFinder = maze.getMazePathFinder();
-        const { start, end } = maze.randomizeStartEndPositions();
+        if (!this._mazeFinder) {
+            console.error('Path finder is not initialized!');
+            return;
+        }
 
-        this._start = start;
-        this._end = end;
+        this._steps = [];
+        this._mazeFinder.findPath(this._ui.pathFindStrategy, this._start, this._finish);
+    }
 
+    private initPathFinder() {
+        this._mazeFinder = this._maze.getMazePathFinder();
         this._mazeFinder.addNodeLabelChangeObserver(step => {
             if (step.node.hasLabel(step.labelChanged)) this._steps.push(step);
         });
+    }
 
+    private setBoxesToInitialPosition(playAnimation = true) {
+        if (!this._mazeFinder) {
+            console.error('Path finder is not initialized!');
+            return;
+        }
+
+        this._boxNodes = [];
         this._mazeFinder.forEachNode(({ pos, node, i }) => {
             const { active, inactive } = this.getBoxPositions(pos);
             const defaultBoxGroup = this._labelGroups.get('default').group;
 
-            this._labelGroups.forEach(label => label.group.setInstancePosition(i, inactive));
+            this._labelGroups.forEach(label => {
+                label.group.setInstancePosition(i, inactive);
+                label.emissive.threeObject.position.set(inactive.x, inactive.y, inactive.z);
+            });
+
             defaultBoxGroup.setInstancePosition(i, active);
 
             this._boxNodes.push({ pos, node, activeGroup: defaultBoxGroup, index: i });
 
             if (node.isColliding()) {
-                setTimeout(
-                    () => playGroupFallAnimation(this, defaultBoxGroup, i),
-                    Random.randomInt(100, 1000)
-                );
+                if (playAnimation) {
+                    setTimeout(
+                        () => playGroupFallAnimation(this, defaultBoxGroup, i),
+                        Random.randomInt(100, 1000)
+                    );
+                } else {
+                    defaultBoxGroup.setInstancePosition(i, inactive);
+                }
             }
         });
+    }
 
-        this._steps = [];
-        this._mazeFinder.findPath(this.ui.pathFindStrategy, this._start, this._end);
+    private spawnMaze() {
+        this._maze = new MazeFacade();
+        this._maze.setGeneratorStrategy(this._ui.generationStrategy);
+        this._maze.generateMaze(this._ui.maze.size);
+
+        this.initPathFinder();
+        this.setBoxesToInitialPosition();
+        this.generateRandomStartFinishPoints();
+        this.generatePathAlgorithmSteps();
     }
 
     private visualizeAlgorithm() {
@@ -205,7 +249,9 @@ export class MazeScene extends Scene {
                     playBoxSpawnAnimation(this, emissive, next);
                 };
             },
-            () => {}
+            () => {
+                lightIndicator.delete();
+            }
         )();
     }
 
@@ -227,17 +273,15 @@ export class MazeScene extends Scene {
             const nodePos = this.getMazeNodePos(boxPos);
             const boxNode = this._boxNodes.find(boxNode => boxNode.pos.equals(nodePos));
 
-            if (boxNode.pos !== this._start && boxNode.pos !== this._end)
+            if (boxNode.pos !== this._start && boxNode.pos !== this._finish)
                 boxNode.node.makeColliding();
 
-            this._steps = [];
-            this._mazeFinder.findPath(this.ui.pathFindStrategy, this._start, this._end);
-
+            this.generatePathAlgorithmSteps();
             playGroupFallAnimation(this, group, instanceIndex);
         }
     }
 
-    override start({ camera, renderer, mouse }: StartArgs): void {
+    override start({ camera, renderer }: StartArgs): void {
         if (!OrthographicCamera.isOrthographic(camera))
             throw new Error('This scene needs an orthographic camera to work properly!');
 
@@ -245,7 +289,7 @@ export class MazeScene extends Scene {
         this.setupUserInterface(renderer);
         this.createBoxInstanceGroups();
         this.spawnMaze();
-        this.createStartFinishBoxes(this._start, this._end);
+        this.createStartFinishBoxes();
     }
 
     override loop({ mouse }: LoopArgs): void {
