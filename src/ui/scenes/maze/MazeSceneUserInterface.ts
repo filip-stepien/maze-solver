@@ -87,7 +87,6 @@ export class MazeSceneUserInterface {
         this._resetButton.onChange = () => {
             if (this._sizeInputX.validate(true) && this._sizeInputY.validate(true)) {
                 this._onRestart();
-                this._startButton.disabled = false;
             }
         };
     }
@@ -150,5 +149,13 @@ export class MazeSceneUserInterface {
 
     public set onPathFindChange(handler: () => void) {
         this._onPathFindChange = handler;
+    }
+
+    public enableStartButton() {
+        this._startButton.disabled = false;
+    }
+
+    public disableStartButton() {
+        this._startButton.disabled = true;
     }
 }

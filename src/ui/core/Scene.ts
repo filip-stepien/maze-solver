@@ -70,7 +70,13 @@ export class Scene {
         this._animations = this._animations.filter(animation => !animation.doneRunning);
     }
 
-    public reset(renderer: Renderer) {
+    public clearAnimations() {
+        this._animations = [];
+    }
+
+    public reset() {
+        const renderer = Renderer.instance;
+
         this._objects.forEach(obj => obj.delete());
         this._objects = [];
         this._animations = [];

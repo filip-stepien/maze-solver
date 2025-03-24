@@ -2,7 +2,7 @@ import { Vec2d } from '../../../types';
 import { LoopArgs, Scene, StartArgs } from '../../core/Scene';
 import { MazeFacade } from '../../../maze/god';
 import { OrthographicCamera } from '../../core/OrthographicCamera';
-import { InstancedMesh, Object3D as ThreeObject, Vector3 } from 'three';
+import { InstancedMesh, PointLightHelper, Object3D as ThreeObject, Vector3 } from 'three';
 import { Random } from '../../../utils/Random';
 import { Button } from '../../controls/Button';
 import { NumberInput } from '../../controls/NumberInput';
@@ -38,6 +38,7 @@ export class MazeScene extends Scene {
     private _steps: MPFLabelChangeCallbackParams[] = [];
     private _start: Vec2d;
     private _finish: Vec2d;
+    private _lightIndicator: PointLight;
 
     private getBoxPositions(pos: Vec2d) {
         const toBoxPos = (dimension: number) =>
@@ -45,7 +46,7 @@ export class MazeScene extends Scene {
 
         return {
             active: new Vector3(toBoxPos(pos.x), 0, toBoxPos(pos.y)),
-            inactive: new Vector3(toBoxPos(pos.x), 1000, toBoxPos(pos.y)),
+            inactive: new Vector3(toBoxPos(pos.x), -1000, toBoxPos(pos.y)),
             up: new Vector3(toBoxPos(pos.x), 1, toBoxPos(pos.y))
         };
     }
@@ -57,11 +58,25 @@ export class MazeScene extends Scene {
         return new Vec2d([fromBoxPos(renderedBoxPos.x), fromBoxPos(renderedBoxPos.z)]);
     }
 
-    private setupUserInterface(renderer: Renderer) {
-        this._ui.onStart = () => this.visualizeAlgorithm();
-        this._ui.onRestart = () => this.reset(renderer);
-        this._ui.onGenerationChange = () => this.reset(renderer);
+    private setupUserInterface() {
+        this._ui.onRestart = () => {
+            this.reset();
+        };
+
+        this._ui.onGenerationChange = () => {
+            this.reset();
+        };
+
+        this._ui.onStart = () => {
+            this.clearAnimations();
+            this.visualizeAlgorithmCleanup();
+            this.setBoxesToInitialPosition(false);
+            this.visualizeAlgorithm();
+        };
+
         this._ui.onPathFindChange = () => {
+            this.clearAnimations();
+            this.visualizeAlgorithmCleanup();
             this.setBoxesToInitialPosition(false);
             this.generatePathAlgorithmSteps();
         };
@@ -217,10 +232,15 @@ export class MazeScene extends Scene {
         this.generatePathAlgorithmSteps();
     }
 
-    private visualizeAlgorithm() {
-        const lightIndicator = new PointLight(this, 0xff00ff, 20);
+    private visualizeAlgorithmCleanup() {
+        if (this._lightIndicator) this._lightIndicator.delete();
+    }
 
-        this._steps.reverse().reduce(
+    private visualizeAlgorithm() {
+        this._lightIndicator = new PointLight(this, 0xff00ff, 20);
+        const steps = [...this._steps].reverse();
+
+        steps.reduce(
             (next, { pos, labelChanged, node }) => {
                 return () => {
                     if (node.hasLabel('start') || node.hasLabel('finish')) {
@@ -237,8 +257,8 @@ export class MazeScene extends Scene {
                         label.emissive.threeObject.position.set(inactive.x, inactive.y, inactive.z)
                     );
 
-                    lightIndicator.threeObject.color.set(color);
-                    lightIndicator.threeObject.position.set(up.x, up.y, up.z);
+                    this._lightIndicator.threeObject.color.set(color);
+                    this._lightIndicator.threeObject.position.set(up.x, up.y, up.z);
                     emissive.threeObject.position.set(active.x, active.y, active.z);
 
                     group.setInstancePosition(boxIndex, active);
@@ -250,7 +270,7 @@ export class MazeScene extends Scene {
                 };
             },
             () => {
-                lightIndicator.delete();
+                this.visualizeAlgorithmCleanup();
             }
         )();
     }
@@ -286,7 +306,7 @@ export class MazeScene extends Scene {
             throw new Error('This scene needs an orthographic camera to work properly!');
 
         this.setupCameraAndLights(camera);
-        this.setupUserInterface(renderer);
+        this.setupUserInterface();
         this.createBoxInstanceGroups();
         this.spawnMaze();
         this.createStartFinishBoxes();
