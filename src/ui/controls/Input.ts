@@ -33,7 +33,7 @@ export class Input extends ControlObservable<HTMLInputElement | HTMLSelectElemen
         return null;
     }
 
-    protected eventReturnValue(eventTarget: HTMLInputElement): string {
+    protected eventReturnValue(eventTarget: HTMLInputElement): string | Promise<string> {
         return eventTarget.value;
     }
 
@@ -44,9 +44,9 @@ export class Input extends ControlObservable<HTMLInputElement | HTMLSelectElemen
     public override set onChange(handler: (value: string) => void) {
         const eventType = this.eventType();
         if (eventType) {
-            this.addEventListener(eventType, event => {
+            this.addEventListener(eventType, async event => {
                 const input = event.target as HTMLInputElement;
-                const eventReturnValue = this.eventReturnValue(input);
+                const eventReturnValue = await Promise.resolve(this.eventReturnValue(input));
                 handler(eventReturnValue);
             });
         }

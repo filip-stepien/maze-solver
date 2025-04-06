@@ -80,6 +80,10 @@ export class MazeScene extends Scene {
             this.setBoxesToInitialPosition(false);
             this.generatePathAlgorithmSteps();
         };
+
+        this._ui.onMazeLoad = () => {
+            this.reset();
+        };
     }
 
     private setupCameraAndLights(camera: OrthographicCamera) {
