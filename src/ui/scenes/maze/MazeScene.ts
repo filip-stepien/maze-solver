@@ -22,6 +22,7 @@ import { Mouse } from '../../core/Mouse';
 import { PrimsStrategy } from '../../../strategies/generation/PrimsStrategy';
 import { BlankMazeStrategy } from '../../../strategies/generation/BlankMazeStrategy';
 import { MazeSceneUserInterface } from './MazeSceneUserInterface';
+import dayjs from 'dayjs';
 
 type BoxNode = { pos: Vec2d; node: MazePathFinderNode; activeGroup: ModelGroup; index: number };
 type LabelGroup = MazePathFinderNodeLabel | 'default';
@@ -83,6 +84,28 @@ export class MazeScene extends Scene {
 
         this._ui.onMazeLoad = () => {
             this.reset();
+        };
+
+        this._ui.onSave = mazeSize => {
+            const maze: number[][] = [];
+
+            let row: number[] = [];
+            this._mazeFinder.forEachNode(({ node, pos, i }) => {
+                row.push(Number(node.isColliding()));
+
+                if (pos.x === mazeSize.x - 1) {
+                    maze.push(row);
+                    row = [];
+                }
+            });
+
+            const mazeStr = maze.map(row => row.join(',')).join('\n');
+            const blob = new Blob([mazeStr], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `maze_${dayjs().format('YYYY-MM-DD_HH-mm-ss')}.txt`;
+            link.click();
+            link.remove();
         };
     }
 

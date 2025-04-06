@@ -47,6 +47,7 @@ export class MazeSceneUserInterface {
     private _startButton = new Button('Start');
     private _generationStrategyDropDown = new DropDown();
     private _pathFindStrategyDropDown = new DropDown();
+    private _saveButton = new Button('Save');
     private _fileSelect = new FileSelect();
 
     // control handlers
@@ -55,12 +56,14 @@ export class MazeSceneUserInterface {
     private _onGenerationChange: (label: string) => void = function () {};
     private _onPathFindChange: (label: string) => void = function () {};
     private _onMazeLoad: () => void = function () {};
+    private _onSave: (mazeSize: Vec2d) => void = function () {};
 
     constructor() {
         this.initSizeInputs();
         this.initStartButton();
         this.initResetButton();
         this.initDropDowns();
+        this.initSaveButton();
         this.initFileSelect();
     }
 
@@ -170,6 +173,12 @@ export class MazeSceneUserInterface {
         };
     }
 
+    public initSaveButton() {
+        this._saveButton.onChange = () => {
+            this._onSave(this._mazeSize);
+        };
+    }
+
     public get initialGenerationStrategyName() {
         return Object.keys(this._GENERATION_STRATEGIES)?.at(0);
     }
@@ -212,6 +221,10 @@ export class MazeSceneUserInterface {
 
     public set onMazeLoad(handler: () => void) {
         this._onMazeLoad = handler;
+    }
+
+    public set onSave(handler: (mazeSize: Vec2d) => void) {
+        this._onSave = handler;
     }
 
     public enableStartButton() {

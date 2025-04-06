@@ -37,6 +37,7 @@
     "chalk": "^5.4.1",
     "command-line-args": "^6.0.1",
     "command-line-usage": "^7.0.3",
+    "dayjs": "^1.11.13",
     "three": "^0.174.0"
   }
 }
