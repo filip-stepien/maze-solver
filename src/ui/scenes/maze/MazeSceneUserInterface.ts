@@ -56,7 +56,7 @@ export class MazeSceneUserInterface {
     private _onGenerationChange: (label: string) => void = function () {};
     private _onPathFindChange: (label: string) => void = function () {};
     private _onMazeLoad: () => void = function () {};
-    private _onSave: (mazeSize: Vec2d) => void = function () {};
+    private _onSave: () => void = function () {};
 
     constructor() {
         this.initSizeInputs();
@@ -175,7 +175,7 @@ export class MazeSceneUserInterface {
 
     public initSaveButton() {
         this._saveButton.onChange = () => {
-            this._onSave(this._mazeSize);
+            this._onSave();
         };
     }
 
@@ -223,7 +223,7 @@ export class MazeSceneUserInterface {
         this._onMazeLoad = handler;
     }
 
-    public set onSave(handler: (mazeSize: Vec2d) => void) {
+    public set onSave(handler: () => void) {
         this._onSave = handler;
     }
 

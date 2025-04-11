@@ -16,13 +16,13 @@ import playBoxSpawnAnimation from './animations/playBoxSpawnAnimation';
 import playGroupFallAnimation from './animations/playGroupFallAnimation';
 import { ModelGroup } from '../../core/ModelGroup';
 import { MazePathFinderNode, MazePathFinderNodeLabel } from '../../../maze/MazePathFinderNode';
-import { AStarStrategy } from '../../../strategies/MazePathFindStrategy/AStarStrategy';
 import { EmissiveBox } from './models/EmissiveBoxGroup';
 import { Mouse } from '../../core/Mouse';
 import { PrimsStrategy } from '../../../strategies/generation/PrimsStrategy';
 import { BlankMazeStrategy } from '../../../strategies/generation/BlankMazeStrategy';
 import { MazeSceneUserInterface } from './MazeSceneUserInterface';
 import dayjs from 'dayjs';
+import { MazeNodePositionConverter } from './MazeNodePositionConverter';
 
 type BoxNode = { pos: Vec2d; node: MazePathFinderNode; activeGroup: ModelGroup; index: number };
 type LabelGroup = MazePathFinderNodeLabel | 'default';
@@ -31,6 +31,8 @@ type LabelBox = { label?: LabelGroup; group: ModelGroup; color: number; emissive
 export class MazeScene extends Scene {
     private _gap = 0.2;
     private _ui = new MazeSceneUserInterface();
+    private _positionConverter = new MazeNodePositionConverter(this._gap, LabelBoxGroup.boxSize);
+
     private _boxNodes: BoxNode[] = [];
     private _labelGroups = new Map<LabelGroup, LabelBox>();
 
@@ -41,22 +43,27 @@ export class MazeScene extends Scene {
     private _finish: Vec2d;
     private _lightIndicator: PointLight;
 
-    private getBoxPositions(pos: Vec2d) {
-        const toBoxPos = (dimension: number) =>
-            dimension * LabelBoxGroup.boxSize * 2 * (1 + this._gap);
+    private saveMaze() {
+        const maze: number[][] = [];
 
-        return {
-            active: new Vector3(toBoxPos(pos.x), 0, toBoxPos(pos.y)),
-            inactive: new Vector3(toBoxPos(pos.x), -1000, toBoxPos(pos.y)),
-            up: new Vector3(toBoxPos(pos.x), 1, toBoxPos(pos.y))
-        };
-    }
+        let row: number[] = [];
+        this._mazeFinder.forEachNode(({ node, pos, i }) => {
+            row.push(Number(node.isColliding()));
 
-    private getMazeNodePos(renderedBoxPos: Vector3): Vec2d {
-        const fromBoxPos = (value: number) =>
-            Math.round(value / (LabelBoxGroup.boxSize * 2 * (1 + this._gap)));
+            if (pos.x === this._ui.maze.size.x - 1) {
+                maze.push(row);
+                row = [];
+            }
+        });
 
-        return new Vec2d([fromBoxPos(renderedBoxPos.x), fromBoxPos(renderedBoxPos.z)]);
+        const mazeStr = maze.map(row => row.join(',')).join('\n');
+        const blob = new Blob([mazeStr], { type: 'text/plain' });
+        const link = document.createElement('a');
+
+        link.href = URL.createObjectURL(blob);
+        link.download = `maze_${dayjs().format('YYYY-MM-DD_HH-mm-ss')}.txt`;
+        link.click();
+        link.remove();
     }
 
     private setupUserInterface() {
@@ -86,26 +93,8 @@ export class MazeScene extends Scene {
             this.reset();
         };
 
-        this._ui.onSave = mazeSize => {
-            const maze: number[][] = [];
-
-            let row: number[] = [];
-            this._mazeFinder.forEachNode(({ node, pos, i }) => {
-                row.push(Number(node.isColliding()));
-
-                if (pos.x === mazeSize.x - 1) {
-                    maze.push(row);
-                    row = [];
-                }
-            });
-
-            const mazeStr = maze.map(row => row.join(',')).join('\n');
-            const blob = new Blob([mazeStr], { type: 'text/plain' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `maze_${dayjs().format('YYYY-MM-DD_HH-mm-ss')}.txt`;
-            link.click();
-            link.remove();
+        this._ui.onSave = () => {
+            this.saveMaze();
         };
     }
 
@@ -186,11 +175,11 @@ export class MazeScene extends Scene {
             return;
         }
 
-        const startVec = this.getBoxPositions(this._start).active;
-        const endVec = this.getBoxPositions(this._finish).active;
+        const startVec = this._positionConverter.nodeToBoxPosition(this._start).path;
+        const finishVec = this._positionConverter.nodeToBoxPosition(this._finish).path;
 
         new GlowingBox(this, startVec, 0xffffff);
-        new GlowingBox(this, endVec, 0xffffff);
+        new GlowingBox(this, finishVec, 0xffffff);
     }
 
     private generatePathAlgorithmSteps() {
@@ -223,15 +212,15 @@ export class MazeScene extends Scene {
 
         this._boxNodes = [];
         this._mazeFinder.forEachNode(({ pos, node, i }) => {
-            const { active, inactive } = this.getBoxPositions(pos);
+            const { path, wall } = this._positionConverter.nodeToBoxPosition(pos);
             const defaultBoxGroup = this._labelGroups.get('default').group;
 
             this._labelGroups.forEach(label => {
-                label.group.setInstancePosition(i, inactive);
-                label.emissive.threeObject.position.set(inactive.x, inactive.y, inactive.z);
+                label.group.setInstancePosition(i, wall);
+                label.emissive.threeObject.position.set(wall.x, wall.y, wall.z);
             });
 
-            defaultBoxGroup.setInstancePosition(i, active);
+            defaultBoxGroup.setInstancePosition(i, path);
 
             this._boxNodes.push({ pos, node, activeGroup: defaultBoxGroup, index: i });
 
@@ -242,7 +231,7 @@ export class MazeScene extends Scene {
                         Random.randomInt(100, 1000)
                     );
                 } else {
-                    defaultBoxGroup.setInstancePosition(i, inactive);
+                    defaultBoxGroup.setInstancePosition(i, wall);
                 }
             }
         });
@@ -274,22 +263,28 @@ export class MazeScene extends Scene {
                         return next();
                     }
 
-                    const { active, inactive, up } = this.getBoxPositions(pos);
+                    const { path, wall, abovePath } =
+                        this._positionConverter.nodeToBoxPosition(pos);
+
                     const { group, color, emissive } = this._labelGroups.get(labelChanged);
                     const currentNode = this._boxNodes.find(node => node.pos.equals(pos));
                     const oldGroup = currentNode.activeGroup;
                     const boxIndex = currentNode.index;
 
                     this._labelGroups.forEach(label =>
-                        label.emissive.threeObject.position.set(inactive.x, inactive.y, inactive.z)
+                        label.emissive.threeObject.position.set(wall.x, wall.y, wall.z)
                     );
 
                     this._lightIndicator.threeObject.color.set(color);
-                    this._lightIndicator.threeObject.position.set(up.x, up.y, up.z);
-                    emissive.threeObject.position.set(active.x, active.y, active.z);
+                    this._lightIndicator.threeObject.position.set(
+                        abovePath.x,
+                        abovePath.y,
+                        abovePath.z
+                    );
+                    emissive.threeObject.position.set(path.x, path.y, path.z);
 
-                    group.setInstancePosition(boxIndex, active);
-                    oldGroup.setInstancePosition(boxIndex, inactive);
+                    group.setInstancePosition(boxIndex, path);
+                    oldGroup.setInstancePosition(boxIndex, wall);
 
                     this._boxNodes[boxIndex] = { node, activeGroup: group, pos, index: boxIndex };
 
@@ -317,7 +312,7 @@ export class MazeScene extends Scene {
                 .find(group => group.threeObject == hoverObject);
 
             const boxPos = group.getInstancePosition(instanceIndex);
-            const nodePos = this.getMazeNodePos(boxPos);
+            const nodePos = this._positionConverter.boxToNodePosition(boxPos);
             const boxNode = this._boxNodes.find(boxNode => boxNode.pos.equals(nodePos));
 
             if (boxNode.pos !== this._start && boxNode.pos !== this._finish)
