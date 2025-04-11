@@ -23,6 +23,7 @@ import { BlankMazeStrategy } from '../../../strategies/generation/BlankMazeStrat
 import { MazeSceneUserInterface } from './MazeSceneUserInterface';
 import dayjs from 'dayjs';
 import { MazeNodePositionConverter } from './MazeNodePositionConverter';
+import { MazeSerializer } from './MazeSerializer';
 
 type BoxNode = { pos: Vec2d; node: MazePathFinderNode; activeGroup: ModelGroup; index: number };
 type LabelGroup = MazePathFinderNodeLabel | 'default';
@@ -42,29 +43,6 @@ export class MazeScene extends Scene {
     private _start: Vec2d;
     private _finish: Vec2d;
     private _lightIndicator: PointLight;
-
-    private saveMaze() {
-        const maze: number[][] = [];
-
-        let row: number[] = [];
-        this._mazeFinder.forEachNode(({ node, pos, i }) => {
-            row.push(Number(node.isColliding()));
-
-            if (pos.x === this._ui.maze.size.x - 1) {
-                maze.push(row);
-                row = [];
-            }
-        });
-
-        const mazeStr = maze.map(row => row.join(',')).join('\n');
-        const blob = new Blob([mazeStr], { type: 'text/plain' });
-        const link = document.createElement('a');
-
-        link.href = URL.createObjectURL(blob);
-        link.download = `maze_${dayjs().format('YYYY-MM-DD_HH-mm-ss')}.txt`;
-        link.click();
-        link.remove();
-    }
 
     private setupUserInterface() {
         this._ui.onRestart = () => {
@@ -94,7 +72,7 @@ export class MazeScene extends Scene {
         };
 
         this._ui.onSave = () => {
-            this.saveMaze();
+            MazeSerializer.save(this._mazeFinder, this._ui.maze.size);
         };
     }
 

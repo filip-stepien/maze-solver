@@ -12,6 +12,7 @@ import { Button } from '../../controls/Button';
 import { DropDown } from '../../controls/DropDown';
 import { FileSelect } from '../../controls/FileSelect';
 import { NumberInput } from '../../controls/NumberInput';
+import { MazeSerializer } from './MazeSerializer';
 
 type GenerationStrategyMap = {
     [label: string]: GenerationStrategy;
@@ -121,49 +122,8 @@ export class MazeSceneUserInterface {
 
     private initFileSelect() {
         this._fileSelect.onChange = fileContent => {
-            const mazeStructureRegex = /^(0|1|,|(\r?\n))*$/;
-
-            const hasCorrectCharacters = mazeStructureRegex.test(fileContent);
-            if (!hasCorrectCharacters) {
-                console.warn(
-                    'Failed to parse the maze from the file.' +
-                        'The file has invalid characters. ' +
-                        'Valid characters are: `0`, `1`, `s`, `e`, `,` and newline characters.'
-                );
-                return;
-            }
-
-            const maze = fileContent
-                .split(/\r?\n/)
-                .map(row => row.split(',').map(wall => Boolean(JSON.parse(wall))));
-
-            const invalidRowIdx = maze.findIndex(row => row.length !== maze[0].length);
-            if (invalidRowIdx !== -1) {
-                console.warn(
-                    'Failed to parse the maze from the file. ' +
-                        'Row sizes are inconsistent. ' +
-                        `Row at line ${invalidRowIdx + 1} has ${
-                            maze[invalidRowIdx].length
-                        } elements, ` +
-                        `while the first row contains ${maze[0].length} elements.`
-                );
-                return;
-            }
-
-            if (maze.length < 10 || maze[0].length < 10) {
-                console.warn(
-                    'Failed to parse the maze from the file. The maze must be at least 10x10.'
-                );
-                return;
-            }
-
-            const hasAtLeastTwoPathNodes = maze.flat().filter(node => !node).length;
-            if (!hasAtLeastTwoPathNodes) {
-                console.warn(
-                    'Failed to parse the maze from the file. The maze must have at least 2 path nodes.'
-                );
-                return;
-            }
+            const maze = MazeSerializer.load(fileContent);
+            if (!maze) return;
 
             this._mazeSize = new Vec2d([maze.length, maze[0].length]);
             this._sizeInputX.value = maze.length;
