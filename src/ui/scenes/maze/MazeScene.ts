@@ -25,6 +25,7 @@ import dayjs from 'dayjs';
 import { MazeNodePositionConverter } from './MazeNodePositionConverter';
 import { MazeSerializer } from './MazeSerializer';
 import { Plane } from './models/Plane';
+import { IndicatorBox } from './models/IndicatorBox';
 
 type BoxNode = { pos: Vec2d; node: MazePathFinderNode; activeGroup: ModelGroup; index: number };
 type LabelGroup = MazePathFinderNodeLabel | 'default';
@@ -45,6 +46,7 @@ export class MazeScene extends Scene {
     private _start: Vec2d;
     private _finish: Vec2d;
     private _lightIndicator: PointLight;
+    private _cursorIndicator = new IndicatorBox(this, 0x00ff00, 0.3);
 
     private setupUserInterface() {
         this._ui.onRestart = this._ui.onGenerationChange = this._ui.onMazeLoad = () => this.reset();
@@ -139,7 +141,11 @@ export class MazeScene extends Scene {
         const totalWidth = x + (x - 1) * this._gap;
         const totalHeight = y + (y - 1) * this._gap;
 
-        plane.threeObject.position.set(totalWidth / 2, 1.001, totalHeight / 2);
+        plane.threeObject.position.set(
+            totalWidth / 2 - this._boxSize,
+            1,
+            totalHeight / 2 - this._boxSize
+        );
         plane.threeObject.scale.set(totalWidth, 1, totalHeight);
     }
 
@@ -286,6 +292,8 @@ export class MazeScene extends Scene {
             return (obj as Mesh)?.isMesh !== undefined;
         };
 
+        this._cursorIndicator.threeObject.position.set(0, -1000, 0);
+
         const up = new Vector3(0, 1, 0);
         const mazeSize = this._ui.maze.size;
 
@@ -311,17 +319,21 @@ export class MazeScene extends Scene {
             }
         }
 
-        if (planeIntersection && mouse.buttonDown === 'right') {
-            const clickedPoint = planeIntersection.point;
-            const boxPos = this._positionConverter.pointToBoxPosition(clickedPoint, mazeSize);
-            const nodePos = this._positionConverter.pointToNodePosition(clickedPoint, mazeSize);
+        if (planeIntersection) {
+            const point = planeIntersection.point;
+            const nodePos = this._positionConverter.pointToNodePosition(point, mazeSize);
+            const boxPos = this._positionConverter.pointToBoxPosition(point, mazeSize);
 
-            if (
-                nodePos &&
-                boxPos &&
-                !nodePos.equals(this._start) &&
-                !nodePos.equals(this._finish)
-            ) {
+            if (!boxPos || !nodePos || nodePos.equals(this._start) || nodePos.equals(this._finish))
+                return;
+
+            this._cursorIndicator.threeObject.position.set(
+                boxPos.path.x,
+                boxPos.path.y,
+                boxPos.path.z
+            );
+
+            if (mouse.buttonDown === 'right') {
                 const box = this._boxNodes.find(node => node.pos.equals(nodePos));
                 box.activeGroup.setInstancePosition(box.index, boxPos.path);
                 box.node.makeNotColliding();

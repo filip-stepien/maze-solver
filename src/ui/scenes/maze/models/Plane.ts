@@ -9,15 +9,18 @@ export class Plane extends Model3D {
     constructor(scene: Scene, color?: number, opacity?: number) {
         super(scene);
         this._color = color ?? 0;
-        this._opacity = opacity ?? 1;
+        this._opacity = opacity ?? 0;
     }
 
     protected materialFactory(): Material {
-        return new MeshStandardMaterial({
-            transparent: true,
-            opacity: this._color ? this._opacity : 0,
-            color: this._color
+        const mesh = new MeshStandardMaterial({
+            opacity: this._opacity,
+            color: this._color,
+            depthWrite: false
         });
+
+        mesh.visible = this._opacity > 0;
+        return mesh;
     }
 
     protected geometryFactory(): BufferGeometry {
