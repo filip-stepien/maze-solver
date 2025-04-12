@@ -2,7 +2,7 @@ import { Vec2d } from '../../../types';
 import { LoopArgs, Scene, StartArgs } from '../../core/Scene';
 import { MazeFacade } from '../../../maze/god';
 import { OrthographicCamera } from '../../core/OrthographicCamera';
-import { InstancedMesh, PointLightHelper, Object3D as ThreeObject, Vector3 } from 'three';
+import { InstancedMesh, Mesh, PointLightHelper, Object3D as ThreeObject, Vector3 } from 'three';
 import { Random } from '../../../utils/Random';
 import { Button } from '../../controls/Button';
 import { NumberInput } from '../../controls/NumberInput';
@@ -24,6 +24,7 @@ import { MazeSceneUserInterface } from './MazeSceneUserInterface';
 import dayjs from 'dayjs';
 import { MazeNodePositionConverter } from './MazeNodePositionConverter';
 import { MazeSerializer } from './MazeSerializer';
+import { Plane } from './models/Plane';
 
 type BoxNode = { pos: Vec2d; node: MazePathFinderNode; activeGroup: ModelGroup; index: number };
 type LabelGroup = MazePathFinderNodeLabel | 'default';
@@ -31,8 +32,9 @@ type LabelBox = { label?: LabelGroup; group: ModelGroup; color: number; emissive
 
 export class MazeScene extends Scene {
     private _gap = 0.2;
+    private _boxSize = LabelBoxGroup.boxSize;
     private _ui = new MazeSceneUserInterface();
-    private _positionConverter = new MazeNodePositionConverter(this._gap, LabelBoxGroup.boxSize);
+    private _positionConverter = new MazeNodePositionConverter(this._gap, this._boxSize);
 
     private _boxNodes: BoxNode[] = [];
     private _labelGroups = new Map<LabelGroup, LabelBox>();
@@ -68,7 +70,7 @@ export class MazeScene extends Scene {
 
     private setupCameraAndLights(camera: OrthographicCamera) {
         const camLookAt = (dimension: number) =>
-            ((dimension - 1) * (LabelBoxGroup.boxSize + this._gap)) / 2 + dimension / 4.5;
+            ((dimension - 1) * (this._boxSize + this._gap)) / 2 + dimension / 4.5;
 
         const mazeDiagonal = this._ui.maze.diagonal;
         const camPos = mazeDiagonal * 4;
@@ -129,6 +131,16 @@ export class MazeScene extends Scene {
         labels.forEach(({ label, color, group, emissive }) => {
             this._labelGroups.set(label, { color, group, emissive });
         });
+    }
+
+    private createHitboxPlane() {
+        const { x, y } = this._ui.maze.size;
+        const plane = new Plane(this);
+        const totalWidth = x + (x - 1) * this._gap;
+        const totalHeight = y + (y - 1) * this._gap;
+
+        plane.threeObject.position.set(totalWidth / 2, 1.001, totalHeight / 2);
+        plane.threeObject.scale.set(totalWidth, 1, totalHeight);
     }
 
     private generateRandomStartFinishPoints() {
@@ -267,29 +279,54 @@ export class MazeScene extends Scene {
 
     private handleMouse(mouse: Mouse) {
         const isInstancedMesh = (obj: ThreeObject): obj is InstancedMesh => {
-            return (obj as InstancedMesh).isInstancedMesh !== undefined;
+            return (obj as InstancedMesh)?.isInstancedMesh !== undefined;
         };
 
-        const intersection = mouse.intersects[0];
-        const hoverObject = intersection?.object;
-        const instanceIndex = intersection?.instanceId;
-        const up = new Vector3(0, 1, 0);
-        const topWall = intersection?.normal.equals(up);
+        const isHitboxPlane = (obj: ThreeObject): obj is Mesh => {
+            return (obj as Mesh)?.isMesh !== undefined;
+        };
 
-        if (hoverObject && topWall && isInstancedMesh(hoverObject) && mouse.buttonDown === 'left') {
+        const up = new Vector3(0, 1, 0);
+        const mazeSize = this._ui.maze.size;
+
+        const planeIntersection = mouse.intersects.find(i => isHitboxPlane(i.object));
+        const boxIntersection = mouse.intersects.find(i => isInstancedMesh(i.object));
+
+        if (boxIntersection && boxIntersection.normal.equals(up) && mouse.buttonDown === 'left') {
+            const hoverObject = boxIntersection.object;
+            const instanceIndex = boxIntersection.instanceId;
             const group = Array.from(this._labelGroups)
                 .map(group => group[1].group)
                 .find(group => group.threeObject == hoverObject);
 
             const boxPos = group.getInstancePosition(instanceIndex);
             const nodePos = this._positionConverter.boxToNodePosition(boxPos);
-            const boxNode = this._boxNodes.find(boxNode => boxNode.pos.equals(nodePos));
+            const box = this._boxNodes.find(boxNode => boxNode.pos.equals(nodePos));
 
-            if (boxNode.pos !== this._start && boxNode.pos !== this._finish)
-                boxNode.node.makeColliding();
+            if (!box.pos.equals(this._start) && !box.pos.equals(this._finish)) {
+                const newPos = this._positionConverter.boxToBoxPosition(boxPos, 'wall');
+                group.setInstancePosition(instanceIndex, newPos);
+                box.node.makeColliding();
+                this.generatePathAlgorithmSteps();
+            }
+        }
 
-            this.generatePathAlgorithmSteps();
-            playGroupFallAnimation(this, group, instanceIndex);
+        if (planeIntersection && mouse.buttonDown === 'right') {
+            const clickedPoint = planeIntersection.point;
+            const boxPos = this._positionConverter.pointToBoxPosition(clickedPoint, mazeSize);
+            const nodePos = this._positionConverter.pointToNodePosition(clickedPoint, mazeSize);
+
+            if (
+                nodePos &&
+                boxPos &&
+                !nodePos.equals(this._start) &&
+                !nodePos.equals(this._finish)
+            ) {
+                const box = this._boxNodes.find(node => node.pos.equals(nodePos));
+                box.activeGroup.setInstancePosition(box.index, boxPos.path);
+                box.node.makeNotColliding();
+                this.generatePathAlgorithmSteps();
+            }
         }
     }
 
@@ -300,6 +337,7 @@ export class MazeScene extends Scene {
         this.setupCameraAndLights(camera);
         this.setupUserInterface();
         this.createBoxInstanceGroups();
+        this.createHitboxPlane();
         this.spawnMaze();
         this.createStartFinishBoxes();
     }
