@@ -45,13 +45,7 @@ export class MazeScene extends Scene {
     private _lightIndicator: PointLight;
 
     private setupUserInterface() {
-        this._ui.onRestart = () => {
-            this.reset();
-        };
-
-        this._ui.onGenerationChange = () => {
-            this.reset();
-        };
+        this._ui.onRestart = this._ui.onGenerationChange = this._ui.onMazeLoad = () => this.reset();
 
         this._ui.onStart = () => {
             this.clearAnimations();
@@ -65,10 +59,6 @@ export class MazeScene extends Scene {
             this.visualizeAlgorithmCleanup();
             this.setBoxesToInitialPosition(false);
             this.generatePathAlgorithmSteps();
-        };
-
-        this._ui.onMazeLoad = () => {
-            this.reset();
         };
 
         this._ui.onSave = () => {
@@ -283,8 +273,10 @@ export class MazeScene extends Scene {
         const intersection = mouse.intersects[0];
         const hoverObject = intersection?.object;
         const instanceIndex = intersection?.instanceId;
+        const up = new Vector3(0, 1, 0);
+        const topWall = intersection?.normal.equals(up);
 
-        if (hoverObject && isInstancedMesh(hoverObject) && mouse.buttonDown === 'left') {
+        if (hoverObject && topWall && isInstancedMesh(hoverObject) && mouse.buttonDown === 'left') {
             const group = Array.from(this._labelGroups)
                 .map(group => group[1].group)
                 .find(group => group.threeObject == hoverObject);
