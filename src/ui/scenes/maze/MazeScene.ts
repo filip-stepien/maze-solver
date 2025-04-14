@@ -45,8 +45,12 @@ export class MazeScene extends Scene {
     private _steps: MPFLabelChangeCallbackParams[] = [];
     private _start: Vec2d;
     private _finish: Vec2d;
+
     private _lightIndicator: PointLight;
     private _cursorIndicator = new IndicatorBox(this, 0x00ff00, 0.3);
+    private _startIndicator: GlowingBox;
+    private _endIndicator: GlowingBox;
+    private _startIndicatorPlacedLast = false;
 
     private setupUserInterface() {
         this._ui.onRestart = this._ui.onGenerationChange = this._ui.onMazeLoad = () => this.reset();
@@ -164,8 +168,8 @@ export class MazeScene extends Scene {
         const startVec = this._positionConverter.nodeToBoxPosition(this._start).path;
         const finishVec = this._positionConverter.nodeToBoxPosition(this._finish).path;
 
-        new GlowingBox(this, startVec, 0xffffff);
-        new GlowingBox(this, finishVec, 0xffffff);
+        this._startIndicator = new GlowingBox(this, startVec, 0xffffff);
+        this._endIndicator = new GlowingBox(this, finishVec, 0xffffff);
     }
 
     private generatePathAlgorithmSteps() {
@@ -300,7 +304,7 @@ export class MazeScene extends Scene {
         const planeIntersection = mouse.intersects.find(i => isHitboxPlane(i.object));
         const boxIntersection = mouse.intersects.find(i => isInstancedMesh(i.object));
 
-        if (boxIntersection && boxIntersection.normal.equals(up) && mouse.buttonDown === 'left') {
+        if (boxIntersection && boxIntersection.normal.equals(up) && mouse.buttonDown === 'right') {
             const hoverObject = boxIntersection.object;
             const instanceIndex = boxIntersection.instanceId;
             const group = Array.from(this._labelGroups)
@@ -333,10 +337,22 @@ export class MazeScene extends Scene {
                 boxPos.path.z
             );
 
-            if (mouse.buttonDown === 'right') {
+            if (mouse.buttonDown === 'left') {
                 const box = this._boxNodes.find(node => node.pos.equals(nodePos));
                 box.activeGroup.setInstancePosition(box.index, boxPos.path);
                 box.node.makeNotColliding();
+                this.generatePathAlgorithmSteps();
+            }
+
+            if (mouse.buttonDown === 'left' && mouse.buttonModifiers.shift) {
+                this._startIndicator.position = boxPos.path;
+                this._start = nodePos;
+                this.generatePathAlgorithmSteps();
+            }
+
+            if (mouse.buttonDown === 'left' && mouse.buttonModifiers.ctrl) {
+                this._endIndicator.position = boxPos.path;
+                this._finish = nodePos;
                 this.generatePathAlgorithmSteps();
             }
         }

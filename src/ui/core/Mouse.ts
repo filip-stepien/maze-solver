@@ -3,12 +3,19 @@ import { Camera, Intersection, Object3D, Object3DEventMap, Raycaster, Scene, Vec
 export type MouseIntersection = Intersection<Object3D<Object3DEventMap>>;
 export type MouseButton = 'left' | 'right' | 'middle';
 
+export type MouseButtonModifiers = {
+    alt: boolean;
+    ctrl: boolean;
+    shift: boolean;
+};
+
 export type MouseKeyCodeMap = {
     [keyCode: number]: MouseButton;
 };
 
 export type MouseOnClickHandler = (args: {
     button: MouseButton;
+    modifiers: MouseButtonModifiers;
     intersects: MouseIntersection[];
 }) => void;
 
@@ -18,6 +25,12 @@ export class Mouse {
     private _pointer = new Vector2(Number.MIN_SAFE_INTEGER, Number.MIN_SAFE_INTEGER);
     private _intersects: MouseIntersection[] = [];
     private _buttonDown: MouseButton | null = null;
+    private _buttonModifiers: MouseButtonModifiers = {
+        alt: false,
+        shift: false,
+        ctrl: false
+    };
+
     private _mouseKeyCodeMap: MouseKeyCodeMap = {
         0: 'left',
         1: 'middle',
@@ -47,9 +60,17 @@ export class Mouse {
         return this._buttonDown;
     }
 
+    public get buttonModifiers(): MouseButtonModifiers {
+        return this._buttonModifiers;
+    }
+
     public set onClick(handler: MouseOnClickHandler) {
         window.addEventListener('click', (event: PointerEvent) =>
-            handler({ button: this._mouseKeyCodeMap[event.button], intersects: this._intersects })
+            handler({
+                button: this._mouseKeyCodeMap[event.button],
+                modifiers: { alt: event.altKey, shift: event.shiftKey, ctrl: event.ctrlKey },
+                intersects: this._intersects
+            })
         );
     }
 
@@ -60,10 +81,16 @@ export class Mouse {
 
     private handlePointerUp() {
         this._buttonDown = null;
+        this._buttonModifiers.alt = false;
+        this._buttonModifiers.ctrl = false;
+        this._buttonModifiers.shift = false;
     }
 
     private handlePointerDown(event: PointerEvent) {
         this._buttonDown = this._mouseKeyCodeMap[event.button];
+        this._buttonModifiers.alt = event.altKey;
+        this._buttonModifiers.ctrl = event.ctrlKey;
+        this._buttonModifiers.shift = event.shiftKey;
     }
 
     public loop(scene: Scene, camera: Camera) {
