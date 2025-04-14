@@ -1,12 +1,4 @@
-import {
-    Material,
-    BufferGeometry,
-    MeshStandardMaterial,
-    PlaneGeometry,
-    BoxGeometry,
-    MeshBasicMaterial,
-    ShaderMaterial
-} from 'three';
+import { Material, BufferGeometry, BoxGeometry, MeshBasicMaterial } from 'three';
 import { Scene } from '../../../core/Scene';
 import { Model3D } from '../../../core/Model3D';
 
@@ -22,9 +14,9 @@ export class IndicatorBox extends Model3D {
 
     protected materialFactory(): Material {
         return new MeshBasicMaterial({
+            transparent: true,
             opacity: this._opacity,
             color: this._color,
-            wireframe: true,
             depthWrite: false
         });
     }
