@@ -3,7 +3,6 @@ import { MazeNode } from './maze/MazeNode';
 import { Vec2d } from './types';
 import MazePathFinder from './maze/MazePathFinder';
 import { MazePathFinderNode } from './maze/MazePathFinderNode';
-import { PrimsStrategy } from './strategies/PrimsStrategy';
 
 import chalk from 'chalk';
 import { Sleep } from './utils/Sleep';
@@ -13,6 +12,7 @@ import commandLineUsage from 'command-line-usage';
 import { availableStrategies } from './config/strategies';
 import { MazePathFindStrategy } from './strategies/MazePathFindStrategy/MazePathFindStrategy';
 import { MazeFacade } from './maze/god';
+import { PrimsStrategy } from './strategies/generation/PrimsStrategy';
 
 const setupMaze = () => {
     console.debug('initializer: ', MazeNode.initializer);
