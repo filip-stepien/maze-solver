@@ -44,7 +44,8 @@ export class MazeSceneUserInterface {
     // ui controls
     private _sizeInputX = new NumberInput();
     private _sizeInputY = new NumberInput();
-    private _resetButton = new Button('Reset');
+    private _resetLayoutButton = new Button('Reset layout');
+    private _resetAlgorithmButton = new Button('Reset algorithm');
     private _startButton = new Button('Start');
     private _generationStrategyDropDown = new DropDown();
     private _pathFindStrategyDropDown = new DropDown();
@@ -53,7 +54,8 @@ export class MazeSceneUserInterface {
 
     // control handlers
     private _onStart: () => void = function () {};
-    private _onRestart: () => void = function () {};
+    private _onLayoutRestart: () => void = function () {};
+    private _onAlgorithmRestart: () => void = function () {};
     private _onGenerationChange: (label: string) => void = function () {};
     private _onPathFindChange: (label: string) => void = function () {};
     private _onMazeLoad: () => void = function () {};
@@ -62,7 +64,8 @@ export class MazeSceneUserInterface {
     constructor() {
         this.initSizeInputs();
         this.initStartButton();
-        this.initResetButton();
+        this.initLayoutResetButton();
+        this.initAlgorithmResetButton();
         this.initDropDowns();
         this.initSaveButton();
         this.initFileSelect();
@@ -92,11 +95,17 @@ export class MazeSceneUserInterface {
         };
     }
 
-    private initResetButton() {
-        this._resetButton.onChange = () => {
+    private initLayoutResetButton() {
+        this._resetLayoutButton.onChange = () => {
             if (this._sizeInputX.validate(true) && this._sizeInputY.validate(true)) {
-                this._onRestart();
+                this._onLayoutRestart();
             }
+        };
+    }
+
+    private initAlgorithmResetButton() {
+        this._resetAlgorithmButton.onChange = () => {
+            this._onAlgorithmRestart();
         };
     }
 
@@ -167,8 +176,12 @@ export class MazeSceneUserInterface {
         this._onStart = handler;
     }
 
-    public set onRestart(handler: () => void) {
-        this._onRestart = handler;
+    public set onAlgorithmRestart(handler: () => void) {
+        this._onAlgorithmRestart = handler;
+    }
+
+    public set onLayoutRestart(handler: () => void) {
+        this._onLayoutRestart = handler;
     }
 
     public set onGenerationChange(handler: () => void) {

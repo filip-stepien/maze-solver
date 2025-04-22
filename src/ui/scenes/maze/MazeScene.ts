@@ -48,25 +48,34 @@ export class MazeScene extends Scene {
     private setupUserInterface() {
         this._cursorIndicator = new IndicatorBox(this, 0x00ff00, 0.3);
 
-        this._ui.onRestart = this._ui.onGenerationChange = this._ui.onMazeLoad = () => this.reset();
+        this._ui.onLayoutRestart =
+            this._ui.onGenerationChange =
+            this._ui.onMazeLoad =
+                () => this.reset();
+
+        this._ui.onAlgorithmRestart = () => {
+            this.clearAlgorithm();
+        };
 
         this._ui.onStart = () => {
-            this.clearAnimations();
-            this.visualizeAlgorithmCleanup();
-            this.setBoxesToInitialPosition(false);
+            this.clearAlgorithm();
             this.visualizeAlgorithm();
         };
 
         this._ui.onPathFindChange = () => {
-            this.clearAnimations();
-            this.visualizeAlgorithmCleanup();
-            this.setBoxesToInitialPosition(false);
+            this.clearAlgorithm();
             this.generatePathAlgorithmSteps();
         };
 
         this._ui.onSave = () => {
             MazeSerializer.save(this._mazeFinder, this._ui.maze.size);
         };
+    }
+
+    private clearAlgorithm() {
+        this.clearAnimations();
+        this.clearIndicators();
+        this.setBoxesToInitialPosition(false);
     }
 
     private setupCameraAndLights(camera: OrthographicCamera) {
@@ -233,7 +242,7 @@ export class MazeScene extends Scene {
         this.generatePathAlgorithmSteps();
     }
 
-    private visualizeAlgorithmCleanup() {
+    private clearIndicators() {
         if (this._lightIndicator) this._lightIndicator.delete();
         if (this._cursorIndicator) this._cursorIndicator.delete();
     }
@@ -278,7 +287,7 @@ export class MazeScene extends Scene {
                 };
             },
             () => {
-                this.visualizeAlgorithmCleanup();
+                this.clearIndicators();
             }
         )();
     }
