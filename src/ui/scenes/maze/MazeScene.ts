@@ -20,6 +20,7 @@ import { MazeNodePositionConverter } from './MazeNodePositionConverter';
 import { MazeSerializer } from './MazeSerializer';
 import { Plane } from './models/Plane';
 import { IndicatorBox } from './models/IndicatorBox';
+import { MazeStatLabel, MazeStats } from './MazeStats';
 
 type BoxNode = { pos: Vec2d; node: MazePathFinderNode; activeGroup: ModelGroup; index: number };
 type LabelGroup = MazePathFinderNodeLabel | 'default';
@@ -46,11 +47,15 @@ export class MazeScene extends Scene {
     private _finishIndicator: GlowingBox;
 
     private _simulationPlaying = false;
+    private _simulationStats = new MazeStats();
 
     private setupUserInterface() {
         this._cursorIndicator = new IndicatorBox(this, 0x00ff00, 0.3);
 
-        this._ui.onLayoutRestart = this._ui.onGenerationChange = () => this.reset();
+        this._ui.onLayoutRestart = this._ui.onGenerationChange = () => {
+            this.reset();
+            this.clearStats();
+        };
 
         this._ui.onMazeLoad = (start, finish) => {
             this.reset();
@@ -62,21 +67,25 @@ export class MazeScene extends Scene {
             this._finishIndicator.position = this._positionConverter.nodeToBoxPosition(finish).path;
 
             this.generatePathAlgorithmSteps();
+            this.clearStats();
         };
 
         this._ui.onAlgorithmRestart = () => {
             this.clearAlgorithm();
+            this.clearStats();
             this._simulationPlaying = false;
         };
 
         this._ui.onStart = () => {
             this.clearAlgorithm();
             this.visualizeAlgorithm();
+            this.clearStats();
             this._simulationPlaying = true;
         };
 
         this._ui.onPathFindChange = () => {
             this.clearAlgorithm();
+            this.clearStats();
             this.generatePathAlgorithmSteps();
         };
 
@@ -89,6 +98,11 @@ export class MazeScene extends Scene {
         this.clearAnimations();
         this.clearIndicators();
         this.setBoxesToInitialPosition(false);
+    }
+
+    private clearStats() {
+        this._simulationStats.reset();
+        this._ui.setStats(this._simulationStats.get());
     }
 
     private setupCameraAndLights(camera: OrthographicCamera) {
@@ -270,6 +284,9 @@ export class MazeScene extends Scene {
                     if (node.hasLabel('start') || node.hasLabel('finish')) {
                         return next();
                     }
+
+                    this._simulationStats.increment(labelChanged as MazeStatLabel);
+                    this._ui.setStats(this._simulationStats.get());
 
                     const { path, wall, abovePath } =
                         this._positionConverter.nodeToBoxPosition(pos);

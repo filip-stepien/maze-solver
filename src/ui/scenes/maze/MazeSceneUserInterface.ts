@@ -17,6 +17,7 @@ import { MazeSerializer } from './MazeSerializer';
 import { Text } from '../../controls/Text';
 import { Control } from '../../controls/Control';
 import { View } from '../../controls/View';
+import { stat } from 'fs';
 
 type GenerationStrategyMap = {
     [label: string]: GenerationStrategy;
@@ -57,6 +58,11 @@ export class MazeSceneUserInterface {
     private _fileSelect = new FileSelect();
     private _helpButton = new Button('Controls Help');
 
+    private _forsakenCount = new Text('0');
+    private _queuedCount = new Text('0');
+    private _candidateCount = new Text('0');
+    private _selectedCount = new Text('0');
+
     // control handlers
     private _onStart: () => void = function () {};
     private _onLayoutRestart: () => void = function () {};
@@ -75,7 +81,8 @@ export class MazeSceneUserInterface {
         this.initSaveButton();
         this.initFileSelect();
         this.initHelpButton();
-        this.initLayout();
+        this.initMenuLayout();
+        this.initStatsLayout();
     }
 
     private initHelpButton() {
@@ -91,7 +98,7 @@ export class MazeSceneUserInterface {
         };
     }
 
-    private initLayout() {
+    private initMenuLayout() {
         const oneColumnFlex = (...children: Control[]) => {
             const flex = new FlexView();
             flex.direction = 'column';
@@ -251,10 +258,70 @@ export class MazeSceneUserInterface {
         };
     }
 
-    public initSaveButton() {
+    private initSaveButton() {
         this._saveButton.onChange = () => {
             this._onSave();
         };
+    }
+
+    private initStatsLayout() {
+        const column = (title: string, color: string, child: Text) => {
+            const flex = new FlexView();
+            flex.width = 80;
+            flex.direction = 'column';
+            flex.alignItems = 'center';
+
+            const text = new Text(title);
+            text.color = child.color = 'white';
+            text.fontSize = child.fontSize = '10pt';
+            text.style = { fontWeight: 'bold' };
+
+            flex.addChild(text, child);
+
+            const container = new View();
+            container.padding = 5;
+            container.style = { background: color };
+            container.addChild(flex);
+
+            return container;
+        };
+
+        const title = new Text('Simulation Statistics');
+        title.color = 'white';
+
+        const columnContainer = new FlexView();
+        columnContainer.addChild(
+            column('Selected', 'rgba(40, 167, 69)', this._selectedCount),
+            column('Candidate', 'rgb(225, 221, 0)', this._candidateCount),
+            column('Queued', '#ffa500', this._queuedCount),
+            column('Forsaken', 'rgb(220, 53, 69)', this._forsakenCount)
+        );
+
+        const layout = new FlexView();
+        layout.direction = 'column';
+        layout.width = 'fit-content';
+        layout.padding = 10;
+        layout.gap = 10;
+        layout.style = {
+            background: 'rgba(255, 255, 255, 0.25)',
+            position: 'absolute',
+            left: '0',
+            bottom: '0'
+        };
+
+        layout.addChild(title, columnContainer);
+    }
+
+    public setStats(stats: {
+        candidate: number;
+        forsaken: number;
+        selected: number;
+        queued: number;
+    }) {
+        this._candidateCount.content = stats.candidate.toString();
+        this._forsakenCount.content = stats.forsaken.toString();
+        this._selectedCount.content = stats.selected.toString();
+        this._queuedCount.content = stats.queued.toString();
     }
 
     public get initialGenerationStrategyName() {
