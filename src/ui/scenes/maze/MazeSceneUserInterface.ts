@@ -198,6 +198,7 @@ export class MazeSceneUserInterface {
     private initStartButton() {
         this._startButton.onChange = () => {
             this._onStart();
+            document.body.style.cursor = 'not-allowed';
         };
     }
 
@@ -212,6 +213,7 @@ export class MazeSceneUserInterface {
     private initAlgorithmResetButton() {
         this._resetAlgorithmButton.onChange = () => {
             this._onAlgorithmRestart();
+            document.body.style.cursor = 'auto';
         };
     }
 

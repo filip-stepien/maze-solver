@@ -45,6 +45,8 @@ export class MazeScene extends Scene {
     private _startIndicator: GlowingBox;
     private _finishIndicator: GlowingBox;
 
+    private _simulationPlaying = false;
+
     private setupUserInterface() {
         this._cursorIndicator = new IndicatorBox(this, 0x00ff00, 0.3);
 
@@ -64,11 +66,13 @@ export class MazeScene extends Scene {
 
         this._ui.onAlgorithmRestart = () => {
             this.clearAlgorithm();
+            this._simulationPlaying = false;
         };
 
         this._ui.onStart = () => {
             this.clearAlgorithm();
             this.visualizeAlgorithm();
+            this._simulationPlaying = true;
         };
 
         this._ui.onPathFindChange = () => {
@@ -311,6 +315,8 @@ export class MazeScene extends Scene {
         };
 
         this._cursorIndicator.threeObject.position.set(0, -1000, 0);
+
+        if (this._simulationPlaying) return;
 
         const up = new Vector3(0, 1, 0);
         const mazeSize = this._ui.maze.size;
