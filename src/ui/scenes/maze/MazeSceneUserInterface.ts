@@ -63,7 +63,7 @@ export class MazeSceneUserInterface {
     private _onAlgorithmRestart: () => void = function () {};
     private _onGenerationChange: (label: string) => void = function () {};
     private _onPathFindChange: (label: string) => void = function () {};
-    private _onMazeLoad: () => void = function () {};
+    private _onMazeLoad: (start: Vec2d, finish: Vec2d) => void = function () {};
     private _onSave: () => void = function () {};
 
     constructor() {
@@ -237,14 +237,15 @@ export class MazeSceneUserInterface {
 
     private initFileSelect() {
         this._fileSelect.onChange = fileContent => {
-            const maze = MazeSerializer.load(fileContent);
-            if (!maze) return;
+            const mazeFile = MazeSerializer.load(fileContent);
+            if (!mazeFile) return;
 
+            const { maze, start, finish } = mazeFile;
             this._mazeSize = new Vec2d([maze.length, maze[0].length]);
             this._sizeInputX.value = maze.length;
             this._sizeInputY.value = maze[0].length;
             this._generationStrategy = new PredefinedMazeStrategy(maze);
-            this._onMazeLoad();
+            this._onMazeLoad(start, finish);
         };
     }
 
@@ -298,7 +299,7 @@ export class MazeSceneUserInterface {
         this._onPathFindChange = handler;
     }
 
-    public set onMazeLoad(handler: () => void) {
+    public set onMazeLoad(handler: (start: Vec2d, finish: Vec2d) => void) {
         this._onMazeLoad = handler;
     }
 

@@ -43,15 +43,24 @@ export class MazeScene extends Scene {
     private _cursorIndicator: IndicatorBox;
     private _lightIndicator: PointLight;
     private _startIndicator: GlowingBox;
-    private _endIndicator: GlowingBox;
+    private _finishIndicator: GlowingBox;
 
     private setupUserInterface() {
         this._cursorIndicator = new IndicatorBox(this, 0x00ff00, 0.3);
 
-        this._ui.onLayoutRestart =
-            this._ui.onGenerationChange =
-            this._ui.onMazeLoad =
-                () => this.reset();
+        this._ui.onLayoutRestart = this._ui.onGenerationChange = () => this.reset();
+
+        this._ui.onMazeLoad = (start, finish) => {
+            this.reset();
+
+            this._start = start;
+            this._startIndicator.position = this._positionConverter.nodeToBoxPosition(start).path;
+
+            this._finish = finish;
+            this._finishIndicator.position = this._positionConverter.nodeToBoxPosition(finish).path;
+
+            this.generatePathAlgorithmSteps();
+        };
 
         this._ui.onAlgorithmRestart = () => {
             this.clearAlgorithm();
@@ -68,7 +77,7 @@ export class MazeScene extends Scene {
         };
 
         this._ui.onSave = () => {
-            MazeSerializer.save(this._mazeFinder, this._ui.maze.size);
+            MazeSerializer.save(this._mazeFinder, this._ui.maze.size, this._start, this._finish);
         };
     }
 
@@ -173,7 +182,7 @@ export class MazeScene extends Scene {
         const finishVec = this._positionConverter.nodeToBoxPosition(this._finish).path;
 
         this._startIndicator = new GlowingBox(this, startVec, 0xffffff);
-        this._endIndicator = new GlowingBox(this, finishVec, 0xffffff);
+        this._finishIndicator = new GlowingBox(this, finishVec, 0xffffff);
     }
 
     private generatePathAlgorithmSteps() {
@@ -356,7 +365,7 @@ export class MazeScene extends Scene {
             }
 
             if (mouse.buttonDown === 'left' && mouse.buttonModifiers.ctrl) {
-                this._endIndicator.position = boxPos.path;
+                this._finishIndicator.position = boxPos.path;
                 this._finish = nodePos;
                 this.generatePathAlgorithmSteps();
             }
