@@ -11,8 +11,12 @@ import { Vec2d } from '../../../types';
 import { Button } from '../../controls/Button';
 import { DropDown } from '../../controls/DropDown';
 import { FileSelect } from '../../controls/FileSelect';
+import { FlexView } from '../../controls/FlexView';
 import { NumberInput } from '../../controls/NumberInput';
 import { MazeSerializer } from './MazeSerializer';
+import { Text } from '../../controls/Text';
+import { Control } from '../../controls/Control';
+import { View } from '../../controls/View';
 
 type GenerationStrategyMap = {
     [label: string]: GenerationStrategy;
@@ -45,12 +49,13 @@ export class MazeSceneUserInterface {
     private _sizeInputX = new NumberInput();
     private _sizeInputY = new NumberInput();
     private _resetLayoutButton = new Button('Reset layout');
-    private _resetAlgorithmButton = new Button('Reset algorithm');
+    private _resetAlgorithmButton = new Button('Restart');
     private _startButton = new Button('Start');
     private _generationStrategyDropDown = new DropDown();
     private _pathFindStrategyDropDown = new DropDown();
     private _saveButton = new Button('Save');
     private _fileSelect = new FileSelect();
+    private _helpButton = new Button('Controls Help');
 
     // control handlers
     private _onStart: () => void = function () {};
@@ -69,6 +74,107 @@ export class MazeSceneUserInterface {
         this.initDropDowns();
         this.initSaveButton();
         this.initFileSelect();
+        this.initHelpButton();
+        this.initLayout();
+    }
+
+    private initHelpButton() {
+        this._helpButton.onChange = () => {
+            const help =
+                'Controls:\n' +
+                'Left Click - place block\n' +
+                'Right Click - destroy block\n' +
+                'Shift + Left Click - change start position\n' +
+                'Ctrl + Left Click - change end position\n';
+
+            alert(help);
+        };
+    }
+
+    private initLayout() {
+        const oneColumnFlex = (...children: Control[]) => {
+            const flex = new FlexView();
+            flex.direction = 'column';
+            flex.gap = 5;
+            flex.addChild(...children);
+            return flex;
+        };
+
+        const twoColumnFlex = (child1: Control, child2: Control) => {
+            const flex = new FlexView();
+            flex.gap = 5;
+            flex.alignItems = 'center';
+            flex.addChild(child1, child2);
+
+            child1.style = child2.style = { flex: '1' };
+            return flex;
+        };
+
+        const title = (label: string) => {
+            const text = new Text(label);
+            text.color = 'white';
+            text.fontSize = '10pt';
+            return text;
+        };
+
+        const subtitle = (label: string) => {
+            const text = new Text(label);
+            text.color = 'rgba(255, 255, 255, 0.75)';
+            text.fontSize = '8pt';
+            text.align = 'center';
+            return text;
+        };
+
+        const header = (label: string) => {
+            const text = new Text(label);
+            text.color = 'white';
+            text.fontSize = '12pt';
+            text.align = 'center';
+            return text;
+        };
+
+        const layout = new FlexView();
+        layout.direction = 'column';
+        layout.gap = 10;
+        layout.padding = 8;
+        layout.width = 'fit-content';
+        layout.style = {
+            background: 'rgba(255, 255, 255, 0.25)'
+        };
+
+        this._fileSelect.style = this._startButton.style = {
+            color: 'white',
+            textAlign: 'center',
+            fontSize: '13.3px',
+            background: 'rgb(0, 123, 255)',
+            padding: '1px 6px 1px 6px',
+            border: '1.6px solid rgb(0, 123, 255)'
+        };
+
+        this._sizeInputX.width = this._sizeInputY.width = 40;
+
+        layout.addChild(
+            header('Maze Pathfinding Visualizer'),
+            subtitle('Authors: Filip Stępień, Rafał Grot'),
+            this._helpButton,
+            oneColumnFlex(title('Maze generation strategy'), this._generationStrategyDropDown),
+            oneColumnFlex(title('Path find strategy'), this._pathFindStrategyDropDown),
+            oneColumnFlex(
+                title('Layout size'),
+                twoColumnFlex(
+                    twoColumnFlex(this._sizeInputX, this._sizeInputY),
+                    this._resetLayoutButton
+                )
+            ),
+            oneColumnFlex(
+                title('Save / upload maze'),
+                twoColumnFlex(this._saveButton, this._fileSelect)
+            ),
+            oneColumnFlex(
+                title('Simulation controls'),
+                twoColumnFlex(this._resetAlgorithmButton, this._startButton)
+            )
+        );
     }
 
     private initSizeInputs() {

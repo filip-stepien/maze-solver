@@ -12,7 +12,6 @@ export abstract class Control<T extends HTMLElement = HTMLElement> {
      */
     constructor() {
         this._htmlElement = this.htmlElement();
-        this.applyStyles();
         this.appendDomElement();
     }
 
@@ -24,13 +23,6 @@ export abstract class Control<T extends HTMLElement = HTMLElement> {
      */
     private appendDomElement(target: HTMLElement = document.body) {
         target.appendChild(this._htmlElement);
-    }
-
-    /**
-     * Applies initial styles returned by `style()` method to the HTML element.
-     */
-    private applyStyles() {
-        Object.assign(this._htmlElement.style, this.style());
     }
 
     /**
@@ -120,8 +112,8 @@ export abstract class Control<T extends HTMLElement = HTMLElement> {
      * Method which can be overridden in subclasses to set the initial CSS style of the HTML element.
      * @returns CSS style for the element.
      */
-    protected style(): Partial<CSSStyleDeclaration> {
-        return {};
+    public set style(style: Partial<CSSStyleDeclaration>) {
+        Object.assign(this._htmlElement.style, style);
     }
 
     /**

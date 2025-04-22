@@ -5,10 +5,25 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Document</title>
         <style>
+            * {
+                font-family: Arial, Helvetica, sans-serif;
+            }
+
+            input[type='button']:hover,
+            label:hover {
+                filter: brightness(0.95);
+            }
+
+            input[type='button']:active,
+            label:active {
+                filter: brightness(1);
+            }
+
             body {
                 margin: 0;
                 overflow: hidden;
             }
+
             canvas {
                 position: absolute;
                 z-index: -1;

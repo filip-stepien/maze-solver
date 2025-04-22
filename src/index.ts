@@ -13,5 +13,5 @@ import { ModelGroup } from './ui/core/ModelGroup';
 const renderer = Renderer.instance;
 renderer.camera = new OrthographicCamera(1, 0.1, 10000);
 renderer.scene = new MazeScene();
-renderer.debugMode = true;
+renderer.debugMode = false;
 renderer.start();
