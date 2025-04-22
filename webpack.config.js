@@ -1,8 +1,8 @@
 import path from 'path';
-import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import HtmlInlineScriptPlugin from 'html-inline-script-webpack-plugin';
 
-const config: webpack.Configuration = {
+export default {
     entry: './src/index.ts',
     mode: 'development',
     module: {
@@ -26,9 +26,14 @@ const config: webpack.Configuration = {
     },
     output: {
         filename: 'bundle.js',
-        path: path.resolve(import.meta.dirname, 'dist')
+        path: path.resolve(import.meta.dirname, 'dist'),
+        clean: true
     },
-    plugins: [new HtmlWebpackPlugin({ template: './src/index.html' })]
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: './src/index.html',
+            inject: 'body'
+        }),
+        new HtmlInlineScriptPlugin()
+    ]
 };
-
-export default config;
