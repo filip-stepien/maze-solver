@@ -56,7 +56,6 @@ export class MazeSceneUserInterface {
     private _pathFindStrategyDropDown = new DropDown();
     private _saveButton = new Button('Save');
     private _fileSelect = new FileSelect();
-    private _helpButton = new Button('Controls Help');
 
     private _forsakenCount = new Text('0');
     private _queuedCount = new Text('0');
@@ -80,22 +79,8 @@ export class MazeSceneUserInterface {
         this.initDropDowns();
         this.initSaveButton();
         this.initFileSelect();
-        this.initHelpButton();
         this.initMenuLayout();
         this.initStatsLayout();
-    }
-
-    private initHelpButton() {
-        this._helpButton.onChange = () => {
-            const help =
-                'Controls:\n' +
-                'Left Click - place block\n' +
-                'Right Click - destroy block\n' +
-                'Shift + Left Click - change start position\n' +
-                'Ctrl + Left Click - change end position\n';
-
-            alert(help);
-        };
     }
 
     private initMenuLayout() {
@@ -149,6 +134,17 @@ export class MazeSceneUserInterface {
             background: 'rgba(255, 255, 255, 0.25)'
         };
 
+        const help = new Button('Controls Help');
+        help.onChange = () => {
+            alert(
+                'Controls:\n' +
+                    'Left Click - place block\n' +
+                    'Right Click - destroy block\n' +
+                    'Shift + Left Click - change start position\n' +
+                    'Ctrl + Left Click - change end position'
+            );
+        };
+
         this._fileSelect.style = this._startButton.style = {
             color: 'white',
             textAlign: 'center',
@@ -163,7 +159,7 @@ export class MazeSceneUserInterface {
         layout.addChild(
             header('Maze Pathfinding Visualizer'),
             subtitle('Authors: Filip Stępień, Rafał Grot'),
-            this._helpButton,
+            help,
             oneColumnFlex(title('Maze generation strategy'), this._generationStrategyDropDown),
             oneColumnFlex(title('Path find strategy'), this._pathFindStrategyDropDown),
             oneColumnFlex(
@@ -286,9 +282,6 @@ export class MazeSceneUserInterface {
             return container;
         };
 
-        const title = new Text('Simulation Statistics');
-        title.color = 'white';
-
         const columnContainer = new FlexView();
         columnContainer.addChild(
             column('Selected', 'rgba(40, 167, 69)', this._selectedCount),
@@ -296,6 +289,24 @@ export class MazeSceneUserInterface {
             column('Queued', '#ffa500', this._queuedCount),
             column('Forsaken', 'rgb(220, 53, 69)', this._forsakenCount)
         );
+
+        const title = new Text('Simulation Statistics');
+        title.color = 'white';
+
+        const help = new Button('Help');
+        help.onChange = () => {
+            alert(
+                'Selected - node has been chosen by the algorithm as part of the final path.\n\n' +
+                    'Candidate - node is currently under consideration and might be included in the final path.\n\n' +
+                    'Queued – node has been added to the processing queue and may become a candidate, unless the algorithm terminates before reaching it.\n\n' +
+                    'Forsaken - node was previously considered a candidate but has since been discarded by the algorithm.'
+            );
+        };
+
+        const titleContainer = new FlexView();
+        titleContainer.alignItems = 'center';
+        titleContainer.justifyContent = 'space-between';
+        titleContainer.addChild(title, help);
 
         const layout = new FlexView();
         layout.direction = 'column';
@@ -309,7 +320,7 @@ export class MazeSceneUserInterface {
             bottom: '0'
         };
 
-        layout.addChild(title, columnContainer);
+        layout.addChild(titleContainer, columnContainer);
     }
 
     public setStats(stats: {
