@@ -4,11 +4,8 @@ import { MazeFacade } from '../../../maze/god';
 import { OrthographicCamera } from '../../core/OrthographicCamera';
 import { InstancedMesh, Mesh, PointLightHelper, Object3D as ThreeObject, Vector3 } from 'three';
 import { Random } from '../../../utils/Random';
-import { Button } from '../../controls/Button';
-import { NumberInput } from '../../controls/NumberInput';
 import { PointLight } from '../../core/PointLight';
 import { DirectionalLight } from '../../core/DirectionalLight';
-import { Renderer } from '../../core/Renderer';
 import MazePathFinder, { MPFLabelChangeCallbackParams } from '../../../maze/MazePathFinder';
 import { GlowingBox } from './models/GlowingBox';
 import { LabelBoxGroup } from './models/LabelBoxGroup';
@@ -18,10 +15,7 @@ import { ModelGroup } from '../../core/ModelGroup';
 import { MazePathFinderNode, MazePathFinderNodeLabel } from '../../../maze/MazePathFinderNode';
 import { EmissiveBox } from './models/EmissiveBoxGroup';
 import { Mouse } from '../../core/Mouse';
-import { PrimsStrategy } from '../../../strategies/generation/PrimsStrategy';
-import { BlankMazeStrategy } from '../../../strategies/generation/BlankMazeStrategy';
 import { MazeSceneUserInterface } from './MazeSceneUserInterface';
-import dayjs from 'dayjs';
 import { MazeNodePositionConverter } from './MazeNodePositionConverter';
 import { MazeSerializer } from './MazeSerializer';
 import { Plane } from './models/Plane';
@@ -46,13 +40,14 @@ export class MazeScene extends Scene {
     private _start: Vec2d;
     private _finish: Vec2d;
 
+    private _cursorIndicator: IndicatorBox;
     private _lightIndicator: PointLight;
-    private _cursorIndicator = new IndicatorBox(this, 0x00ff00, 0.3);
     private _startIndicator: GlowingBox;
     private _endIndicator: GlowingBox;
-    private _startIndicatorPlacedLast = false;
 
     private setupUserInterface() {
+        this._cursorIndicator = new IndicatorBox(this, 0x00ff00, 0.3);
+
         this._ui.onRestart = this._ui.onGenerationChange = this._ui.onMazeLoad = () => this.reset();
 
         this._ui.onStart = () => {
@@ -240,6 +235,7 @@ export class MazeScene extends Scene {
 
     private visualizeAlgorithmCleanup() {
         if (this._lightIndicator) this._lightIndicator.delete();
+        if (this._cursorIndicator) this._cursorIndicator.delete();
     }
 
     private visualizeAlgorithm() {
