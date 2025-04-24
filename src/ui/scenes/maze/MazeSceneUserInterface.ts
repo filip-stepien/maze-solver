@@ -131,7 +131,10 @@ export class MazeSceneUserInterface {
         layout.padding = 8;
         layout.width = 'fit-content';
         layout.style = {
-            background: 'rgba(255, 255, 255, 0.25)'
+            background: 'rgba(255, 255, 255, 0.25)',
+            position: 'absolute',
+            top: '0',
+            left: '0'
         };
 
         const help = new Button('Controls Help');
