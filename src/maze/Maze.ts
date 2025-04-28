@@ -21,7 +21,7 @@ export class Maze<T extends MazeNode> {
      * @param pos Postion to validate
      * @throws RangeError
      */
-    protected validateNodePosition(pos: Vec2d) {
+    public validateNodePosition(pos: Vec2d) {
         const x = pos.x;
         const y = pos.y;
         if (

@@ -19,6 +19,7 @@ import { Control } from '../../controls/Control';
 import { View } from '../../controls/View';
 import { stat } from 'fs';
 import { KruskalsStrategy } from '../../../strategies/generation/KrushalsStrategy';
+import { DFSGenerationStategy } from '../../../strategies/generation/DFSGenerationStrategy';
 
 type GenerationStrategyMap = {
     [label: string]: GenerationStrategy;
@@ -34,7 +35,8 @@ export class MazeSceneUserInterface {
     private _GENERATION_STRATEGIES: GenerationStrategyMap = {
         'Manual': new BlankMazeStrategy(),
         "Prim's Algorithm": new PrimsStrategy(),
-        'Kruskal': new KruskalsStrategy()
+        'Kruskal': new KruskalsStrategy(),
+        'DFS': new DFSGenerationStategy()
     };
 
     private _PATH_FIND_STRATEGIES: PathFindStrategyMap = {
