@@ -115,7 +115,7 @@ export class Maze<T extends MazeNode> {
                 const pos = new Vec2d({ x, y });
                 const node = this.getNode(pos);
                 callback({ pos, node, i });
-                i++;
+                ++i;
             }
         }
     }
@@ -161,4 +161,12 @@ export class Maze<T extends MazeNode> {
         });
         return str;
     }
+
+    public getCollsionState = () => {
+        return this.m_matrix.map(column => {
+            return column.map(cell => {
+                return cell.isColliding();
+            });
+        });
+    };
 }
