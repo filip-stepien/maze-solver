@@ -39,6 +39,7 @@ export class PrimsStrategy implements GenerationStrategy {
 
         maze[startNode.y][startNode.x] = 0;
 
+        // FIXME neczytleny kod
         edges.push(
             ...this.getNeighbors(startNode, cols, rows).map(neighbor => ({
                 from: startNode,
