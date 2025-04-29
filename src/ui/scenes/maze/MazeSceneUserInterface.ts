@@ -190,11 +190,11 @@ export class MazeSceneUserInterface {
     private initSizeInputs() {
         this._sizeInputX.value = 10;
         this._sizeInputX.min = 3;
-        this._sizeInputX.max = 100;
+        this._sizeInputX.max = 10000;
 
         this._sizeInputY.value = 10;
         this._sizeInputY.min = 3;
-        this._sizeInputY.max = 100;
+        this._sizeInputY.max = 10000;
 
         this._sizeInputX.onChange = value => {
             this._mazeSize.x = parseInt(value);
