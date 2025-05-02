@@ -169,4 +169,21 @@ export class Maze<T extends MazeNode> {
             });
         });
     };
+
+    public transpose(): void {
+        const originalSize = this.m_size;
+        const newSize = new Vec2d([originalSize.y, originalSize.x]);
+        const newMatrix: T[][] = [];
+
+        for (let x = 0; x < originalSize.x; x++) {
+            const newRow: T[] = [];
+            for (let y = 0; y < originalSize.y; y++) {
+                newRow.push(this.m_matrix[y][x]);
+            }
+            newMatrix.push(newRow);
+        }
+
+        this.m_matrix = newMatrix;
+        this.m_size = newSize;
+    }
 }

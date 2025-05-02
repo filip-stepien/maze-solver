@@ -57,6 +57,9 @@ export class DFSGenerationStategy implements GenerationStrategy {
 
         dfs(startNode);
 
+        // make x to be x not y
+        maze.transpose();
+
         return maze.getCollsionState();
     }
 }

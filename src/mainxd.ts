@@ -10,7 +10,7 @@ const strategyies = [new PrimsStrategy(), new DFSGenerationStategy()];
 for (const strategy of strategyies) {
     const maze = new MazeFacade();
     maze.setGeneratorStrategy(strategy);
-    maze.generateMaze(new Vec2d([10, 10]));
+    maze.generateMaze(new Vec2d([10, 40]));
 
     console.log(maze.getMazePathFinder().toString());
 }

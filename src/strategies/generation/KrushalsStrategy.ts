@@ -96,6 +96,8 @@ export class KruskalsStrategy implements GenerationStrategy {
             }
         });
 
+        // make x to be x not y
+        maze.transpose();
         return maze.getCollsionState();
     }
 }
