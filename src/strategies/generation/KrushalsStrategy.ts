@@ -79,7 +79,7 @@ export class KruskalsStrategy implements GenerationStrategy {
 
         walls.forEach(wall => {
             const devidedNodes = maze.getAdjacentNodes(wall);
-            console.log(`${JSON.stringify(wall)} devides ${JSON.stringify(devidedNodes)}}`);
+            // console.log(`${JSON.stringify(wall)} devides ${JSON.stringify(devidedNodes)}}`);
 
             const setsDevidedByWall = new Set();
             devidedNodes.forEach(e => {
@@ -92,7 +92,7 @@ export class KruskalsStrategy implements GenerationStrategy {
                 devidedNodes.forEach(e => {
                     dt.union(toIdx(e.pos), toIdx(devidedNodes[0].pos));
                 });
-                console.log(maze.toString());
+                // console.log(maze.toString());
             }
         });
 
