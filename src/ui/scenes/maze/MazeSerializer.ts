@@ -3,7 +3,7 @@ import { Vec2d } from '../../../types';
 import { MazePathFinderNode } from '../../../maze/MazePathFinderNode';
 import MazePathFinder from '../../../maze/MazePathFinder';
 
-export class MazeSerializer {
+export class LegacyBadMazeSerializer {
     public static save(
         mazeFinder: MazePathFinder<MazePathFinderNode>,
         mazeSize: Vec2d,

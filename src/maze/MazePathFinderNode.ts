@@ -222,14 +222,14 @@ export class MazePathFinderNode extends MazeNode {
         return super.getDisplayedLabel();
     }
 
-    public getCharacter(): CharacterData {
+    public getRepresentation(): CharacterData {
         const labelIcons = {
-            finish: { fontAwesomeName: 'home', icon: '' },
-            start: { fontAwesomeName: 'user', icon: '' },
-            selected: { fontAwesomeName: 'check', icon: '󰸞' },
-            candidate: { fontAwesomeName: 'arrows-alt', icon: '󰁁' },
-            queued: { fontAwesomeName: 'hourglass', icon: '󰞌' },
-            forsaken: { fontAwesomeName: 'skull', icon: '󰚌' }
+            finish: { fontAwesomeName: 'home', icon: '', color: 'blue' },
+            start: { fontAwesomeName: 'user', icon: '', color: 'blue' },
+            selected: { fontAwesomeName: 'check', icon: '󰸞', color: 'green' },
+            candidate: { fontAwesomeName: 'arrows-alt', icon: '󰁁', color: 'yellow' },
+            queued: { fontAwesomeName: 'hourglass', icon: '󰞌', color: 'purple' },
+            forsaken: { fontAwesomeName: 'skull', icon: '󰚌', color: 'red' }
         };
 
         for (const [label, data] of Object.entries(labelIcons)) {
@@ -238,33 +238,38 @@ export class MazePathFinderNode extends MazeNode {
             }
         }
 
-        return super.getCharacter();
+        return super.getRepresentation();
+    }
+
+    protected getChalkForegroundColorFunction() {
+        const labelColorMap = new Map([
+            ['purple', chalk.rgb(64, 64, 233)],
+            ['green', chalk.green],
+            ['blue', chalk.blue],
+            ['yellow', chalk.yellow],
+            ['red', chalk.red],
+            ['white', chalk.white]
+        ]);
+
+        return labelColorMap.get(this.getRepresentation().color) || chalk.grey;
+    }
+
+    protected getChalkBackgroundColorFunction() {
+        const labelBgMap = new Map([
+            ['finish', chalk.bgWhite],
+            ['start', chalk.bgWhite],
+            ['selected', chalk.bgGreen]
+        ]);
+
+        return labelBgMap.get(this.getRepresentation().bgColor) || chalk.black;
     }
 
     toString(): string {
-        let colorFunc = chalk.gray;
-        let bgFunc = chalk.black;
+        const colorFunc = this.getChalkForegroundColorFunction();
+        const bgFunc = this.getChalkBackgroundColorFunction();
 
-        if (this.hasLabel('finish')) {
-            colorFunc = chalk.rgb(64, 64, 233);
-            bgFunc = chalk.bgWhite;
-        } else if (this.hasLabel('start')) {
-            colorFunc = chalk.rgb(64, 64, 233);
-            bgFunc = chalk.bgWhite;
-        } else if (this.hasLabel('selected')) {
-            colorFunc = chalk.black;
-        } else if (this.hasLabel('candidate')) {
-            colorFunc = chalk.yellow;
-        } else if (this.hasLabel('queued')) {
-            colorFunc = chalk.magenta;
-        } else if (this.hasLabel('forsaken')) {
-            colorFunc = chalk.red;
-        }
+        const rep: CharacterData = this.getRepresentation();
 
-        if (this.hasLabel('selected')) {
-            bgFunc = chalk.bgGreen;
-        }
-
-        return bgFunc(colorFunc(this.getCharacter().icon));
+        return bgFunc(colorFunc(this.getRepresentation().icon));
     }
 }

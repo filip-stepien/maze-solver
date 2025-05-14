@@ -13,7 +13,7 @@ import { DropDown } from '../../controls/DropDown';
 import { FileSelect } from '../../controls/FileSelect';
 import { FlexView } from '../../controls/FlexView';
 import { NumberInput } from '../../controls/NumberInput';
-import { MazeSerializer } from './MazeSerializer';
+import { LegacyBadMazeSerializer } from './MazeSerializer';
 import { Text } from '../../controls/Text';
 import { Control } from '../../controls/Control';
 import { View } from '../../controls/View';
@@ -249,7 +249,7 @@ export class MazeSceneUserInterface {
 
     private initFileSelect() {
         this._fileSelect.onChange = fileContent => {
-            const mazeFile = MazeSerializer.load(fileContent);
+            const mazeFile = LegacyBadMazeSerializer.load(fileContent);
             if (!mazeFile) return;
 
             const { maze, start, finish } = mazeFile;

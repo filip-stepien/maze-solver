@@ -17,7 +17,7 @@ import { EmissiveBox } from './models/EmissiveBoxGroup';
 import { Mouse } from '../../core/Mouse';
 import { MazeSceneUserInterface } from './MazeSceneUserInterface';
 import { MazeNodePositionConverter } from './MazeNodePositionConverter';
-import { MazeSerializer } from './MazeSerializer';
+import { LegacyBadMazeSerializer } from './MazeSerializer';
 import { Plane } from './models/Plane';
 import { IndicatorBox } from './models/IndicatorBox';
 import { MazeStatLabel, MazeStats } from './MazeStats';
@@ -90,7 +90,12 @@ export class MazeScene extends Scene {
         };
 
         this._ui.onSave = () => {
-            MazeSerializer.save(this._mazeFinder, this._ui.maze.size, this._start, this._finish);
+            LegacyBadMazeSerializer.save(
+                this._mazeFinder,
+                this._ui.maze.size,
+                this._start,
+                this._finish
+            );
         };
     }
 

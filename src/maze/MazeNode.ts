@@ -1,10 +1,10 @@
-import chalk from 'chalk';
-
 export type MazeNodeLabel = 'colliding' | 'noncolliding';
 
 export type CharacterData = {
     fontAwesomeName: string;
     icon: string;
+    color: string;
+    bgColor?: string;
 };
 
 export class MazeNode {
@@ -32,16 +32,16 @@ export class MazeNode {
         }
     }
 
-    protected getCharacter(): CharacterData {
+    protected getRepresentation(): CharacterData {
         if (this.isColliding()) {
-            return { icon: '▓', fontAwesomeName: 'square-full' };
+            return { icon: '▓', fontAwesomeName: 'square-full', color: 'gray' };
         } else {
-            return { icon: '', fontAwesomeName: 'dot-circle' };
+            return { icon: '', fontAwesomeName: 'dot-circle', color: 'gray' };
         }
     }
 
     toString(): string {
-        return this.getCharacter().icon;
+        return this.getRepresentation().icon;
     }
 
     clone() {
