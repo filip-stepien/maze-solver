@@ -2,7 +2,7 @@ import { Extends } from 'expect-type';
 import { Vec2d } from '../types';
 import { MazePathFinderExporter } from './mazeExporter';
 import { MazeNode } from './MazeNode';
-import { MazePathFinderNode } from './MazePathFinderNode';
+import { MazePathFinderNode, MazePathFinderNodeLabel } from './MazePathFinderNode';
 import { Maze } from './Maze';
 
 export class TikzExporter implements MazePathFinderExporter<MazePathFinderNode> {
@@ -14,10 +14,17 @@ export class TikzExporter implements MazePathFinderExporter<MazePathFinderNode> 
             const endPos = nodeData.pos.move(new Vec2d([1, 1]));
 
             let tikzCommand = '';
-            switch (nodeData.node.getDisplayedLabel()) {
-                case 'colliding':
-                    tikzCommand = `\\fill[gray] (${startPos.x}, ${startPos.y}) rectangle (${endPos.x}, ${endPos.y});\n`;
-                    break;
+            const label = nodeData.node.getDisplayedLabel();
+            if (label == 'colliding') {
+                tikzCommand = `\\fill[gray] (${startPos.x}, ${startPos.y}) rectangle (${endPos.x}, ${endPos.y});\n`;
+            } else if (label == 'noncolliding') {
+                // non coliding -> do nothing
+                return;
+            } else {
+                const iconPos = startPos.move(new Vec2d([0.5, 0.5]));
+                const faName = nodeData.node.getCharacter().fontAwesomeName;
+                // \node at (4.5, 4.5){\faIcon{home}};
+                tikzCommand = `\\node at (${iconPos.x}, ${iconPos.y}){\\faIcon{${faName}}};\n`;
             }
 
             tikzRectangles += tikzCommand;

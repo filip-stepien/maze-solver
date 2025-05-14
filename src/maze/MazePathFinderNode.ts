@@ -1,5 +1,5 @@
 import chalk, { colorNames, foregroundColorNames } from 'chalk';
-import { MazeNode, MazeNodeLabel } from './MazeNode';
+import { CharacterData, MazeNode, MazeNodeLabel } from './MazeNode';
 
 export type MPFNodeLabelCallBackParams = {
     node: MazePathFinderNode;
@@ -222,19 +222,19 @@ export class MazePathFinderNode extends MazeNode {
         return super.getDisplayedLabel();
     }
 
-    protected getCharacter() {
+    public getCharacter(): CharacterData {
         const labelIcons = {
-            finish: '',
-            start: '',
-            selected: '󰸞',
-            candidate: '󰁁',
-            queued: '󰞌',
-            forsaken: '󰚌'
+            finish: { fontAwesomeName: 'home', icon: '' },
+            start: { fontAwesomeName: 'user', icon: '' },
+            selected: { fontAwesomeName: 'check', icon: '󰸞' },
+            candidate: { fontAwesomeName: 'arrows-alt', icon: '󰁁' },
+            queued: { fontAwesomeName: 'hourglass', icon: '󰞌' },
+            forsaken: { fontAwesomeName: 'skull', icon: '󰚌' }
         };
 
-        for (const [label, icon] of Object.entries(labelIcons)) {
+        for (const [label, data] of Object.entries(labelIcons)) {
             if (this.hasLabel(label)) {
-                return icon;
+                return data;
             }
         }
 
@@ -265,6 +265,6 @@ export class MazePathFinderNode extends MazeNode {
             bgFunc = chalk.bgGreen;
         }
 
-        return bgFunc(colorFunc(this.getCharacter()));
+        return bgFunc(colorFunc(this.getCharacter().icon));
     }
 }

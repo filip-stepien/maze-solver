@@ -2,6 +2,11 @@ import chalk from 'chalk';
 
 export type MazeNodeLabel = 'colliding' | 'noncolliding';
 
+export type CharacterData = {
+    fontAwesomeName: string;
+    icon: string;
+};
+
 export class MazeNode {
     public static initializer = new this();
 
@@ -27,16 +32,16 @@ export class MazeNode {
         }
     }
 
-    protected getCharacter(): string {
+    protected getCharacter(): CharacterData {
         if (this.isColliding()) {
-            return '▓';
+            return { icon: '▓', fontAwesomeName: 'square-full' };
         } else {
-            return '·';
+            return { icon: '', fontAwesomeName: 'dot-circle' };
         }
     }
 
     toString(): string {
-        return this.getCharacter();
+        return this.getCharacter().icon;
     }
 
     clone() {
