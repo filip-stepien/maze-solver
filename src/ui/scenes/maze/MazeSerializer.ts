@@ -84,10 +84,8 @@ export class MazeSerializer {
             return null;
         }
 
-        if (maze.length < 10 || maze[0].length < 10) {
-            console.warn(
-                'Failed to parse the maze from the file. The maze must be at least 10x10.'
-            );
+        if (maze.length < 3 || maze[0].length < 3) {
+            console.warn('Failed to parse the maze from the file. The maze must be at least 3x3.');
             return null;
         }
 

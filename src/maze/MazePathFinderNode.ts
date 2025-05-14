@@ -1,5 +1,5 @@
 import chalk, { colorNames, foregroundColorNames } from 'chalk';
-import { MazeNode } from './MazeNode';
+import { MazeNode, MazeNodeLabel } from './MazeNode';
 
 export type MPFNodeLabelCallBackParams = {
     node: MazePathFinderNode;
@@ -17,6 +17,7 @@ export type MPFNodeLabelChangeCallback = (args: MPFNodeLabelCallBackParams) => v
  * @see MazePathFinderNode
  */
 export type MazePathFinderNodeLabel =
+    | MazeNodeLabel
     | 'start'
     | 'finish'
     | 'candidate'
@@ -195,29 +196,48 @@ export class MazePathFinderNode extends MazeNode {
      * @returns true / false
      * @see getLabels
      */
-    hasLabel(label: MazePathFinderNodeLabel): boolean {
-        return this.m_labels.has(label);
+    hasLabel(label: string): boolean {
+        return this.m_labels.has(label as MazePathFinderNodeLabel);
+    }
+
+    /**
+     * get label that is most important, used for drawing
+     */
+    public getDisplayedLabel() {
+        const labelPriority: MazePathFinderNodeLabel[] = [
+            'finish',
+            'start',
+            'selected',
+            'candidate',
+            'queued',
+            'forsaken'
+        ];
+
+        for (const label of labelPriority) {
+            if (this.hasLabel(label)) {
+                return label;
+            }
+        }
+
+        return super.getDisplayedLabel();
     }
 
     protected getCharacter() {
-        if (this.hasLabel('finish')) {
-            return '';
+        const labelIcons = {
+            finish: '',
+            start: '',
+            selected: '󰸞',
+            candidate: '󰁁',
+            queued: '󰞌',
+            forsaken: '󰚌'
+        };
+
+        for (const [label, icon] of Object.entries(labelIcons)) {
+            if (this.hasLabel(label)) {
+                return icon;
+            }
         }
-        if (this.hasLabel('start')) {
-            return '';
-        }
-        if (this.hasLabel('selected')) {
-            return '󰸞';
-        }
-        if (this.hasLabel('candidate')) {
-            return '󰁁';
-        }
-        if (this.hasLabel('queued')) {
-            return '󰞌';
-        }
-        if (this.hasLabel('forsaken')) {
-            return '󰚌';
-        }
+
         return super.getCharacter();
     }
 

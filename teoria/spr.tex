@@ -1,0 +1,46 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usepackage[polish]{babel}
+\usepackage{caption}
+\usepackage[T1]{fontenc}
+\usepackage{standalone}
+\title{Maze solver}
+\author{Rafał Grot \and Filip Stępień}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  Generowanie dwuwymiarowego labiryntu oraz wyszukiwanie ścieżki w dwuwymiarowym labirynice z zadanaego pola do dowolnego innego pola.
+\end{abstract}
+
+% Parametry siatki
+\newcommand{\GridWidth}{8}   % liczba kolumn
+\newcommand{\GridHeight}{6}  % liczba wierszy
+
+
+\section{Labirynt}
+
+Labirynt zbudownay jest z pól które reprezentują przejście lub ścianę
+
+\begin{figure}[ht]
+  \begin{center}
+    \includestandalone{figures/maze_example}
+  \end{center}
+  \caption{Przykładowy labirynt}
+\end{figure}
+
+\section{Generowanie labiryntu}
+\subsection{manual}
+\subsection{depth first search}
+\subsection{krushal}
+\subsection{Prim's}
+
+\section{Szukanie drogi}
+\subsection{depth first search}
+\subsection{breadth first search}
+\subsection{A*}
+
+
+\end{document}

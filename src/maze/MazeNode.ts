@@ -1,5 +1,7 @@
 import chalk from 'chalk';
 
+export type MazeNodeLabel = 'colliding' | 'noncolliding';
+
 export class MazeNode {
     public static initializer = new this();
 
@@ -15,6 +17,14 @@ export class MazeNode {
 
     isColliding(): boolean {
         return this.m_isSolid;
+    }
+
+    protected getDisplayedLabel(): string {
+        if (this.isColliding()) {
+            return 'colliding';
+        } else {
+            return 'noncolliding';
+        }
     }
 
     protected getCharacter(): string {
