@@ -7,16 +7,21 @@
 \usepackage{standalone}
 \usepackage{fontawesome5}
 \usepackage{geometry}
+\usepackage{intcalc}
+\usepackage{subcaption}
 \usetikzlibrary{patterns}
 \geometry{margin=2.5cm}
 \title{
-    Dokumentacja projektu \\
+    \Huge Politechnika Świętokrzyska \\
+    \large Wydział Elektrotechniki, Automatyki i Informatyki \\
+    \vspace{0.5cm}
+    \LARGE Dokumentacja projektu zespołowego \\
     \large Wizualizacja wyszukiwania drogi w labiryncie
 }
 \author{
   \begin{tabular}{c c}
-    Jan Kowalski & Anna Nowak \\
-    \footnotesize Nr indeksu: 123456 & \footnotesize Nr indeksu: 654321 \\ \\
+    Filip Stępień & Rafał Grot \\
+    \footnotesize Nr indeksu: 094117 & \footnotesize Nr indeksu: 094046 \\ \\
     \multicolumn{2}{c}{Informatyka, grupa 3ID11B} \\
   \end{tabular}
 }
@@ -24,7 +29,7 @@
 
 \begin{document}
 \maketitle
-
+\thispagestyle{empty}
 \newpage
 
 \tableofcontents
@@ -38,18 +43,18 @@ Labirynt w kontekście projektu to struktura siatki, gdzie każde pole może sta
 \begin{figure}[h]
 \centering
 \begin{tikzpicture}[scale=1]
-  \draw[step=1cm,gray,very thin] (0,0) grid (5,5);
-  \fill[black] (1,2) rectangle ++(1,1);
-  \fill[black] (1,3) rectangle ++(1,1);
-  \fill[black] (3,1) rectangle ++(1,1);
-  \fill[black] (3,3) rectangle ++(1,1);
-  \fill[black] (1,1) rectangle ++(1,1);
-  \fill[black] (0,2) rectangle ++(1,1);
-  \fill[black] (3,0) rectangle ++(1,1);
-  \fill[black] (4,0) rectangle ++(1,1);
-
-  \node at (0.5,1.5) {\scriptsize Start};
-  \node at (4.5,1.5) {\scriptsize Koniec};
+    \fill[gray] (1,2) rectangle ++(1,1);
+    \fill[gray] (1,3) rectangle ++(1,1);
+    \fill[gray] (3,1) rectangle ++(1,1);
+    \fill[gray] (3,3) rectangle ++(1,1);
+    \fill[gray] (1,1) rectangle ++(1,1);
+    \fill[gray] (0,2) rectangle ++(1,1);
+    \fill[gray] (3,0) rectangle ++(1,1);
+    \fill[gray] (4,0) rectangle ++(1,1);
+    
+    \node at (0.5,1.5) {\scriptsize Start};
+    \node at (4.5,1.5) {\scriptsize Koniec};
+    \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
 \end{tikzpicture}
 \caption{\centering Przykładowy labirynt 5x5 z zaznaczonym startem i końcem, gdzie białe pole - przejście, czarne - ściana.}
 \label{fig:labirynt}
@@ -110,18 +115,17 @@ W projekcie istotne jest porównanie różnych algorytmów wyszukiwania ścieżk
 
 \begin{figure}[ht]
   \centering
-  \begin{minipage}{0.4\textwidth}
+  \begin{minipage}{0.45\textwidth}
     \centering
     \begin{tikzpicture}[scale=1]
-      \draw[step=1cm,gray,very thin] (0,0) grid (5,5);
-      \fill[black] (1,2) rectangle ++(1,1);
-      \fill[black] (1,3) rectangle ++(1,1);
-      \fill[black] (3,1) rectangle ++(1,1);
-      \fill[black] (3,3) rectangle ++(1,1);
-      \fill[black] (1,1) rectangle ++(1,1);
-      \fill[black] (0,2) rectangle ++(1,1);
-      \fill[black] (3,0) rectangle ++(1,1);
-      \fill[black] (4,0) rectangle ++(1,1);
+      \fill[gray] (1,2) rectangle ++(1,1);
+      \fill[gray] (1,3) rectangle ++(1,1);
+      \fill[gray] (3,1) rectangle ++(1,1);
+      \fill[gray] (3,3) rectangle ++(1,1);
+      \fill[gray] (1,1) rectangle ++(1,1);
+      \fill[gray] (0,2) rectangle ++(1,1);
+      \fill[gray] (3,0) rectangle ++(1,1);
+      \fill[gray] (4,0) rectangle ++(1,1);
 
       \fill[pattern=north east lines, pattern color=green] (0,0) rectangle ++(1,1);
       \fill[pattern=north east lines, pattern color=green] (0,1) rectangle ++(1,1);
@@ -139,20 +143,21 @@ W projekcie istotne jest porównanie różnych algorytmów wyszukiwania ścieżk
 
       \node at (0.5,1.5) {\scriptsize Start};
       \node at (4.5,1.5) {\scriptsize Koniec};
+
+      \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
     \end{tikzpicture}
   \end{minipage}
-  \begin{minipage}{0.4\textwidth}
+  \begin{minipage}{0.45\textwidth}
     \centering
     \begin{tikzpicture}[scale=1]
-      \draw[step=1cm,gray,very thin] (0,0) grid (5,5);
-      \fill[black] (1,2) rectangle ++(1,1);
-      \fill[black] (1,3) rectangle ++(1,1);
-      \fill[black] (3,1) rectangle ++(1,1);
-      \fill[black] (3,3) rectangle ++(1,1);
-      \fill[black] (1,1) rectangle ++(1,1);
-      \fill[black] (0,2) rectangle ++(1,1);
-      \fill[black] (3,0) rectangle ++(1,1);
-      \fill[black] (4,0) rectangle ++(1,1);
+      \fill[gray] (1,2) rectangle ++(1,1);
+      \fill[gray] (1,3) rectangle ++(1,1);
+      \fill[gray] (3,1) rectangle ++(1,1);
+      \fill[gray] (3,3) rectangle ++(1,1);
+      \fill[gray] (1,1) rectangle ++(1,1);
+      \fill[gray] (0,2) rectangle ++(1,1);
+      \fill[gray] (3,0) rectangle ++(1,1);
+      \fill[gray] (4,0) rectangle ++(1,1);
 
       \fill[pattern=north east lines, pattern color=green] (0,0) rectangle ++(1,1);
       \fill[pattern=north east lines, pattern color=green] (0,1) rectangle ++(1,1);
@@ -166,6 +171,8 @@ W projekcie istotne jest porównanie różnych algorytmów wyszukiwania ścieżk
 
       \node at (0.5,1.5) {\scriptsize Start};
       \node at (4.5,1.5) {\scriptsize Koniec};
+
+      \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
     \end{tikzpicture}
   \end{minipage}
   \caption{\centering Porównanie ścieżek w labiryncie. Po lewej stronie – ścieżka nieoptymalna, po prawej – optymalna.}
@@ -175,30 +182,184 @@ W projekcie istotne jest porównanie różnych algorytmów wyszukiwania ścieżk
 \newcommand{\GridWidth}{8}   % liczba kolumn
 \newcommand{\GridHeight}{6}  % liczba wierszy
 
-\section{Labirynt}
+\section{Generowanie labiryntu}
 
-Labirynt zbudownay jest z pól które reprezentują przejście lub ścianę.
+\subsection{Algorytm Prima}
+
+Algorytm Prima to metoda generowania labiryntów wykorzystująca technikę tworzenia minimalnego drzewa rozpinającego (MST) dla grafu reprezentującego planszę labiryntu.
+W kontekście generowania labiryntu działanie algorytmu przebiega następująco:
+
+\begin{enumerate}
+    \item Na początku tworzona jest plansza, w której wszystkie pola są oznaczone jako ściany.
+    \item Następnie wybierane jest losowe pole i oznaczane jako przejście.
+    \item Do zbioru krawędzi dodawane są sąsiednie pola, do których można przejść z wybranego pola.
+    \item Losowana jest jedna krawędź ze zbioru. Jeśli prowadzi ona do nieodwiedzonego pola, to tworzy się przejście pomiędzy bieżącym polem a nowym (usuwana zostaje ściana między nimi), a nowe pole zostaje oznaczone jako przejście.
+    \item Do zbioru krawędzi dodawani są sąsiedzi nowego pola. 
+    \item Proces powtarza się, dopóki zbiór krawędzi nie będzie pusty.
+\end{enumerate}
+
+Algorytm ten gwarantuje, że wygenerowany labirynt nie będzie zawierał zamkniętych pętli, a pomiędzy dowolnymi dwoma punktami zawsze będzie istniała możliwa ścieżka. Charakteryzuje się ponadto dużą liczbą krótkich, ślepych zaułków, co w przypadku większych plansz znacząco utrudnia szybkie odnalezienie rozwiązania. Ilustracja działania algorytmu Prima została przedstawione na rysunkach 4-9.
 
 \begin{figure}[ht]
-  \begin{center}
-    \includestandalone{figures/maze_example}
-  \end{center}
-  \caption{Przykładowy labirynt}
+  \centering
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \begin{tikzpicture}[scale=1]
+        \foreach \x in {0,...,4} {
+            \foreach \y in {0,...,4} {
+                \fill[gray] (\x,\y) rectangle ++(1,1);
+            }
+        }
+        \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
+    \end{tikzpicture}
+    \caption{\centering Krok 1. Cała plansza stanowi ściany.}
+    \label{fig:prim_krok_1}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \begin{tikzpicture}[scale=1]
+        \foreach \x in {0,...,4} {
+            \foreach \y in {0,...,4} {
+                \fill[gray] (\x,\y) rectangle ++(1,1);
+            }
+        }
+        \fill[white] (0, 0) rectangle ++(1,1);
+        \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
+    \end{tikzpicture}
+    \caption{\centering  Krok 2. Wybierane jest losowe pole startowe.}
+    \label{fig:prim_krok_2}
+  \end{minipage}
 \end{figure}
 
-\faUser
-\faIcon{arrows-alt}
+\begin{figure}[ht]
+  \centering
+    \begin{minipage}{0.45\textwidth}
+    \centering
+        \begin{tikzpicture}[scale=1]
+        \foreach \x in {0,...,4} {
+            \foreach \y in {0,...,4} {
+                \fill[gray] (\x,\y) rectangle ++(1,1);
+            }
+        }
 
-\section{Generowanie labiryntu}
-\subsection{manual}
-\subsection{depth first search}
-\subsection{krushal}
-\subsection{Prim's}
+        \fill[white] (0,2) rectangle ++(1,1);
+        \fill[pattern=north east lines, pattern color=black] (0,2) rectangle ++(1,1);
 
-\section{Szukanie drogi}
-\subsection{depth first search}
-\subsection{breadth first search}
-\subsection{A*}
+        \fill[white] (2,0) rectangle ++(1,1);
+        \fill[pattern=north east lines, pattern color=black] (2,0) rectangle ++(1,1);
+
+        \fill[white] (0, 0) rectangle ++(1,1);
+
+        \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
+    \end{tikzpicture}
+    \caption{\centering  Krok 3. Wybór sąsiednich pól, do których można poprowadzić krawędzie.}
+    \label{fig:prim_krok_3}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \begin{tikzpicture}[scale=1]
+        \foreach \x in {0,...,4} {
+            \foreach \y in {0,...,4} {
+                \fill[gray] (\x,\y) rectangle ++(1,1);
+            }
+        }
+
+        \fill[white] (0,2) rectangle ++(1,1);
+        \fill[pattern=north east lines, pattern color=black] (0,2) rectangle ++(1,1);
+
+        \fill[white] (2,2) rectangle ++(1,1);
+        \fill[pattern=north east lines, pattern color=black] (2,2) rectangle ++(1,1);
+
+        \fill[white] (4,0) rectangle ++(1,1);
+        \fill[pattern=north east lines, pattern color=black] (4,0) rectangle ++(1,1);
+
+
+        \fill[white] (0, 0) rectangle ++(1,1);
+        \fill[white] (2, 0) rectangle ++(1,1);
+        \fill[white] (1, 0) rectangle ++(1,1);
+        \draw[->, very thick, black] (0.5,0.5) -- (2.5,0.5);
+
+        \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
+    \end{tikzpicture}
+    \caption{\centering  Krok 4. Losowy wybór sąsiedniego pola i utworzenie nowej krawędzi.}
+    \label{fig:prim_krok_4}
+  \end{minipage}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \begin{minipage}{0.45\textwidth}
+    \centering
+        \begin{tikzpicture}[scale=1]
+            \draw[very thick, black] (0.5,0.5) -- (2.5,0.5);
+            \draw[very thick, black] (2.5,0.5) -- (2.5,4.5);
+            \draw[very thick, black] (0.5,4.5) -- (4.5,4.5);
+            \draw[very thick, black] (0.5,4.5) -- (0.5,2.5);
+            \draw[very thick, black] (4.5,2.5) -- (4.5,0.5);
+            \draw[very thick, black] (2.5,2.5) -- (4.5,2.5);
+
+            \fill[gray] (0, 1) rectangle ++(1,1);
+            \fill[gray] (1, 1) rectangle ++(1,1);
+            \fill[gray] (1, 2) rectangle ++(1,1);
+            \fill[gray] (1, 3) rectangle ++(1,1);
+            \fill[gray] (3, 3) rectangle ++(1,1);
+            \fill[gray] (4, 3) rectangle ++(1,1);
+            \fill[gray] (3, 0) rectangle ++(1,1);
+            \fill[gray] (3, 1) rectangle ++(1,1);
+
+            \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
+        \end{tikzpicture}
+    \caption{\centering  Ilustracja kolejnych kroków wyznaczania krawędzi w algorytmie Prima.}
+    \label{fig:prim_krok_5}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.45\textwidth}
+    \centering
+        \begin{tikzpicture}[scale=1]
+
+            \fill[gray] (0, 1) rectangle ++(1,1);
+            \fill[gray] (1, 1) rectangle ++(1,1);
+            \fill[gray] (1, 2) rectangle ++(1,1);
+            \fill[gray] (1, 3) rectangle ++(1,1);
+            \fill[gray] (3, 3) rectangle ++(1,1);
+            \fill[gray] (4, 3) rectangle ++(1,1);
+            \fill[gray] (3, 0) rectangle ++(1,1);
+            \fill[gray] (3, 1) rectangle ++(1,1);
+
+            \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
+        \end{tikzpicture}
+    \caption{\centering Labirynt powstały na podstawie wyznaczonych krawędzi z~Rysunku 8.}
+    \label{fig:prim_krok_6}
+  \end{minipage}
+\end{figure}
+
+
+% \section{Labirynt}
+
+% Labirynt zbudownay jest z pól które reprezentują przejście lub ścianę.
+
+% \begin{figure}[ht]
+%   \begin{center}
+%     \includestandalone{figures/maze_example}
+%   \end{center}
+%   \caption{Przykładowy labirynt}
+% \end{figure}
+
+% \faUser
+% \faIcon{arrows-alt}
+
+% \section{Generowanie labiryntu}
+% \subsection{manual}
+% \subsection{depth first search}
+% \subsection{krushal}
+% \subsection{Prim's}
+
+% \section{Szukanie drogi}
+% \subsection{depth first search}
+% \subsection{breadth first search}
+% \subsection{A*}
 
 
 \end{document}
