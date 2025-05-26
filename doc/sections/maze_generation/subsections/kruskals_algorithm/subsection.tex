@@ -1,0 +1,32 @@
+\subsection{Algorytm Kruskala}
+
+Algorytm Kruskala podobnie jak algorytm Prima jest oparty na tworzeniu minimalnego drzewa rozpinającego. Algorytm traktuje ściany między polami labiryntu jako potencjalne krawędzie (przejścia w labiryncie). Działanie algorytmu w kontekście labiryntu przebiega następująco:
+
+\begin{enumerate}
+    \item Na początku tworzona jest plansza, w której wszystkie pola są oznaczone jako przejśćia.
+
+    \item Tworzony jest zbiór rozłącznych zbiorów \textit{Disjoint Set}, w którym każda komórka należy do własnego zbioru — oznacza to, że na początku żadna komórka nie jest połączona z inną.
+
+    Struktura \textit{Disjoint Set} reprezentuje rozłączne zbiory elementów za pomocą drzew. Na początku każdy element tworzy pojedynczy, jednoelementowy zbiór, którego reprezentantem jest korzeń drzewa.
+
+    Kluczową operacją na tej strukturze jest \textit{Union}, która łączy dwa zbiory, tworząc jedno drzewo, w którym korzeń jednego zbioru staje się potomkiem korzenia drugiego. W ten sposób zbiory są scalane.
+
+    Schematyczne przedstawienie scalania zbiorów znajduje się na Rysunku \ref{fig:disjoint_set}.
+
+    \input{sections/maze_generation/subsections/kruskals_algorithm/figures/disjoint_set}
+
+    \item Zbierane są wszystkie możliwe krawędzie, czyli miejsca między dwiema bezpośrednio sąsiadującymi komórkami, które można potencjalnie zamienić na ściany. Następnie są one tasowane w losowej kolejności. W odróżnieniu od algorytmu Prima, za sąsiadujące uznaje się tutaj pola przylegające bezpośrednio.
+
+    \item Iterujemy po każdej ścianie ze zbioru:
+    \begin{enumerate}
+        \item Dla danej ściany sprawdzane są dwie komórki, które ta ściana oddziela.
+        \item Jeśli te komórki należą do różnych zbiorów (nie są jeszcze połączone), to:
+        \begin{enumerate}
+            \item Usuwana jest ściana między nimi - tworzy się przejście.
+            \item Obie komórki zostają połączone w jednym zbiorze.
+        \end{enumerate}
+        \item Jeśli komórki są już w tym samym zbiorze (czyli istnieje już droga między nimi), ściana nie jest usuwana — zapobiega to tworzeniu cykli.
+    \end{enumerate}
+
+    \item Proces trwa do momentu, gdy wszystkie komórki zostaną połączone w jeden zbiór — czyli zostanie utworzone jedno spójne drzewo bez cykli.
+\end{enumerate}

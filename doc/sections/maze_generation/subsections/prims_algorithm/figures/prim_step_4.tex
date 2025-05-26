@@ -1,0 +1,29 @@
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=0.8]
+        \foreach \x in {0,...,4} {
+            \foreach \y in {0,...,4} {
+                \fill[gray] (\x,\y) rectangle ++(1,1);
+            }
+        }
+
+        \fill[white] (0,2) rectangle ++(1,1);
+        \fill[pattern=north east lines, pattern color=black] (0,2) rectangle ++(1,1);
+
+        \fill[white] (2,2) rectangle ++(1,1);
+        \fill[pattern=north east lines, pattern color=black] (2,2) rectangle ++(1,1);
+
+        \fill[white] (4,0) rectangle ++(1,1);
+        \fill[pattern=north east lines, pattern color=black] (4,0) rectangle ++(1,1);
+
+
+        \fill[white] (0, 0) rectangle ++(1,1);
+        \fill[white] (2, 0) rectangle ++(1,1);
+        \fill[white] (1, 0) rectangle ++(1,1);
+        \draw[->, very thick, black] (0.5,0.5) -- (2.5,0.5);
+
+        \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
+    \end{tikzpicture}
+    \caption{\centering Utworzenie krawędzi do sąsiedniego pola.}
+    \label{fig:prim_step_4}
+\end{figure}

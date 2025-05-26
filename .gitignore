@@ -135,9 +135,10 @@ dist
 .yarn/install-state.gz
 .pnp.*
 .direnv
-teoria/spr.synctex.gz
-teoria/spr.fls
-teoria/spr.fdb_latexmk
-teoria/spr.aux
-teoria/spr.toc
-teoria/figures/maze_example.aux
+
+# LaTeX
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.aux
+*.toc

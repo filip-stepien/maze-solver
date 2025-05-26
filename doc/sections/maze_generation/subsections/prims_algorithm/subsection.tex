@@ -1,0 +1,32 @@
+\subsection{Algorytm Prima}
+
+Algorytm Prima to metoda generowania labiryntów wykorzystująca technikę tworzenia minimalnego drzewa rozpinającego (MST) dla grafu reprezentującego planszę labiryntu.
+W kontekście generowania labiryntu działanie algorytmu przebiega następująco:
+
+\begin{enumerate}
+    \item Na początku tworzona jest plansza, w której wszystkie pola są oznaczone jako ściany.
+    
+    \input{sections/maze_generation/subsections/prims_algorithm/figures/prim_step_1}
+
+    \item Następnie wybierane jest losowe pole i oznaczane jako przejście.
+    
+    \input{sections/maze_generation/subsections/prims_algorithm/figures/prim_step_2}
+
+    \clearpage
+
+    \item Do zbioru krawędzi dodawane są sąsiednie komórki, do których można przejść bezpośrednio z miejsca startowego. Za sąsiednie uznaje się komórki oddalone o jedno pole w pionie lub poziomie.
+    
+    \input{sections/maze_generation/subsections/prims_algorithm/figures/prim_step_3}
+
+    \item Losowana jest jedna krawędź ze zbioru. Jeśli prowadzi ona do nieodwiedzonego pola, to tworzy się przejście pomiędzy bieżącym polem a nowym (usuwana zostaje ściana między nimi), a nowe pole zostaje oznaczone jako przejście. Do zbioru krawędzi dodawani są sąsiedzi nowego pola.
+
+    \input{sections/maze_generation/subsections/prims_algorithm/figures/prim_step_4}
+
+    \item Proces powtarza się, dopóki zbiór krawędzi nie będzie pusty.
+    
+    \input{sections/maze_generation/subsections/prims_algorithm/figures/prim_later_steps}
+\end{enumerate}
+
+Algorytm ten gwarantuje, że utworzony labirynt nie będzie zawierał zamkniętych pętli, a pomiędzy dowolnymi dwoma punktami zawsze będzie istniała możliwa ścieżka.
+
+\clearpage
