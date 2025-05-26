@@ -29,27 +29,6 @@ class DisjointSet {
 }
 
 export class KruskalsStrategy implements GenerationStrategy {
-    private getNeighbors(coords: Vec2d, cols: number, rows: number): Vec2d[] {
-        const neighbors: Vec2d[] = [];
-        const directions: Vec2d[] = [
-            new Vec2d({ x: 2, y: 0 }),
-            // new Vec2d({ x: -2, y: 0 }),
-            new Vec2d({ x: 0, y: 2 })
-            // new Vec2d({ x: 0, y: -2 })
-        ];
-
-        for (const { x, y } of directions) {
-            const neighborX = coords.x + x;
-            const neighborY = coords.y + y;
-
-            if (neighborX >= 0 && neighborX < cols && neighborY >= 0 && neighborY < rows) {
-                neighbors.push(new Vec2d({ x: neighborX, y: neighborY }));
-            }
-        }
-
-        return neighbors;
-    }
-
     generateMaze(cols: number, rows: number): boolean[][] {
         // const maze: boolean[][] = Array.from({ length: rows }, () => Array(cols).fill(false));
         const maze = new Maze({

@@ -42,7 +42,7 @@ Labirynt w kontekście projektu to struktura siatki, gdzie każde pole może sta
 
 \begin{figure}[h]
 \centering
-\begin{tikzpicture}[scale=1]
+\begin{tikzpicture}[scale=0.8]
     \fill[gray] (1,2) rectangle ++(1,1);
     \fill[gray] (1,3) rectangle ++(1,1);
     \fill[gray] (3,1) rectangle ++(1,1);
@@ -52,8 +52,8 @@ Labirynt w kontekście projektu to struktura siatki, gdzie każde pole może sta
     \fill[gray] (3,0) rectangle ++(1,1);
     \fill[gray] (4,0) rectangle ++(1,1);
     
-    \node at (0.5,1.5) {\scriptsize Start};
-    \node at (4.5,1.5) {\scriptsize Koniec};
+    \node at (0.5,1.5) {\tiny Start};
+    \node at (4.5,1.5) {\tiny Koniec};
     \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
 \end{tikzpicture}
 \caption{\centering Przykładowy labirynt 5x5 z zaznaczonym startem i końcem, gdzie białe pole - przejście, czarne - ściana.}
@@ -64,9 +64,9 @@ Można zauważyć, że taka struktura jest reprezentacją grafu, gdzie pola odpo
 
 \begin{figure}[h]
 \centering
-\begin{tikzpicture}[scale=1, every node/.style={circle,draw,minimum size=12mm}]
+\begin{tikzpicture}[scale=1, every node/.style={circle,draw,minimum size=10mm}]
   \node (n00) at (0,0) {};
-  \node (n01) at (0,1.5) {\scriptsize Start};
+  \node (n01) at (0,1.5) {\tiny Start};
   \node (n03) at (0,4.5) {};
   \node (n04) at (0,6) {};
 
@@ -82,7 +82,7 @@ Można zauważyć, że taka struktura jest reprezentacją grafu, gdzie pola odpo
   \node (n32) at (4.5,3) {};
   \node (n34) at (4.5,6) {};
 
-  \node (n41) at (6,1.5) {\scriptsize Koniec};
+  \node (n41) at (6,1.5) {\tiny Koniec};
   \node (n42) at (6,3) {};
   \node (n43) at (6,4.5) {};
   \node (n44) at (6,6) {};
@@ -106,7 +106,7 @@ Można zauważyć, że taka struktura jest reprezentacją grafu, gdzie pola odpo
   \draw (n34) -- (n44);
 \end{tikzpicture}
 \caption{Graf reprezentujący labirynt z rys. 1.}
-\label{fig:graf}
+\label{fig:graf_prim}
 \end{figure}
 
 W projekcie istotne jest porównanie różnych algorytmów wyszukiwania ścieżki, które pozwalają znaleźć trasę między dwoma punktami. W najlepszym przypadku celem jest znalezienie ścieżki \textit{optymalnej}, czyli takiej, która minimalizuje liczbę kroków, co w kontekście grafu o jednakowych wagach krawędzi sprowadza się do znalezienia drogi o minimalnej długości.
@@ -115,9 +115,9 @@ W projekcie istotne jest porównanie różnych algorytmów wyszukiwania ścieżk
 
 \begin{figure}[ht]
   \centering
-  \begin{minipage}{0.45\textwidth}
+  \begin{subfigure}{0.4\textwidth}
     \centering
-    \begin{tikzpicture}[scale=1]
+    \begin{tikzpicture}[scale=0.8]
       \fill[gray] (1,2) rectangle ++(1,1);
       \fill[gray] (1,3) rectangle ++(1,1);
       \fill[gray] (3,1) rectangle ++(1,1);
@@ -141,15 +141,16 @@ W projekcie istotne jest porównanie różnych algorytmów wyszukiwania ścieżk
       \fill[pattern=north east lines, pattern color=green] (4,2) rectangle ++(1,1);
       \fill[pattern=north east lines, pattern color=green] (4,1) rectangle ++(1,1);
 
-      \node at (0.5,1.5) {\scriptsize Start};
-      \node at (4.5,1.5) {\scriptsize Koniec};
+      \node at (0.5,1.5) {\tiny Start};
+      \node at (4.5,1.5) {\tiny Koniec};
 
       \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
     \end{tikzpicture}
-  \end{minipage}
-  \begin{minipage}{0.45\textwidth}
+    \caption{Ścieżka nieoptymalna}
+  \end{subfigure}
+  \begin{subfigure}{0.4\textwidth}
     \centering
-    \begin{tikzpicture}[scale=1]
+    \begin{tikzpicture}[scale=0.8]
       \fill[gray] (1,2) rectangle ++(1,1);
       \fill[gray] (1,3) rectangle ++(1,1);
       \fill[gray] (3,1) rectangle ++(1,1);
@@ -169,18 +170,17 @@ W projekcie istotne jest porównanie różnych algorytmów wyszukiwania ścieżk
       \fill[pattern=north east lines, pattern color=green] (4,2) rectangle ++(1,1);
       \fill[pattern=north east lines, pattern color=green] (4,1) rectangle ++(1,1);
 
-      \node at (0.5,1.5) {\scriptsize Start};
-      \node at (4.5,1.5) {\scriptsize Koniec};
+      \node at (0.5,1.5) {\tiny Start};
+      \node at (4.5,1.5) {\tiny Koniec};
 
       \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
     \end{tikzpicture}
-  \end{minipage}
-  \caption{\centering Porównanie ścieżek w labiryncie. Po lewej stronie – ścieżka nieoptymalna, po prawej – optymalna.}
+    \caption{Ścieżka optymalna}
+  \end{subfigure}
+  \caption{Porównanie ścieżek w labiryncie.}
   \label{fig:labirynt_optymalna_i_nieoptymalna_sciezka}
 \end{figure}
 
-\newcommand{\GridWidth}{8}   % liczba kolumn
-\newcommand{\GridHeight}{6}  % liczba wierszy
 
 \section{Generowanie labiryntu}
 
@@ -191,152 +191,250 @@ W kontekście generowania labiryntu działanie algorytmu przebiega następująco
 
 \begin{enumerate}
     \item Na początku tworzona jest plansza, w której wszystkie pola są oznaczone jako ściany.
+    
+    \begin{figure}[ht]
+      \centering
+      \begin{tikzpicture}[scale=0.8]
+          \foreach \x in {0,...,4} {
+              \foreach \y in {0,...,4} {
+                  \fill[gray] (\x,\y) rectangle ++(1,1);
+              }
+          }
+          \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
+      \end{tikzpicture}
+      \caption{\centering Cała plansza stanowi ściany.}
+      \label{fig:prim_krok_11}
+    \end{figure}
+
     \item Następnie wybierane jest losowe pole i oznaczane jako przejście.
-    \item Do zbioru krawędzi dodawane są sąsiednie pola, do których można przejść z wybranego pola.
-    \item Losowana jest jedna krawędź ze zbioru. Jeśli prowadzi ona do nieodwiedzonego pola, to tworzy się przejście pomiędzy bieżącym polem a nowym (usuwana zostaje ściana między nimi), a nowe pole zostaje oznaczone jako przejście.
-    \item Do zbioru krawędzi dodawani są sąsiedzi nowego pola. 
+    
+    \begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=0.8]
+        \foreach \x in {0,...,4} {
+            \foreach \y in {0,...,4} {
+                \fill[gray] (\x,\y) rectangle ++(1,1);
+            }
+        }
+        \fill[white] (0, 0) rectangle ++(1,1);
+        \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
+    \end{tikzpicture}
+    \caption{\centering Losowe pole startowe.}
+    \label{fig:prim_losowe_pole_startowe}
+    \end{figure}
+
+    \clearpage
+
+    \item Do zbioru krawędzi dodawane są sąsiednie komórki, do których można przejść bezpośrednio z miejsca startowego. Za sąsiednie uznaje się komórki oddalone o jedno pole w pionie lub poziomie.
+    
+    \begin{figure}[h]
+    \centering
+      \begin{tikzpicture}[scale=0.8]
+          \foreach \x in {0,...,4} {
+              \foreach \y in {0,...,4} {
+                  \fill[gray] (\x,\y) rectangle ++(1,1);
+              }
+          }
+
+          \fill[white] (0,2) rectangle ++(1,1);
+          \fill[pattern=north east lines, pattern color=black] (0,2) rectangle ++(1,1);
+
+          \fill[white] (2,0) rectangle ++(1,1);
+          \fill[pattern=north east lines, pattern color=black] (2,0) rectangle ++(1,1);
+
+          \fill[white] (0, 0) rectangle ++(1,1);
+
+          \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
+      \end{tikzpicture}
+      \caption{\centering  Wybór sąsiednich pól.}
+      \label{fig:prim_wybor_sasiadow}
+    \end{figure}
+
+    \item Losowana jest jedna krawędź ze zbioru. Jeśli prowadzi ona do nieodwiedzonego pola, to tworzy się przejście pomiędzy bieżącym polem a nowym (usuwana zostaje ściana między nimi), a nowe pole zostaje oznaczone jako przejście. Do zbioru krawędzi dodawani są sąsiedzi nowego pola.
+
+    \begin{figure}[ht]
+      \centering
+      \begin{tikzpicture}[scale=0.8]
+          \foreach \x in {0,...,4} {
+              \foreach \y in {0,...,4} {
+                  \fill[gray] (\x,\y) rectangle ++(1,1);
+              }
+          }
+
+          \fill[white] (0,2) rectangle ++(1,1);
+          \fill[pattern=north east lines, pattern color=black] (0,2) rectangle ++(1,1);
+
+          \fill[white] (2,2) rectangle ++(1,1);
+          \fill[pattern=north east lines, pattern color=black] (2,2) rectangle ++(1,1);
+
+          \fill[white] (4,0) rectangle ++(1,1);
+          \fill[pattern=north east lines, pattern color=black] (4,0) rectangle ++(1,1);
+
+
+          \fill[white] (0, 0) rectangle ++(1,1);
+          \fill[white] (2, 0) rectangle ++(1,1);
+          \fill[white] (1, 0) rectangle ++(1,1);
+          \draw[->, very thick, black] (0.5,0.5) -- (2.5,0.5);
+
+          \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
+      \end{tikzpicture}
+      \caption{\centering Utworzenie krawędzi do sąsiedniego pola.}
+      \label{fig:prim_utworzenie_krawedzi}
+    \end{figure}
+
     \item Proces powtarza się, dopóki zbiór krawędzi nie będzie pusty.
+    
+  \begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+      \centering
+      \begin{tikzpicture}[scale=0.8, every node/.style={circle,draw,minimum size=8mm}]
+        \draw[very thick, black] (0.5,0.5) -- (2.5,0.5);
+        \draw[very thick, black] (2.5,0.5) -- (2.5,4.5);
+        \draw[very thick, black] (0.5,4.5) -- (4.5,4.5);
+        \draw[very thick, black] (0.5,4.5) -- (0.5,2.5);
+        \draw[very thick, black] (4.5,2.5) -- (4.5,0.5);
+        \draw[very thick, black] (2.5,2.5) -- (4.5,2.5);
+
+        \fill[gray] (0, 1) rectangle ++(1,1);
+        \fill[gray] (1, 1) rectangle ++(1,1);
+        \fill[gray] (1, 2) rectangle ++(1,1);
+        \fill[gray] (1, 3) rectangle ++(1,1);
+        \fill[gray] (3, 3) rectangle ++(1,1);
+        \fill[gray] (4, 3) rectangle ++(1,1);
+        \fill[gray] (3, 0) rectangle ++(1,1);
+        \fill[gray] (3, 1) rectangle ++(1,1);
+
+        \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
+      \end{tikzpicture}
+      \caption{\centering Wyznaczanie kolejnych krawędzi labiryntu.}
+      \label{fig:prim_kolejne_kroki_a}
+    \end{subfigure}
+    \begin{subfigure}{0.45\textwidth}
+      \centering
+      \begin{tikzpicture}[scale=0.8, every node/.style={circle,draw,minimum size=8mm}]
+        \fill[gray] (0, 1) rectangle ++(1,1);
+        \fill[gray] (1, 1) rectangle ++(1,1);
+        \fill[gray] (1, 2) rectangle ++(1,1);
+        \fill[gray] (1, 3) rectangle ++(1,1);
+        \fill[gray] (3, 3) rectangle ++(1,1);
+        \fill[gray] (4, 3) rectangle ++(1,1);
+        \fill[gray] (3, 0) rectangle ++(1,1);
+        \fill[gray] (3, 1) rectangle ++(1,1);
+
+        \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
+      \end{tikzpicture}
+      \caption{\centering Labirynt powstały na podstawie wyznaczonych krawędzi.}
+      \label{fig:prim_kolejne_kroki_b}
+    \end{subfigure}
+    \caption{Kolejne kroki działania algorytmu.}
+    \label{fig:prim_kolejne_kroki}
+  \end{figure}
+
 \end{enumerate}
 
-Algorytm ten gwarantuje, że wygenerowany labirynt nie będzie zawierał zamkniętych pętli, a pomiędzy dowolnymi dwoma punktami zawsze będzie istniała możliwa ścieżka. Charakteryzuje się ponadto dużą liczbą krótkich, ślepych zaułków, co w przypadku większych plansz znacząco utrudnia szybkie odnalezienie rozwiązania. Ilustracja działania algorytmu Prima została przedstawione na rysunkach 4-9.
+Algorytm ten gwarantuje, że utworzony labirynt nie będzie zawierał zamkniętych pętli, a pomiędzy dowolnymi dwoma punktami zawsze będzie istniała możliwa ścieżka.
+
+\clearpage
+
+\subsection{Algorytm Kruskala}
+
+Algorytm Kruskala podobnie jak algorytm Prima jest oparty na tworzeniu minimalnego drzewa rozpinającego. Algorytm traktuje ściany między polami labiryntu jako potencjalne krawędzie (przejścia w labiryncie). Działanie algorytmu w kontekście labiryntu przebiega następująco:
+
+\begin{enumerate}
+\item Na początku tworzona jest plansza, w której wszystkie pola są oznaczone jako przejśćia.
+
+\item Tworzony jest zbiór rozłącznych zbiorów \textit{Disjoint Set}, w którym każda komórka należy do własnego zbioru — oznacza to, że na początku żadna komórka nie jest połączona z inną.
+
+Struktura \textit{Disjoint Set} reprezentuje rozłączne zbiory elementów za pomocą drzew. Na początku każdy element tworzy pojedynczy, jednoelementowy zbiór, którego reprezentantem jest korzeń drzewa.
+
+Kluczową operacją na tej strukturze jest \textit{Union}, która łączy dwa zbiory, tworząc jedno drzewo, w którym korzeń jednego zbioru staje się potomkiem korzenia drugiego. W ten sposób zbiory są scalane.
+
+Schematyczne przedstawienie scalania zbiorów znajduje się na Rysunku \ref{fig:disjoint_set}.
 
 \begin{figure}[ht]
   \centering
-  \begin{minipage}{0.45\textwidth}
+
+  \begin{subfigure}{0.24\textwidth}
     \centering
-    \begin{tikzpicture}[scale=1]
-        \foreach \x in {0,...,4} {
-            \foreach \y in {0,...,4} {
-                \fill[gray] (\x,\y) rectangle ++(1,1);
-            }
-        }
-        \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
+    \begin{tikzpicture}[scale=1, every node/.style={circle,draw,minimum size=8mm}]
+      \node (n0) at (0,0) {1};
+      \node (n1) at (1,0) {2};
+      \node (n3) at (2,0) {3};
+      \node (n4) at (3,0) {4};
     \end{tikzpicture}
-    \caption{\centering Krok 1. Cała plansza stanowi ściany.}
-    \label{fig:prim_krok_1}
-  \end{minipage}
+    \caption{Krok 1}
+    \label{fig:disjoint_set_a}
+  \end{subfigure}
   \hfill
-  \begin{minipage}{0.45\textwidth}
+  \begin{subfigure}{0.24\textwidth}
     \centering
-    \begin{tikzpicture}[scale=1]
-        \foreach \x in {0,...,4} {
-            \foreach \y in {0,...,4} {
-                \fill[gray] (\x,\y) rectangle ++(1,1);
-            }
-        }
-        \fill[white] (0, 0) rectangle ++(1,1);
-        \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
+    \begin{tikzpicture}[scale=1, every node/.style={circle,draw,minimum size=8mm}]
+      \node (n0) at (0,1.3) {1};
+      \node (n1) at (0,0) {2};
+      \node (n2) at (1,1.3) {3};
+      \node (n3) at (2,1.3) {4};
+      \draw[->, very thin, black] (0,0.4) -- (0,0.88);
     \end{tikzpicture}
-    \caption{\centering  Krok 2. Wybierane jest losowe pole startowe.}
-    \label{fig:prim_krok_2}
-  \end{minipage}
-\end{figure}
-
-\begin{figure}[ht]
-  \centering
-    \begin{minipage}{0.45\textwidth}
-    \centering
-        \begin{tikzpicture}[scale=1]
-        \foreach \x in {0,...,4} {
-            \foreach \y in {0,...,4} {
-                \fill[gray] (\x,\y) rectangle ++(1,1);
-            }
-        }
-
-        \fill[white] (0,2) rectangle ++(1,1);
-        \fill[pattern=north east lines, pattern color=black] (0,2) rectangle ++(1,1);
-
-        \fill[white] (2,0) rectangle ++(1,1);
-        \fill[pattern=north east lines, pattern color=black] (2,0) rectangle ++(1,1);
-
-        \fill[white] (0, 0) rectangle ++(1,1);
-
-        \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
-    \end{tikzpicture}
-    \caption{\centering  Krok 3. Wybór sąsiednich pól, do których można poprowadzić krawędzie.}
-    \label{fig:prim_krok_3}
-  \end{minipage}
+    \caption{Krok 2}
+    \label{fig:disjoint_set_b}
+  \end{subfigure}
   \hfill
-  \begin{minipage}{0.45\textwidth}
+  \begin{subfigure}{0.24\textwidth}
     \centering
-    \begin{tikzpicture}[scale=1]
-        \foreach \x in {0,...,4} {
-            \foreach \y in {0,...,4} {
-                \fill[gray] (\x,\y) rectangle ++(1,1);
-            }
-        }
-
-        \fill[white] (0,2) rectangle ++(1,1);
-        \fill[pattern=north east lines, pattern color=black] (0,2) rectangle ++(1,1);
-
-        \fill[white] (2,2) rectangle ++(1,1);
-        \fill[pattern=north east lines, pattern color=black] (2,2) rectangle ++(1,1);
-
-        \fill[white] (4,0) rectangle ++(1,1);
-        \fill[pattern=north east lines, pattern color=black] (4,0) rectangle ++(1,1);
-
-
-        \fill[white] (0, 0) rectangle ++(1,1);
-        \fill[white] (2, 0) rectangle ++(1,1);
-        \fill[white] (1, 0) rectangle ++(1,1);
-        \draw[->, very thick, black] (0.5,0.5) -- (2.5,0.5);
-
-        \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
+    \begin{tikzpicture}[scale=1, every node/.style={circle,draw,minimum size=8mm}]
+      \node (n0) at (0,1.3) {1};
+      \node (n1) at (0,0) {2};
+      \node (n2) at (1,1.3) {3};
+      \node (n3) at (1,0) {4};
+      \draw[->, very thin, black] (0,0.4) -- (0,0.88);
+      \draw[->, very thin, black] (1,0.4) -- (1,0.88);
     \end{tikzpicture}
-    \caption{\centering  Krok 4. Losowy wybór sąsiedniego pola i utworzenie nowej krawędzi.}
-    \label{fig:prim_krok_4}
-  \end{minipage}
-\end{figure}
-
-\begin{figure}[ht]
-  \centering
-  \begin{minipage}{0.45\textwidth}
-    \centering
-        \begin{tikzpicture}[scale=1]
-            \draw[very thick, black] (0.5,0.5) -- (2.5,0.5);
-            \draw[very thick, black] (2.5,0.5) -- (2.5,4.5);
-            \draw[very thick, black] (0.5,4.5) -- (4.5,4.5);
-            \draw[very thick, black] (0.5,4.5) -- (0.5,2.5);
-            \draw[very thick, black] (4.5,2.5) -- (4.5,0.5);
-            \draw[very thick, black] (2.5,2.5) -- (4.5,2.5);
-
-            \fill[gray] (0, 1) rectangle ++(1,1);
-            \fill[gray] (1, 1) rectangle ++(1,1);
-            \fill[gray] (1, 2) rectangle ++(1,1);
-            \fill[gray] (1, 3) rectangle ++(1,1);
-            \fill[gray] (3, 3) rectangle ++(1,1);
-            \fill[gray] (4, 3) rectangle ++(1,1);
-            \fill[gray] (3, 0) rectangle ++(1,1);
-            \fill[gray] (3, 1) rectangle ++(1,1);
-
-            \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
-        \end{tikzpicture}
-    \caption{\centering  Ilustracja kolejnych kroków wyznaczania krawędzi w algorytmie Prima.}
-    \label{fig:prim_krok_5}
-  \end{minipage}
+    \caption{Krok 3}
+    \label{fig:disjoint_set_c}
+  \end{subfigure}
   \hfill
-  \begin{minipage}{0.45\textwidth}
+  \begin{subfigure}{0.24\textwidth}
     \centering
-        \begin{tikzpicture}[scale=1]
+    \begin{tikzpicture}[scale=1, every node/.style={circle,draw,minimum size=8mm}]
+      \node (n0) at (0.5,2.6) {1};
+      \node (n1) at (0,1.3) {2};
+      \node (n2) at (1,0) {3};
+      \node (n3) at (1,1.3) {4};
+      \draw[->, very thin, black] (0,1.7) -- (0.3,2.22);
+      \draw[->, very thin, black] (1,1.7) -- (0.7,2.22);
+      \draw[->, very thin, black] (1,0.4) -- (1,0.88);
+    \end{tikzpicture}
+    \caption{Krok 4}
+    \label{fig:disjoint_set_d}
+  \end{subfigure}
 
-            \fill[gray] (0, 1) rectangle ++(1,1);
-            \fill[gray] (1, 1) rectangle ++(1,1);
-            \fill[gray] (1, 2) rectangle ++(1,1);
-            \fill[gray] (1, 3) rectangle ++(1,1);
-            \fill[gray] (3, 3) rectangle ++(1,1);
-            \fill[gray] (4, 3) rectangle ++(1,1);
-            \fill[gray] (3, 0) rectangle ++(1,1);
-            \fill[gray] (3, 1) rectangle ++(1,1);
-
-            \draw[step=1cm,ultra thin,black] (0,0) grid (5,5);
-        \end{tikzpicture}
-    \caption{\centering Labirynt powstały na podstawie wyznaczonych krawędzi z~Rysunku 8.}
-    \label{fig:prim_krok_6}
-  \end{minipage}
+  \caption{Kolejne kroki scalania zbioru}
+  \label{fig:disjoint_set}
 \end{figure}
+%https://cp-algorithms.com/data_structures/disjoint_set_union.html
+
+\item Zbierane są wszystkie możliwe krawędzie, czyli miejsca między dwiema bezpośrednio sąsiadującymi komórkami, które można potencjalnie zamienić na ściany. Następnie są one tasowane w losowej kolejności. W odróżnieniu od algorytmu Prima, za sąsiadujące uznaje się tutaj pola przylegające bezpośrednio.
+
+\item Iterujemy po każdej ścianie ze zbioru:
+\begin{enumerate}
+    \item Dla danej ściany sprawdzane są dwie komórki, które ta ściana oddziela.
+    \item Jeśli te komórki należą do różnych zbiorów (nie są jeszcze połączone), to:
+    \begin{enumerate}
+      \item Usuwana jest ściana między nimi - tworzy się przejście.
+      \item Obie komórki zostają połączone w jednym zbiorze.
+    \end{enumerate}
+    \item Jeśli komórki są już w tym samym zbiorze (czyli istnieje już droga między nimi), ściana nie jest usuwana — zapobiega to tworzeniu cykli.
+\end{enumerate}
+
+\item Proces trwa do momentu, gdy wszystkie komórki zostaną połączone w jeden zbiór — czyli zostanie utworzone jedno spójne drzewo bez cykli.
+\end{enumerate}
 
 
 % \section{Labirynt}
+
+% \newcommand{\GridWidth}{8}   % liczba kolumn
+% \newcommand{\GridHeight}{6}  % liczba wierszy
 
 % Labirynt zbudownay jest z pól które reprezentują przejście lub ścianę.
 
