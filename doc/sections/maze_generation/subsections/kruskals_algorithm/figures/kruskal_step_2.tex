@@ -1,0 +1,20 @@
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[scale=0.8]
+        \draw[step=1cm, ultra thin, black] (0,0) grid (5,5);
+        
+        \newcounter{char}
+        \setcounter{char}{1}
+        
+        \foreach \x in {0,...,4} {
+            \foreach \y in {0,...,4} {
+                \ifnum\value{char}<26
+                    \node at (\x + 0.5, 4.5 - \y) {\small\textbf{\Alph{char}}};
+                    \stepcounter{char}
+                \fi
+            }
+        }
+    \end{tikzpicture}
+    \caption{\centering Każdy zbiór jest oznaczony unikalną literą.}
+    \label{fig:kruskal_step_2}
+\end{figure}

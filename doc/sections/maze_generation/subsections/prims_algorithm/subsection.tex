@@ -14,7 +14,7 @@ W kontekście generowania labiryntu działanie algorytmu przebiega następująco
 
     \clearpage
 
-    \item Do zbioru krawędzi dodawane są sąsiednie komórki, do których można przejść bezpośrednio z miejsca startowego. Za sąsiednie uznaje się komórki oddalone o jedno pole w pionie lub poziomie.
+    \item Do zbioru krawędzi dodawane są sąsiednie komórki, do których można przejść bezpośrednio z miejsca startowego. Za sąsiednie uznaje się komórki oddalone o jedno pole w pionie lub poziomie. W ten sposób korytarze zawsze będą miały szerokość jednego pola.
     
     \input{sections/maze_generation/subsections/prims_algorithm/figures/prim_step_3}
 
@@ -26,7 +26,5 @@ W kontekście generowania labiryntu działanie algorytmu przebiega następująco
     
     \input{sections/maze_generation/subsections/prims_algorithm/figures/prim_later_steps}
 \end{enumerate}
-
-Algorytm ten gwarantuje, że utworzony labirynt nie będzie zawierał zamkniętych pętli, a pomiędzy dowolnymi dwoma punktami zawsze będzie istniała możliwa ścieżka.
 
 \clearpage

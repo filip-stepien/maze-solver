@@ -1,0 +1,25 @@
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[scale=0.8]
+        \draw[step=1cm, ultra thin, black] (0,0) grid (5,5);
+        \draw (1.5,1.5) circle[radius=4mm];
+
+        \fill[pattern=north east lines, pattern color=gray] (0,1) rectangle ++(1,1);
+        \fill[pattern=north east lines, pattern color=gray] (1,0) rectangle ++(1,1);
+        \fill[pattern=north east lines, pattern color=gray] (1,2) rectangle ++(1,1);
+        \fill[pattern=north east lines, pattern color=gray] (2,1) rectangle ++(1,1);
+
+        \newcounter{char_kruskal_3a}
+        \setcounter{char_kruskal_3a}{1}
+        \foreach \x in {0,...,4} {
+            \foreach \y in {0,...,4} {
+                \ifnum\value{char_kruskal_3a}<26
+                    \node at (\x + 0.5, 4.5 - \y) {\small\textbf{\Alph{char_kruskal_3a}}};
+                    \stepcounter{char_kruskal_3a}
+                \fi
+            }
+        }
+    \end{tikzpicture}
+    \caption{\centering Losowa komórka (oznaczona kółkiem) i jej sąsiedzi (zakreskowani).}
+    \label{fig:kruskal_step_3_a}
+\end{figure}

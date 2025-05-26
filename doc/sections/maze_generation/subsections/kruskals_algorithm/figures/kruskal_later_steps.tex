@@ -1,0 +1,180 @@
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.8]
+            \draw[step=1cm, ultra thin, black] (0,0) grid (5,5);
+            \newcounter{char_kruskal_later_a}
+            \setcounter{char_kruskal_later_a}{1}
+            \foreach \x in {0,...,4} {
+                \foreach \y in {0,...,4} {
+                    \ifnum\value{char_kruskal_later_a}<26
+                        \node at (\x + 0.5, 4.5 - \y) {\small\textbf{\Alph{char_kruskal_later_a}}};
+                        \stepcounter{char_kruskal_later_a}
+                    \fi
+                }
+            }
+
+            \fill[white] (0.1,1.1) rectangle ++(0.8, 0.8);
+            \fill[white] (1.1,0.1) rectangle ++(0.8, 0.8);
+            \fill[white] (1.1,2.1) rectangle ++(0.8, 0.8);
+            \fill[white] (2.1,1.1) rectangle ++(0.8, 0.8);
+            \fill[white] (2.1,0.1) rectangle ++(0.8, 0.8);
+            \fill[white] (2.1,2.1) rectangle ++(0.8, 0.8);
+
+            \node at (0.5, 1.5) {\small\textbf{H}};
+            \node at (1.5, 0.5) {\small\textbf{H}};
+            \node at (1.5, 2.5) {\small\textbf{H}};
+            \node at (2.5, 1.5) {\small\textbf{H}};
+
+            \draw[ultra thick] (0, 1) -- (0, 2);
+            \draw[ultra thick] (1, 0) -- (1, 1);
+            \draw[ultra thick] (2, 0) -- (2, 1);
+            \draw[ultra thick] (3, 1) -- (3, 2);
+            \draw[ultra thick] (3, 1) -- (3, 2);
+            \draw[ultra thick] (1, 2) -- (1, 3);
+            \draw[ultra thick] (2, 2) -- (2, 3);
+
+            \draw[ultra thick] (1, 0) -- (2, 0);
+            \draw[ultra thick] (1, 3) -- (2, 3);
+            \draw[ultra thick] (0, 2) -- (1, 2);
+            \draw[ultra thick] (0, 1) -- (1, 1);
+            \draw[ultra thick] (2, 1) -- (3, 1);
+            \draw[ultra thick] (2, 2) -- (3, 2);
+
+            \fill[gray] (1,1) rectangle ++(1,1);
+        \end{tikzpicture}
+        \caption{\centering Kolejna komórka bez unikalnych sąsiadów.}
+        \label{fig:kruskal_later_steps_a}
+    \end{subfigure}
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.8]
+            \draw[step=1cm, ultra thin, black] (0,0) grid (5,5);
+            \newcounter{char_kruskal_later_b}
+            \setcounter{char_kruskal_later_b}{1}
+            \foreach \x in {0,...,4} {
+                \foreach \y in {0,...,4} {
+                    \ifnum\value{char_kruskal_later_b}<26
+                        \node at (\x + 0.5, 4.5 - \y) {\small\textbf{\Alph{char_kruskal_later_b}}};
+                        \stepcounter{char_kruskal_later_b}
+                    \fi
+                }
+            }
+
+            \fill[white] (0.1,1.1) rectangle ++(0.8, 0.8);
+            \fill[white] (1.1,0.1) rectangle ++(0.8, 0.8);
+            \fill[white] (1.1,2.1) rectangle ++(0.8, 0.8);
+            \fill[white] (2.1,1.1) rectangle ++(0.8, 0.8);
+            \fill[white] (2.1,0.1) rectangle ++(0.8, 0.8);
+            \fill[white] (0.1,2.1) rectangle ++(0.8, 0.8);
+            \fill[white] (0.1,0.1) rectangle ++(0.8, 0.8);
+            \fill[white] (2.1,2.1) rectangle ++(0.8, 0.8);
+
+            \node at (0.5, 1.5) {\small\textbf{H}};
+            \node at (1.5, 0.5) {\small\textbf{H}};
+            \node at (1.5, 2.5) {\small\textbf{H}};
+            \node at (2.5, 1.5) {\small\textbf{H}};
+            \node at (0.5, 0.5) {\small\textbf{H}};
+            \node at (0.5, 2.5) {\small\textbf{H}};
+
+            \fill[gray] (1,1) rectangle ++(1,1);
+            \fill[gray] (0,1) rectangle ++(1,1);
+
+            \draw[ultra thick] (0, 1) -- (0, 2);
+            \draw[ultra thick] (2, 0) -- (2, 1);
+            \draw[ultra thick] (3, 1) -- (3, 2);
+            \draw[ultra thick] (2, 2) -- (2, 3);
+
+            \draw[ultra thick] (1, 0) -- (2, 0);
+            \draw[ultra thick] (1, 3) -- (2, 3);
+            \draw[ultra thick] (2, 1) -- (3, 1);
+            \draw[ultra thick] (2, 2) -- (3, 2);
+            \draw[ultra thick] (0, 0) -- (0, 1);
+            \draw[ultra thick] (0, 0) -- (1, 0);
+            \draw[ultra thick] (0, 2) -- (0, 3);
+            \draw[ultra thick] (0, 3) -- (1, 3);
+
+        \end{tikzpicture}
+        \caption{\centering Rozszerzenie połączonego zbioru.}
+        \label{fig:kruskal_later_steps_b}
+    \end{subfigure}
+    \begin{subfigure}{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.8]
+            \draw[step=1cm, ultra thin, black] (0,0) grid (5,5);
+            \newcounter{char_kruskal_later_c}
+            \setcounter{char_kruskal_later_c}{1}
+            \foreach \x in {0,...,4} {
+                \foreach \y in {0,...,4} {
+                    \ifnum\value{char_kruskal_later_c}<26
+                        \node at (\x + 0.5, 4.5 - \y) {\small\textbf{\Alph{char_kruskal_later_c}}};
+                        \stepcounter{char_kruskal_later_c}
+                    \fi
+                }
+            }
+
+            \fill[white] (0.1,1.1) rectangle ++(0.8, 0.8);
+            \fill[white] (1.1,0.1) rectangle ++(0.8, 0.8);
+            \fill[white] (1.1,2.1) rectangle ++(0.8, 0.8);
+            \fill[white] (2.1,1.1) rectangle ++(0.8, 0.8);
+            \fill[white] (2.1,0.1) rectangle ++(0.8, 0.8);
+            \fill[white] (0.1,2.1) rectangle ++(0.8, 0.8);
+            \fill[white] (0.1,0.1) rectangle ++(0.8, 0.8);
+            \fill[white] (2.1,3.1) rectangle ++(0.8, 0.8);
+            \fill[white] (3.1,2.1) rectangle ++(0.8, 0.8);
+            \fill[white] (3.1,4.1) rectangle ++(0.8, 0.8);
+            \fill[white] (4.1,3.1) rectangle ++(0.8, 0.8);
+            \fill[white] (2.1,2.1) rectangle ++(0.8, 0.8);
+
+            \node at (0.5, 1.5) {\small\textbf{H}};
+            \node at (1.5, 0.5) {\small\textbf{H}};
+            \node at (1.5, 2.5) {\small\textbf{H}};
+            \node at (2.5, 1.5) {\small\textbf{H}};
+            \node at (0.5, 0.5) {\small\textbf{H}};
+            \node at (0.5, 2.5) {\small\textbf{H}};
+
+            \node at (2.5, 3.5) {\small\textbf{P}};
+            \node at (4.5, 3.5) {\small\textbf{P}};
+            \node at (3.5, 2.5) {\small\textbf{P}};
+            \node at (3.5, 4.5) {\small\textbf{P}};
+
+            \fill[gray] (1,1) rectangle ++(1,1);
+            \fill[gray] (0,1) rectangle ++(1,1);
+            \fill[gray] (3,3) rectangle ++(1,1);
+
+            \draw[ultra thick] (0, 1) -- (0, 2);
+            \draw[ultra thick] (2, 0) -- (2, 1);
+            \draw[ultra thick] (3, 1) -- (3, 2);
+            \draw[ultra thick] (2, 2) -- (2, 3);
+
+            \draw[ultra thick] (1, 0) -- (2, 0);
+            \draw[ultra thick] (1, 3) -- (2, 3);
+            \draw[ultra thick] (2, 1) -- (3, 1);
+            \draw[ultra thick] (2, 2) -- (3, 2);
+            \draw[ultra thick] (0, 0) -- (0, 1);
+            \draw[ultra thick] (0, 0) -- (1, 0);
+            \draw[ultra thick] (0, 2) -- (0, 3);
+            \draw[ultra thick] (0, 3) -- (1, 3);
+
+            \draw[densely dashed, ultra thick] (2, 3) -- (3, 3);
+            \draw[densely dashed, ultra thick] (4, 3) -- (5, 3);
+            \draw[densely dashed, ultra thick] (2, 4) -- (3, 4);
+            \draw[densely dashed, ultra thick] (4, 4) -- (5, 4);
+            \draw[densely dashed, ultra thick] (3, 5) -- (4, 5);
+            \draw[densely dashed, ultra thick] (3, 2) -- (4, 2);
+            
+            \draw[densely dashed, ultra thick] (2, 3) -- (2, 4);
+            \draw[densely dashed, ultra thick] (5, 3) -- (5, 4);
+            \draw[densely dashed, ultra thick] (3, 4) -- (3, 5);
+            \draw[densely dashed, ultra thick] (3, 2) -- (3, 3);
+            \draw[densely dashed, ultra thick] (4, 2) -- (4, 3);
+            \draw[densely dashed, ultra thick] (4, 4) -- (4, 5);
+
+        \end{tikzpicture}
+        \caption{\centering Scalenie kolejnego zbioru.}
+        \label{fig:kruskal_later_steps_c}
+    \end{subfigure}
+    \caption{Przykładowe kolejne iteracje algorytmu.}
+    \label{fig:kruskal_later_steps}
+\end{figure}
