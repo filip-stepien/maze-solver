@@ -1,30 +1,27 @@
 \subsection{Algorytm Prima}
 
-Algorytm Prima to metoda generowania labiryntów wykorzystująca technikę tworzenia minimalnego drzewa rozpinającego (MST) dla grafu reprezentującego planszę labiryntu.
-W kontekście generowania labiryntu działanie algorytmu przebiega następująco:
+Algorytm Prima w kontekście generowania labiryntu działa poprzez stopniowe budowanie połączeń między komórkami planszy. W każdej iteracji wybierana jest losowa krawędź prowadząca z odwiedzonej komórki do jednej z sąsiednich, jeszcze nieodwiedzonych. Wybrana komórka zostaje następnie połączona z dotychczasowym obszarem labiryntu. Proces ten powtarzany jest aż do momentu, gdy wszystkie komórki zostaną połączone, tworząc spójną strukturę bez cykli. Szczegółowy przebieg algorytmu wygląda następująco:
 
 \begin{enumerate}
-    \item Na początku tworzona jest plansza, w której wszystkie pola są oznaczone jako ściany.
+    \item Na początku tworzona jest plansza, w której wszystkie komórki są oznaczone jako ściany. Rysunek \ref{fig:prim_step_1} przedstawia początkowy układ planszy w całości wypełnionej ścianami.
     
     \input{sections/maze_generation/subsections/prims_algorithm/figures/prim_step_1}
 
-    \item Następnie wybierane jest losowe pole i oznaczane jako przejście.
+    \item Następnie wybierane jest losowe pole, które zostaje oznaczone jako przejście. Rysunek \ref{fig:prim_step_2} przedstawia wybrane losowo pole startowe.
     
     \input{sections/maze_generation/subsections/prims_algorithm/figures/prim_step_2}
 
-    \clearpage
-
-    \item Do zbioru krawędzi dodawane są sąsiednie komórki, do których można przejść bezpośrednio z miejsca startowego. Za sąsiednie uznaje się komórki oddalone o jedno pole w pionie lub poziomie. W ten sposób korytarze zawsze będą miały szerokość jednego pola.
+    \item Do zbioru krawędzi dodawane są sąsiednie komórki, do których można przejść bezpośrednio z pola startowego. Za sąsiednie uznaje się komórki oddalone o jedno pole w pionie lub poziomie. Ilustrację tego etapu przedstawiono na Rysunku \ref{fig:prim_step_3}.
     
     \input{sections/maze_generation/subsections/prims_algorithm/figures/prim_step_3}
 
-    \item Losowana jest jedna krawędź ze zbioru. Jeśli prowadzi ona do nieodwiedzonego pola, to tworzy się przejście pomiędzy bieżącym polem a nowym (usuwana zostaje ściana między nimi), a nowe pole zostaje oznaczone jako przejście. Do zbioru krawędzi dodawani są sąsiedzi nowego pola.
+    \item Losowana jest jedna krawędź ze zbioru potencjalnych przejść. Jeśli prowadzi ona do nieodwiedzonego pola, tworzy się przejście między bieżącym polem a nowym (usuwana jest ściana między nimi), a nowe pole zostaje oznaczone jako przejście. Następnie do zbioru krawędzi dodawani są sąsiedzi nowo odwiedzonego pola. Ilustrację tego etapu przedstawiono na Rysunku \ref{fig:prim_step_4}.
 
     \input{sections/maze_generation/subsections/prims_algorithm/figures/prim_step_4}
 
-    \item Proces powtarza się, dopóki zbiór krawędzi nie będzie pusty.
+    \item Proces powtarza się, aż zbiór krawędzi stanie się pusty, co oznacza, że wszystkie komórki zostały połączone.
+
+    Na Rysunku \ref{fig:prim_later_steps_a} przedstawiono wyznaczanie kolejnych krawędzi labiryntu, a na Rysunku \ref{fig:prim_later_steps_b} końcowy labirynt powstały na podstawie tych krawędzi.
     
     \input{sections/maze_generation/subsections/prims_algorithm/figures/prim_later_steps}
 \end{enumerate}
-
-\clearpage

@@ -1,41 +1,43 @@
 \subsection{Algorytm Kruskala}
 
-Algorytm Kruskala, podobnie jak algorytm Prima, opiera się na tworzeniu minimalnego drzewa rozpinającego. Kluczowym elementem jego działania jest wykorzystanie struktury danych \textit{Disjoint Set} (zbiorów rozłącznych).
+Algorytm Kruskala do znalezienia minimalnego drzewa rozpinającego wykorzystuje strukturę zbiorów rozłącznych (ang. \textit{Disjoint Set}).
 
-Struktura \textit{Disjoint Set} reprezentuje rozłączne zbiory elementów za pomocą drzew. Na początku każdy element tworzy pojedynczy, jednoelementowy zbiór, którego reprezentantem jest korzeń drzewa. Główna operacja na tej strukturze, \textit{union}, łączy dwa zbiory, tworząc jedno drzewo, w którym korzeń jednego zbioru staje się potomkiem korzenia drugiego. W ten sposób zbiory są scalane. Schematyczne przedstawienie scalania zbiorów znajduje się na Rysunku \ref{fig:disjoint_set}.
+Struktura \textit{Disjoint Set} reprezentuje rozłączne zbiory elementów za pomocą drzew. Na początku każdy element tworzy pojedynczy, jednoelementowy zbiór, którego reprezentantem jest korzeń drzewa. Główna operacja na tej strukturze, \textit{unia}, łączy dwa zbiory, tworząc jedno drzewo, w którym korzeń jednego zbioru staje się potomkiem korzenia drugiego. W ten sposób zbiory są scalane. Schematyczne przedstawienie scalania zbiorów znajduje się na Rysunku \ref{fig:disjoint_set}.
 
 \input{sections/maze_generation/subsections/kruskals_algorithm/figures/disjoint_set}
 
-Generowanie labiryntu przebiega następująco:
+Projekt wykorzystuje zmodyfikowaną wersję algorytmu Kruskala. W klasycznym wariancie algorytm losowo wybiera krawędź, czyli parę sąsiadujących komórek, które mogą zostać połączone ścieżką. Jeśli komórki te należą do różnych zbiorów, są one łączone w jeden zbiór, a między nimi tworzone jest przejście.
+
+W prezentowanej wersji algorytmu zamiast losowo wybierać krawędzie, iteruje się w losowej kolejności po wszystkich komórkach planszy. Dla każdej komórki rozpatrywani są jej sąsiedzi – jeśli należą do innych zbiorów, bieżąca komórka zostaje przekształcona w ścieżkę, a sąsiadujące zbiory zostają połączone.
+
+Kluczową różnicą w porównaniu do klasycznego podejścia jest sposób zakończenia algorytmu. W tradycyjnej wersji wszystkie komórki zostają połączone w jeden wspólny zbiór. W tym przypadku natomiast, ze względu na lokalny charakter działania, istnieje wysokie prawdopodobieństwo, że w wyniku działania algorytmu pozostanie wiele niepołączonych zbiorów. Mimo to, końcowy układ labiryntu wizualnie przypomina ten uzyskany metodą klasyczną.
+
+Poszczególne kroki generowania labiryntu przebiegają następująco:
 \begin{enumerate}
-    \item Tworzona jest siatka, w której wszystkie pola są oznaczone jako przejścia.
+    \item Tworzona jest siatka, w której wszystkie pola są początkowo oznaczone jako przejścia. Warto zaznaczyć, że nie ma znaczenia, czy algorytm rozpoczyna z planszą wypełnioną przejściami, a następnie tworzy ściany, czy odwrotnie — z planszą wypełnioną ścianami, w której tworzone są przejścia. Efekt końcowy pozostaje taki sam. Przykład planszy z samymi przejściami przedstawiono na \ref{fig:kruskal_step_1}.
 
     \input{sections/maze_generation/subsections/kruskals_algorithm/figures/kruskal_step_1}
 
-    \item Każde pole planszy jest osobnym zbiorem w strukturze \textit{Disjoint Set}. Na tym etapie żadna komórka nie jest jeszcze połączona z inną.
+    \item Każde pole planszy jest osobnym zbiorem w strukturze zbiorów rozłącznych. Na tym etapie żadna komórka nie jest jeszcze połączona z inną, co zostało przedstawione na Rysunku \ref{fig:kruskal_step_2}.
 
     \input{sections/maze_generation/subsections/kruskals_algorithm/figures/kruskal_step_2}
 
     \item Komórki planszy są rozpatrywane w losowej kolejności:
     \begin{enumerate}
-        \item Dla wybranej komórki określa się bezpośrednich sąsiadów. W tym przypadku są to pola bezpośrednio przyległe w górę, doł, lewo lub prawo - inaczej niż przyjęto w algorytmie Prima.
+        \item Dla wybranej komórki określa się bezpośrednich sąsiadów. W tym przypadku są to pola bezpośrednio przyległe w górę, doł, lewo lub prawo - inaczej niż przyjęto w algorytmie Prima. Przykład takiej sytuacji przedstawiono na Rysunku \ref{fig:kruskal_step_3_a}.
         
         \input{sections/maze_generation/subsections/kruskals_algorithm/figures/kruskal_step_3a}
 
-        \item Jeśli wszyscy sąsiedzi należą do różnych zbiorów:
-        \begin{enumerate}
-            \item Wylosowana komórka staje się ścianą.
-            \item Sąsiedzi zostają połączeni w jeden zbiór.
-        \end{enumerate}
+        \item Jeśli wszyscy sąsiedzi należą do różnych zbiorów to wylosowana komórka staje się ścianą, a jej sąsiedzi są łączeni w jeden zbiór. Schemat łączenia komórek w zbiory pokazano na Rysunku \ref{fig:kruskal_step_3_b}.
 
         \input{sections/maze_generation/subsections/kruskals_algorithm/figures/kruskal_step_3b}
 
-        \item Jeśli chociaż dwaj sąsiedzi należą do tego samego zbioru, komórka nie zostaje oznaczona jako ściana – pozostaje przejściem.
+        \item Jeśli chociaż dwaj sąsiedzi należą do tego samego zbioru, komórka nie zostaje oznaczona jako ściana – pozostaje przejściem, co przedstawiono na Rysunku~\ref{fig:kruskal_step_3_c}.
 
         \input{sections/maze_generation/subsections/kruskals_algorithm/figures/kruskal_step_3c}
     \end{enumerate}
 
-    \item Proces powtarza się, aż każda komórka zostanie przetworzona.
+    \item Proces powtarza się, aż każda komórka zostanie przetworzona. Przykładowe dalsze kroki algorytmu przedstawia Rysunek \ref{fig:kruskal_later_steps}, a Rysunek \ref{fig:kruskal_example_maze} ukazuje potencjalny schemat wygenerowanego labiryntu.
     
     \input{sections/maze_generation/subsections/kruskals_algorithm/figures/kruskal_later_steps}
 

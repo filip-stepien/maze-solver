@@ -1,15 +1,15 @@
 \section{Wstęp}
 
 Celem projektu jest stworzenie aplikacji umożliwiającej generowanie dwuwymiarowego labiryntu oraz wizualizację procesu wyszukiwania ścieżki pomiędzy dwoma punktami.
-Labirynt w kontekście projektu to struktura siatki, gdzie każde pole może stanowić przejście lub ścianę. 
+Labirynt w kontekście projektu to struktura siatki, gdzie każde pole może stanowić przejście lub ścianę. Przykładowy labirynt pokazano na Rysunku \ref{fig:example_maze}.
 
 \input{sections/introduction/figures/example_maze}
 
-Można zauważyć, że taka struktura jest reprezentacją grafu, gdzie pola odpowiadają wierzchołkom, a krawędzie łączą sąsiadujące pola przejściowe.
+Można zauważyć, że taka struktura jest reprezentacją grafu, gdzie pola odpowiadają wierzchołkom, a krawędzie łączą sąsiadujące pola przejściowe. Reprezentacja labiryntu~w formie grafu została przedstawiona na Rysunku \ref{fig:maze_graph}.
 
 \input{sections/introduction/figures/maze_graph}
 
-W projekcie istotne jest porównanie różnych algorytmów wyszukiwania ścieżki, które pozwalają znaleźć trasę między dwoma punktami. W najlepszym przypadku celem jest znalezienie ścieżki \textit{optymalnej}, czyli takiej, która minimalizuje liczbę kroków, co w kontekście grafu o jednakowych wagach krawędzi sprowadza się do znalezienia drogi o minimalnej długości.
+W projekcie istotne jest porównanie różnych algorytmów wyszukiwania ścieżki, które pozwalają znaleźć trasę między dwoma punktami. W najlepszym przypadku celem jest znalezienie ścieżki \textit{optymalnej}, czyli takiej, która minimalizuje liczbę kroków, co w kontekście grafu o jednakowych wagach krawędzi sprowadza się do znalezienia drogi o minimalnej długości. Ścieżkę \textit{optymalną} oraz \textit{nieoptymalną} ukazuje Rysunek \ref{fig:optimal_and_suboptimal_path}. 
 
 \newpage
 

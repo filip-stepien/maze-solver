@@ -142,3 +142,5 @@ dist
 *.fdb_latexmk
 *.aux
 *.toc
+*.bbl
+*.blg

@@ -1,5 +1,24 @@
 \section{Generowanie labiryntu}
 
+Do generowania labiryntów kluczowe jest zrozumienie idei drzew rozpinających.
+
+\textbf{Drzewo rozpinające} to taki podgraf oryginalnego grafu, który zawiera wszystkie jego wierzchołki, a jednocześnie jest spójny i nie zawiera cykli. 
+
+\textbf{Spójność} oznacza, że między każdą parą wierzchołków istnieje co najmniej jedna ścieżka, czyli można przejść z dowolnego wierzchołka do dowolnego innego, poruszając się po krawędziach grafu. Różnicę między grafem spójnym oraz niespójnym przedstawia Rysunek~\ref{fig:connected_and_not_connected_graph}.
+
+\input{sections/maze_generation/figures/connected_and_not_conntected_graph}
+
+\textbf{Cyklem} nazywamy ścieżkę zaczynającą się i kończącą w tym samym wierzchołku, w której żadna krawędź ani wierzchołek (poza początkiem i końcem) się nie powtarza. Obecność cykli oznacza, że można okrążyć pewien obszar grafu i wrócić do punktu startu inną drogą, co w kontekście labiryntu oznacza istnienie pętli. W drzewie rozpinającym takich pętli nie ma, co gwarantuje unikalną ścieżkę między dowolnymi dwoma wierzchołkami. Przykładowy graf zawierający cykl został pokazany na Rysunku \ref{fig:graph_cycle}.
+
+\input{sections/maze_generation/figures/graph_cycle}
+
+\textbf{Minimalne drzewo rozpinające} (ang. \textit{MST, minimum spanning tree}) to takie drzewo rozpinające, dla którego suma wag krawędzi jest najmniejsza spośród wszystkich możliwych drzew rozpinających danego grafu. W grafach nieważonych, jak te stosowane przy modelowaniu labiryntów, wszystkie krawędzie są traktowane jako równe, dlatego każde drzewo rozpinające o minimalnej liczbie krawędzi spełnia warunki \textit{MST}. Przykładowe minimalne drzewo rozpinające dla grafu z równoważnymi krawędziami pokazuje Rysunek \ref{fig:minimum_spanning_tree}.
+
+\input{sections/maze_generation/figures/minimum_spanning_tree}
+
+Algorytmy generujące labirynty sprowadzają się właśnie do wyznaczenia wspomnianego drzewa rozpinającego. 
+Uzyskane drzewo określa, które krawędzie (ścieżki) są dostępne, a które stanowią ściany labiryntu.
+
 \input{sections/maze_generation/subsections/prims_algorithm/subsection}
 
 \input{sections/maze_generation/subsections/kruskals_algorithm/subsection}
