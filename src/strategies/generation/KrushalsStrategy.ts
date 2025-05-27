@@ -1,4 +1,4 @@
-import { array } from 'three/src/Three.TSL';
+import { array, element } from 'three/src/Three.TSL';
 import { Random } from '../../utils/Random';
 import { GenerationStrategy } from './GenerationStrategy';
 import { Vec2d } from '../../types';
@@ -29,6 +29,16 @@ class DisjointSet {
 }
 
 export class KruskalsStrategy implements GenerationStrategy {
+    verbose: boolean = false;
+
+    enableVerboseLogs() {
+        this.verbose = true;
+    }
+
+    disableVerboseLogs() {
+        this.verbose = true;
+    }
+
     generateMaze(cols: number, rows: number): boolean[][] {
         // const maze: boolean[][] = Array.from({ length: rows }, () => Array(cols).fill(false));
         const maze = new Maze({
@@ -42,13 +52,13 @@ export class KruskalsStrategy implements GenerationStrategy {
             e.node.makeNotColliding();
         });
 
-        const walls: Vec2d[] = [];
+        const mazeNodes: Vec2d[] = [];
 
         maze.forEachNode(e => {
-            walls.push(e.pos);
+            mazeNodes.push(e.pos);
         });
 
-        Random.shuffle(walls);
+        Random.shuffle(mazeNodes);
 
         const dt = new DisjointSet(cols * rows);
 
@@ -56,22 +66,45 @@ export class KruskalsStrategy implements GenerationStrategy {
             return pos.y * rows + pos.x;
         };
 
-        walls.forEach(wall => {
-            const devidedNodes = maze.getAdjacentNodes(wall);
-            // console.log(`${JSON.stringify(wall)} devides ${JSON.stringify(devidedNodes)}}`);
+        mazeNodes.forEach(currentMazeNode => {
+            const adjacentNodesOfCurrentNode = maze.getAdjacentNodes(currentMazeNode);
 
-            const setsDevidedByWall = new Set();
-            devidedNodes.forEach(e => {
-                setsDevidedByWall.add(dt.find(toIdx(e.pos)));
+            const setsNeiberhoringCurrentNode = new Set<number>();
+            adjacentNodesOfCurrentNode.forEach(adjacentNode => {
+                const adjacentNodeSetNumber = dt.find(toIdx(adjacentNode.pos));
+                setsNeiberhoringCurrentNode.add(adjacentNodeSetNumber);
             });
-            // if all neiberhoods are distinct
-            if (setsDevidedByWall.size === devidedNodes.length) {
-                // make this passage
-                maze.getNode(wall).makeColliding();
-                devidedNodes.forEach(e => {
-                    dt.union(toIdx(e.pos), toIdx(devidedNodes[0].pos));
+
+            if (this.verbose) {
+                console.log(
+                    `node ${JSON.stringify(currentMazeNode)} is neighbors with ${
+                        adjacentNodesOfCurrentNode.length
+                    } nodes from ${setsNeiberhoringCurrentNode.size} sets ${JSON.stringify(
+                        Array.from(setsNeiberhoringCurrentNode)
+                    )}`
+                );
+            }
+
+            // if all neiberhoods are from distinct sets
+            if (setsNeiberhoringCurrentNode.size === adjacentNodesOfCurrentNode.length) {
+                // make current node wall (colliding)
+                maze.getNode(currentMazeNode).makeColliding();
+
+                // union all nodes devided by that node to one set
+                adjacentNodesOfCurrentNode.forEach(adjacentNode => {
+                    const setsToUnion = [
+                        toIdx(adjacentNode.pos),
+                        toIdx(adjacentNodesOfCurrentNode[0].pos)
+                    ];
+                    if (this.verbose) {
+                        console.log(`doing union of sets ${setsToUnion}`);
+                    }
+                    dt.union(setsToUnion[0], setsToUnion[1]);
                 });
-                // console.log(maze.toString());
+
+                if (this.verbose) {
+                    console.log(maze.toString());
+                }
             }
         });
 

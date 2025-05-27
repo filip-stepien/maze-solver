@@ -8,8 +8,15 @@ import { Vec2d } from '../types';
 import { LegacyBadMazeSerializer } from '../ui/scenes/maze/MazeSerializer';
 
 const maze = new MazeFacade();
-maze.setGeneratorStrategy(new PrimsStrategy());
-maze.generateMaze(new Vec2d([11, 7]));
+
+maze.setGeneratorStrategy(
+    (() => {
+        const strategy = new KruskalsStrategy();
+        strategy.enableVerboseLogs();
+        return strategy;
+    })()
+);
+maze.generateMaze(new Vec2d([5, 5]));
 
 // console.log(maze.getMazePathFinder().toString());
 const exporter = new TikzExporter();
