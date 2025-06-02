@@ -1,4 +1,5 @@
 import { MazeFacade } from '../maze/god';
+import MazePathFinder from '../maze/MazePathFinder';
 import { TikzExporter } from '../maze/tikzExporter';
 import { DFSGenerationStategy } from '../strategies/generation/DFSGenerationStrategy';
 import { KruskalsStrategy } from '../strategies/generation/KrushalsStrategy';
@@ -12,15 +13,20 @@ const maze = new MazeFacade();
 maze.setGeneratorStrategy(
     (() => {
         const strategy = new KruskalsStrategy();
-        strategy.enableVerboseLogs();
+        // strategy.enableVerboseLogs();
         return strategy;
     })()
 );
 maze.generateMaze(new Vec2d([5, 5]));
 
-// console.log(maze.getMazePathFinder().toString());
 const exporter = new TikzExporter();
-console.log(exporter.doExport(maze.getMazePathFinder()));
+
+maze.getMazePathFinder().addNodeLabelChangeObserver(data => {
+    // if added label
+    if (data.node.hasLabel(data.labelChanged)) {
+        console.log(exporter.doExport(maze.getMazePathFinder()));
+    }
+});
 
 maze.getMazePathFinder().findPath(
     new DFSStrategy(),
