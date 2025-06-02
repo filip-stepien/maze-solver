@@ -41,12 +41,14 @@ export class DFSGenerationStategy implements GenerationStrategy {
                 const middleNode = pos.move(moveDir);
                 const toNode = middleNode.move(moveDir);
                 try {
+                    // ensure both nodes are on map
                     maze.validateNodePosition(middleNode);
                     maze.validateNodePosition(toNode);
                 } catch (err) {
                     return;
                 }
                 if (visitedSet.has(JSON.stringify(toNode))) {
+                    // if vistued already do nothing
                     return;
                 }
                 maze.getNode(middleNode).makeNotColliding();
