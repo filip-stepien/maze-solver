@@ -1,0 +1,19 @@
+\documentclass[../../../../doc.tex]{subfiles}
+
+\begin{document}
+\subsection{Algorytm DFS}
+
+Wyszukiwanie ścieżki działa jak zwykły algorytm DFS z następującymi modyfikacjami:
+
+\begin{itemize}
+  \item Przeszukiwanie zaczyna od punktu startowego z którego chcemy znaleść ścieszkę
+  \item Jeśli aktualnie odwiedzany węzeł jest węzłem do którego szukana jest scieszka,
+        algorytm kończy szukanie i odczytuje kolejne punkty drogi z aktualnego stosu.
+\end{itemize}
+
+
+Przykład działania algorytmu przedstawia \cref{fig:dfs_solve_steps}.
+
+\input{./figures/dfs_solve_steps.tex}
+
+\end{document}

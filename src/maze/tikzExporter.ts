@@ -43,9 +43,10 @@ export class TikzExporter implements MazePathFinderExporter<MazePathFinderNode> 
 
         // map grid
         const tikz = `
-\\begin{tikzpicture}
-${tikzRectangles}${tikzGrid}
-\\end{tikzpicture}`;
+  \\begin{tikzpicture}
+  ${tikzRectangles}${tikzGrid}
+  \\end{tikzpicture}
+  `;
 
         return tikz;
     };

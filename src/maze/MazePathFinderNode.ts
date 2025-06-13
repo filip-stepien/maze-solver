@@ -227,7 +227,7 @@ export class MazePathFinderNode extends MazeNode {
             finish: { fontAwesomeName: 'home', icon: '', color: 'blue' },
             start: { fontAwesomeName: 'user', icon: '', color: 'blue' },
             selected: { fontAwesomeName: 'check', icon: '󰸞', color: 'green' },
-            candidate: { fontAwesomeName: 'arrows-alt', icon: '󰁁', color: 'yellow' },
+            candidate: { fontAwesomeName: 'arrows-alt', icon: '󰁁', color: 'orange' },
             queued: { fontAwesomeName: 'hourglass', icon: '󰞌', color: 'purple' },
             forsaken: { fontAwesomeName: 'skull', icon: '󰚌', color: 'red' }
         };

@@ -144,3 +144,7 @@ dist
 *.toc
 *.bbl
 *.blg
+doc/sections/pathfinding/subsections/dfs/section.pdf
+doc/sections/pathfinding/subsections/dfs/section.out
+doc/sections/pathfinding/section.pdf
+doc/doc.out

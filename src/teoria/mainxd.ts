@@ -12,7 +12,7 @@ const maze = new MazeFacade();
 
 maze.setGeneratorStrategy(
     (() => {
-        const strategy = new KruskalsStrategy();
+        const strategy = new PrimsStrategy();
         // strategy.enableVerboseLogs();
         return strategy;
     })()

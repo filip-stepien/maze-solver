@@ -56,6 +56,35 @@ export class MazeFacade {
         };
     };
 
+    static getRandomNonCollidingNodePositon(maze: MazePathFinder<MazePathFinderNode>) {
+        const nonColliding: Vec2d[] = [];
+
+        maze.forEachNode(({ pos, node }) => {
+            if (!node.isColliding()) {
+                nonColliding.push(pos);
+            }
+        });
+
+        const randomNonCollidingNodeIndex = nonColliding[Random.randomIndex(nonColliding)];
+        return randomNonCollidingNodeIndex;
+    }
+
+    static randomizeStartEndPositions = (
+        maze: MazePathFinder<MazePathFinderNode>
+    ): { start: Vec2d; end: Vec2d } => {
+        const start = this.getRandomNonCollidingNodePositon(maze);
+
+        let end: Vec2d;
+        do {
+            end = this.getRandomNonCollidingNodePositon(maze);
+        } while (start.equals(end));
+
+        return {
+            start,
+            end
+        };
+    };
+
     getMazePathFinder() {
         return this.m_mazePathFinder;
     }

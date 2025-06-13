@@ -1,7 +1,7 @@
 \documentclass[12pt, a4paper]{article}
+\usepackage{subfiles}
 \usepackage[utf8]{inputenc}
 \usepackage{tikz}
-\usepackage[polish]{babel}
 \usepackage{caption}
 \usepackage[T1]{fontenc}
 \usepackage{standalone}
@@ -12,6 +12,19 @@
 \usepackage{float}
 \usepackage{xcolor}
 \usepackage{url}
+\usepackage{caption}
+\usepackage{hyperref} 
+\usepackage[noabbrev]{cleveref} % has to be after hyperref
+\usepackage[polish]{babel}
+
+\crefname{figure}{rysunek}{rysunki}
+\Crefname{figure}{Rysunek}{Rysunki}
+\crefname{table}{tabela}{tabele}
+\Crefname{table}{Tabela}{Tabele}
+\crefname{section}{sekcja}{sekcje}
+\Crefname{section}{Sekcja}{Sekcje}
+\crefname{equation}{równanie}{równania}
+\Crefname{equation}{Równanie}{Równania}
 
 \definecolor{lightlightgray}{rgb}{0.9, 0.9, 0.9}
 
@@ -19,14 +32,16 @@
 
 \begin{document}
 
-\input{sections/title/section}
+\subfile{sections/title/section.tex}
 
-\input{sections/table_of_contents/section}
+\subfile{sections/table_of_contents/section.tex}
 
-\input{sections/introduction/section}
+\subfile{sections/introduction/section.tex}
 
-\input{sections/maze_generation/section}
+\subfile{sections/maze_generation/section.tex}
 
-\input{sections/bibliography/section}
+\subfile{sections/pathfinding/section.tex}
+
+\subfile{sections/bibliography/section.tex}
 
 \end{document}
