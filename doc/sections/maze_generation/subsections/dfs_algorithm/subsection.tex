@@ -1,0 +1,31 @@
+\subsection{Algorytm \textit{przeszukiwania w głąb}}
+
+\textbf{Algorytm przeszukiwania w głąb} (ang. \textit{Depth-First Search}, DFS)~\cite{cormen2009} to klasyczna metoda eksploracji grafu, która w kontekście generowania labiryntu pozwala na systematyczne zagłębianie się w kolejne, jeszcze nieodwiedzone komórki planszy z wykorzystaniem mechanizmu rekurencji. Algorytm rozpoczyna od wybranej komórki startowej i rekursywnie odwiedza sąsiadujące, nieodwiedzone komórki, usuwając ściany między nimi w celu utworzenia ścieżek. Algorytm działa w następujący sposób:
+
+\begin{enumerate}
+    \item Na początku algorytmu, tworzony jest labirynt, którego wszystkie pola stanowią ściany. Rysunek \ref{fig:dfs_gen_step_1} przedstawia początkowy układ labiryntu.
+    
+    \input{sections/maze_generation/subsections/dfs_algorithm/figures/dfs_gen_step_1}
+
+    \item W następnym kroku wybierana jest losowa komórka, która jest oznaczana jako przejście. Na Rysunku \ref{fig:dfs_gen_step_2} pokzano losowo wybrane pole labiryntu.
+
+    \input{sections/maze_generation/subsections/dfs_algorithm/figures/dfs_gen_step_2}
+
+    \item Następnie algorytm losowo wybiera jedną z sąsiadujących komórek. Podobnie jak w przypadku \textit{algorytmu Prima}, przyjęto, że komórka sąsiadująca to dowolna komórka oddalona o jedno pole w pionie lub poziomie. Podczas ruchu przejścia są weryfikowane - mogą bowiem znajdować się poza granicami planszy. Rysunek~\ref{fig:dfs_gen_step_3} przedstawia taką sytuację.
+    
+    \input{sections/maze_generation/subsections/dfs_algorithm/figures/dfs_gen_step_3}
+
+    \item Po losowym wybraniu nowej komórki do której można utworzyć ścieżkę, algorytm usuwa ścianę dzielącą ją od poprzedniej i kontynuuje działanie na tej komórce. Warto jednak zauważyć, że ze względu na rekurencyjny charakter algorytmu, poprzednie możliwe ruchy są zapisywane na \textit{stosie}. Oznacza to, że algorytm generuje labirynt \textit{w głąb}, podejmując decyzję o kontynuacji na podstawie pierwszej dostępnej komórki, a dopiero w przypadku braku dalszych możliwości następuje wycofanie do wcześniejszego kroku. Rysunek~\ref{fig:dfs_gen_step_4} ilustruje cały ten proces.
+
+    \input{sections/maze_generation/subsections/dfs_algorithm/figures/dfs_gen_step_4}
+
+    \input{sections/maze_generation/subsections/dfs_algorithm/figures/dfs_gen_step_5}
+
+    \input{sections/maze_generation/subsections/dfs_algorithm/figures/dfs_gen_step_6}
+
+    \input{sections/maze_generation/subsections/dfs_algorithm/figures/dfs_gen_step_7}
+
+    \input{sections/maze_generation/subsections/dfs_algorithm/figures/dfs_gen_step_8}
+
+\end{enumerate}
+
