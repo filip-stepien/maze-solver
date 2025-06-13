@@ -1,4 +1,5 @@
 \documentclass[12pt, a4paper]{article}
+\usepackage{polski}
 \usepackage{subfiles}
 \usepackage[utf8]{inputenc}
 \usepackage{tikz}
@@ -13,9 +14,28 @@
 \usepackage{xcolor}
 \usepackage{url}
 \usepackage{caption}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{amsmath}
+
+
 \usepackage{hyperref} 
 \usepackage[noabbrev]{cleveref} % has to be after hyperref
 \usepackage[polish]{babel}
+
+% Polish keyword redefinitions
+\renewcommand{\algorithmicrequire}{\textbf{Wymagane}}
+\renewcommand{\algorithmicensure}{\textbf{Zapewnij}}
+\renewcommand{\algorithmicif}{\textbf{Jeśli}}
+\renewcommand{\algorithmicthen}{\textbf{wtedy}}
+\renewcommand{\algorithmicelse}{\textbf{w przeciwnym razie}}
+\renewcommand{\algorithmicendif}{\textbf{koniec jeśli}}
+\renewcommand{\algorithmicfor}{\textbf{Dla}}
+\renewcommand{\algorithmicdo}{\textbf{wykonaj}}
+\renewcommand{\algorithmicendfor}{\textbf{koniec dla}}
+\renewcommand{\algorithmicwhile}{\textbf{Dopóki}}
+\renewcommand{\algorithmicendwhile}{\textbf{koniec dopóki}}
+\renewcommand{\algorithmicreturn}{\textbf{Zwróć}}
 
 \crefname{figure}{rysunek}{rysunki}
 \Crefname{figure}{Rysunek}{Rysunki}

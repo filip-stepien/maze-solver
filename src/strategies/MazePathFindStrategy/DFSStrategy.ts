@@ -37,7 +37,7 @@ export class DFSStrategy<T extends MazePathFinderNode> implements MazePathFindSt
 
                 // Recurse into the adjacent node
                 const path: MazePath = dfs(pos);
-                // Only return non-empty paths that do not lead to the finish node
+                // Only return non-empty paths that do lead to the finish node
                 if (path.length !== 0) {
                     // If path is found, append current node to the path
                     currentNode.makeSelected();
