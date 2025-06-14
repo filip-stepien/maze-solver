@@ -80,4 +80,4 @@ const __filename = fileURLToPath(import.meta.url);
 // Get directory of the current file
 const __dirname = dirname(__filename);
 
-fs.writeFileSync(`${__dirname}/figures/dfs_solve_steps.tex`, out);
+fs.writeFileSync(`${__dirname}/figures/bfs_solve_steps.tex`, out);

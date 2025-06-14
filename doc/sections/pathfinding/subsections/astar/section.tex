@@ -2,11 +2,85 @@
 
 \begin{document}
 \subsection{Algorytm A*}
+\subsection{Algorytm A*}
 
-Działa jak BFS z wykorzystaniem zamiast zwykłej kolejki, kolejki prioretytowej która jako prirorytetu używa
-sumy heurystyki i dystansu.
+Algorytm A* jest algorytmem wyszukiwania ścieżki w grafie, który znajduje najkrótszą ścieżkę między punktem startowym a docelowym. Wykorzystuje funkcję heurystyczną do optymalizacji procesu przeszukiwania.
+
+\subsubsection{Opis działania algorytmu}
+
+Algorytm łączy zalety przeszukiwania wszerz (BFS) i zachłannego przeszukiwania najlepszego pierwszego (Best-First Search). Działa poprzez minimalizację funkcji kosztu:
+\[
+  f(n) = g(n) + h(n)
+\]
+gdzie:
+\begin{itemize}
+  \item $g(n)$ - rzeczywisty koszt dotarcia z węzła startowego do bieżącego
+  \item $h(n)$ - heurystyczny koszt dotarcia z bieżącego węzła do celu
+\end{itemize}
+
+\subsubsection{Inicjalizacja}
+\begin{enumerate}
+  \item Inicjalizacja struktur danych:
+        \begin{itemize}
+          \item \texttt{state} - mapa stanów węzłów (przechowuje $g(n)$ i poprzednika)
+          \item \texttt{sortedQueue} - kolejka priorytetowa węzłów (posortowana po $f(n)$)
+        \end{itemize}
+  \item Dodanie węzła startowego:
+        \begin{itemize}
+          \item $g(\text{start}) = 0$
+          \item $f(\text{start}) = h(\text{start})$
+          \item Oznaczenie startu jako \texttt{queued}
+        \end{itemize}
+\end{enumerate}
+
+\subsubsection{Funkcja heurystyczna}
+Wykorzystana heurystyka to \textbf{odległość Manhattan (Taxicab)}:
+\[
+  h(n) = |n_x - \text{end}_x| + |n_y - \text{end}_y|
+\]
+Zapewnia dopuszczalność (nie przeszacowuje kosztu).
+
+\subsubsection{Główna pętla algorytmu}
+\begin{algorithmic}
+  \WHILE{kolejka nie jest pusta}
+  \STATE Pobierz węzeł o minimalnym $f(n)$ z \texttt{sortedQueue}
+  \STATE Oznacz bieżący węzeł jako \texttt{candidate}
+  \IF{bieżący węzeł jest metą}
+  \STATE Przerwij pętlę
+  \ENDIF
+  \FOR{każdego sąsiada}
+  \IF{sąsiad nie jest kolizją i nie był odwiedzony}
+  \STATE $g_{\text{new}} \gets g(\text{current}) + 1$
+  \STATE $f_{\text{new}} \gets g_{\text{new}} + h(\text{sąsiad})$
+  \STATE Zapisz stan: $g = g_{\text{new}}$, poprzednik = currentNodePos
+  \STATE Wstaw do kolejki z priorytetem $f_{\text{new}}$
+  \STATE Oznacz jako \texttt{queued}
+  \ENDIF
+  \ENDFOR
+  \ENDWHILE
+\end{algorithmic}
+
+\subsubsection{Budowanie ścieżki}
+\begin{enumerate}
+  \item \textbf{Śledzenie wsteczne:}
+        \begin{itemize}
+          \item Rozpocznij od mety
+          \item Podążaj do poprzedników aż do startu
+          \item Oznaczaj węzły jako \texttt{selected}
+        \end{itemize}
+  \item \textbf{Końcowe przetwarzanie:}
+        \begin{itemize}
+          \item Odwróć ścieżkę (start $\rightarrow$ meta)
+          \item Oznacz start jako \texttt{selected}
+        \end{itemize}
+\end{enumerate}
 
 
+\subsubsection{Złożoność obliczeniowa}
+\begin{itemize}
+  \item \textbf{Czasowa}: $O(n^2)$ (dla implementacji z listą)
+  \item \textbf{Pamięciowa}: $O(n)$ (przechowywanie stanów i kolejki)
+\end{itemize}
 Przykład działania algorytmu przedstawia \cref{fig:astar_solve_steps}.
 
 \input{./figures/astar_solve_steps.tex}

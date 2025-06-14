@@ -3,19 +3,85 @@
 \begin{document}
 \subsection{Algorytm BFS}
 
-Wyszukiwanie ścieżki działa jak zwykły algorytm BFS z następującymi modyfikacjami:
+\subsubsection{Opis działania algorytmu}
 
+Algorytm wykorzystuje \textbf{przeszukiwanie wszerz (Breadth-First Search)} do znalezienia najkrótszej ścieżki między punktem startowym a końcowym w labiryncie. Poniżej przedstawiono kluczowe kroki działania:
+
+\subsubsection{Inicjalizacja}
+\begin{enumerate}
+  \item Inicjalizacja struktur danych:
+        \begin{itemize}
+          \item \texttt{queue} - kolejka FIFO przechowująca węzły do odwiedzenia (zainicjowana pozycją startową)
+          \item \texttt{state} - mapa śledząca pochodzenie węzłów (klucz: pozycja, wartość: pozycja rodzica)
+        \end{itemize}
+  \item Oznaczenie węzła startowego jako \texttt{queued} (w kolejce)
+\end{enumerate}
+
+\subsubsection{Proces przeszukiwania BFS}
+Główna logika zaimplementowana jest w pętli przetwarzającej kolejkę:
+
+\begin{algorithm}
+  \caption{Procedura BFS}
+  \begin{algorithmic}
+    \WHILE{kolejka nie jest pusta}
+    \STATE $current \gets queue.dequeue()$
+    \STATE Oznacz $current$ jako \texttt{candidate} (kandydat)
+    \IF{$current = end$}
+    \STATE \textbf{break}
+    \ENDIF
+    \FOR{każdego sąsiada $neighbour$ bieżącego węzła}
+    \IF{$neighbour$ nie jest ścianą \AND nie był odwiedzony}
+    \STATE $state[neighbour] \gets current$ (zapisz pochodzenie)
+    \STATE $queue.enqueue(neighbour)$
+    \STATE Oznacz $neighbour$ jako \texttt{queued}
+    \ENDIF
+    \ENDFOR
+    \ENDWHILE
+  \end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Proces budowania ścieżki}
+\begin{enumerate}
+  \item Jeśli cel ($end$) został osiągnięty:
+        \begin{itemize}
+          \item Inicjalizacja pustej ścieżki
+          \item Backtracking od celu do startu:
+                \begin{enumerate}
+                  \item Dodaj aktualną pozycję do ścieżki
+                  \item Przejdź do pozycji rodzica (z mapy \texttt{state})
+                  \item Oznacz węzeł jako \texttt{selected}
+                \end{enumerate}
+          \item Oznaczenie węzła startowego jako \texttt{selected}
+          \item Odwrócenie ścieżki (od startu do celu)
+        \end{itemize}
+  \item Jeśli cel nie został osiągnięty, zwracana jest pusta lista
+\end{enumerate}
+
+
+\subsubsection{Złożoność obliczeniowa}
 \begin{itemize}
-  \item Przeszukiwanie zaczyna od punktu startowego z którego chcemy znaleść ścieszkę
-  \item Jeśli aktualnie odwiedzany węzeł jest węzłem do którego szukana jest scieszka,
-        algorytm kończy szukanie i odczytuje kolejne punkty drogi z aktualnego stosu.
-  \item Utrzymwana jest lista która dla każdego zakolejkowanego węzła trzyma informacje o poprzeddnim węźle,
-        jest ona wykrzystywana do odtworzenia drogi po napotkaniu docelowego węzła
+  \item \textbf{Czasowa}: $O(V + E)$
+        \begin{itemize}
+          \item $V$ - liczba wierzchołków (komórek labiryntu)
+          \item $E$ - liczba krawędzi (połączeń między komórkami)
+        \end{itemize}
+  \item \textbf{Pamięciowa}: $O(V)$
+        \begin{itemize}
+          \item Przechowywanie odwiedzonych węzłów w mapie stanu
+          \item Kolejka przechowująca do $O(V)$ elementów
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Właściwości algorytmu}
+\begin{itemize}
+  \item \textbf{Gwarantuje znalezienie najkrótszej ścieżki} (w sensie liczby kroków)
+  \item \textbf{Eksploruje równomiernie} we wszystkich kierunkach
+  \item \textbf{Wymaga pełnej eksploracji} w najgorszym przypadku
 \end{itemize}
 
 
 Przykład działania algorytmu przedstawia \cref{fig:bfs_solve_steps}.
 
-\input{./figures/dfs_solve_steps.tex}
+\input{./figures/bfs_solve_steps.tex}
 
 \end{document}

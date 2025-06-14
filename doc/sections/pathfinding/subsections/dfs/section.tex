@@ -26,7 +26,7 @@ Algorytm wykorzystuje \textbf{przeszukiwanie w głąb (Depth-First Search)} do z
   \item Inicjalizacja struktur danych:
         \begin{itemize}
           \item \texttt{stack} - stos przechowujący węzły do odwiedzenia (zainicjowany pozycją startową)
-          \item \texttt{state} - mapa śledząca stan węzłów
+          \item \texttt{state} - mapa śledząca stan węzłów (czy węzeł został odwiedzony)
         \end{itemize}
   \item Oznaczenie węzła startowego jako \texttt{queued} (w kolejce)
 \end{enumerate}
@@ -61,27 +61,19 @@ Główna logika zaimplementowana jest w funkcji rekurencyjnej \texttt{dfs(curren
 
 \subsubsection{Proces budowania ścieżki}
 \begin{enumerate}
-  \item Algorytm eksploruje labirynt w porządku \textbf{LIFO} (Last-In-First-Out), charakterystycznym dla DFS
-  \item Dla każdego węzła sprawdzani są jego \textbf{sąsiedzi} po kolei w losowej kolejności:
-        \begin{enumerate}
-          \item Pomijani są sąsiedzi będący ścianami (\texttt{colliding})
-          \item Pomijani są sąsiedzi już odwiedzeni (\texttt{candidate}) lub porzuceni (\texttt{forsaken})
-        \end{enumerate}
-  \item Po znalezieniu mety ścieżka jest rekurencyjnie \textbf{propagowana w górę}:
+  \item \textbf{Propagacja w górę:} Po znalezieniu mety:
         \begin{itemize}
+          \item Następuje rekurencyjna propagacja w górę drzewa
           \item Każdy węzeł dodaje swoją pozycję do ścieżki
           \item Węzły na ścieżce oznaczane są jako \texttt{selected}
         \end{itemize}
-  \item Jeśli ścieżka nie istnieje, zwracana jest pusta lista
-\end{enumerate}
-
-\subsubsection{Końcowe przetwarzanie}
-\begin{enumerate}
-  \item Po zakończeniu rekurencji ścieżka jest \textbf{odwracana}:
-        \[
-          \text{finalna\_ścieżka} = \text{reverse}(\text{ścieżka\_z\_rekurencji})
-        \]
-  \item Powód odwrócenia: ścieżka budowana jest od mety do startu
+  \item \textbf{Weryfikacja ścieżki:} Jeśli ścieżka nie istnieje, zwracana jest pusta lista
+  \item \textbf{Końcowe przetwarzanie:} Po zakończeniu rekurencji:
+        \begin{itemize}
+          \item Ścieżka jest odwracana:
+                \[ \text{finalna\_ścieżka} = \mathrm{reverse}(\text{ścieżka\_z\_rekurencji}) \]
+          \item Powód: ścieżka budowana jest od mety do startu, a wynik powinien przedstawiać kolejność od startu do mety
+        \end{itemize}
 \end{enumerate}
 
 \subsubsection{Stany węzłów}
@@ -94,8 +86,15 @@ Główna logika zaimplementowana jest w funkcji rekurencyjnej \texttt{dfs(curren
 
 \subsubsection{Złożoność obliczeniowa}
 \begin{itemize}
-  \item \textbf{Czasowa}: $O(V + E)$ (gdzie $V$ - liczba węzłów, $E$ - liczba krawędzi)
-  \item \textbf{Pamięciowa}: $O(V)$ (zdeterminowana głębokością rekurencji)
+  \item \textbf{Czasowa}: $O(V + E)$
+        \begin{itemize}
+          \item $V$ - liczba węzłów
+          \item $E$ - liczba krawędzi
+        \end{itemize}
+  \item \textbf{Pamięciowa}: $O(V)$
+        \begin{itemize}
+          \item Zdeterminowana głębokością rekurencji
+        \end{itemize}
 \end{itemize}
 
 Przykład działania algorytmu przedstawia \cref{fig:dfs_solve_steps}.
