@@ -10,7 +10,7 @@ import fs from 'fs';
 const facade = new MazeFacade();
 
 facade.setGeneratorStrategy(new KruskalsStrategy());
-facade.generateMaze(new Vec2d({ x: 10, y: 5 }));
+facade.generateMaze(new Vec2d({ x: 5, y: 5 }));
 
 const maze = facade.getMazePathFinder();
 
@@ -24,6 +24,10 @@ const maze = facade.getMazePathFinder();
 
 const exporter = new TikzExporter();
 
+const posToText = (vec: Vec2d) => {
+    return `x: ${vec.x} y: ${vec.y}`;
+};
+
 const eventToText = (data: MPFLabelChangeCallbackParams) => {
     switch (data.labelChanged) {
         case 'colliding':
@@ -33,11 +37,11 @@ const eventToText = (data: MPFLabelChangeCallbackParams) => {
         case 'forsaken':
             return 'not implemented';
         case 'queued':
-            return `Dodaj do kolejki węzeł ${JSON.stringify(data.pos)}`;
+            return `Dodaj do kolejki węzeł ${posToText(data.pos)}`;
         case 'candidate':
-            return `Rozpatrz ${JSON.stringify(data.pos)}`;
+            return `Rozpatrz ${posToText(data.pos)}`;
         case 'selected':
-            return `Wybierz ${JSON.stringify(data.pos)} do finalnej ścierzki`;
+            return `Wybierz ${posToText(data.pos)} do finalnej ścierzki`;
     }
 };
 
