@@ -22,10 +22,11 @@ Algorytm wykorzystuje \textbf{przeszukiwanie w głąb (Depth-First Search)} do z
 \end{enumerate}
 
 \subsubsection{Funkcja rekurencyjna DFS}
-Główna logika zaimplementowana jest w funkcji rekurencyjnej \texttt{dfs(currentNodePos)}:
+Główna logika zaimplementowana jest w funkcji rekurencyjnej \texttt{dfs(currentNodePos)} przedstawia \cref{find_dfs}
 
 \begin{algorithm}
   \caption{Procedura DFS}
+  \label{find_dfs}
   \begin{algorithmic}
     \STATE Oznacz bieżący węzeł jako \texttt{candidate} (kandydat)
     \IF{bieżący węzeł jest metą (\texttt{finish})}
@@ -89,6 +90,8 @@ Główna logika zaimplementowana jest w funkcji rekurencyjnej \texttt{dfs(curren
 
 Przykład działania algorytmu przedstawia \cref{fig:dfs_solve_steps}.
 
-\input{./figures/dfs_solve_steps.tex}
+\begin{multicols}{2}
+  \input{./figures/dfs_solve_steps.tex}
+\end{multicols}
 
 \end{document}
