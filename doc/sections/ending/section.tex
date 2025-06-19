@@ -1,0 +1,17 @@
+\documentclass[../doc.tex]{subfiles}
+
+\begin{document}
+
+\section{Zakończenie i wnioski końcowe}
+
+Celem niniejszego projektu było zaprojektowanie i implementacja aplikacji umożliwiającej generowanie labiryntów oraz wizualizację działania różnych algorytmów wyszukiwania ścieżek. W toku prac stworzono w pełni funkcjonalne narzędzie, które w sposób interaktywny ilustruje różnice pomiędzy popularnymi algorytmami.
+
+W projekcie zaimplementowano trzy klasyczne algorytmy: DFS (\textit{Depth-First Search}), BFS (\textit{Breadth-First Search}) oraz A*, co umożliwiło ich bezpośrednie porównanie w środowisku symulacyjnym. Każdy z algorytmów został dokładnie przeanalizowany zarówno pod względem teoretycznym, jak i praktycznym, z uwzględnieniem procesu inicjalizacji, budowy ścieżki, stosowanych struktur danych oraz złożoności obliczeniowej.
+
+Przeprowadzone eksperymenty i symulacje wykazały, że zastosowane metody różnią się nie tylko sposobem działania, ale również efektywnością operacyjną. DFS okazał się najoszczędniejszy pod względem liczby operacji, jednak nie gwarantuje optymalności ścieżki. BFS zapewnia zawsze najkrótszą możliwą trasę, lecz obarczone jest to znacznie większym zakresem przeszukiwania. Algorytm A*, wykorzystujący heurystykę w postaci \textit{odległości Manhattan}, zaprezentował najlepszy kompromis pomiędzy dokładnością a efektywnością, co czyni go szczególnie przydatnym w zastosowaniach wymagających wysokiej wydajności.
+
+Na szczególną uwagę zasługuje również stworzony interfejs użytkownika, który w~przystępny sposób prezentuje przebieg działania poszczególnych algorytmów. Umożliwia on obserwację procesu wyszukiwania ścieżki w czasie rzeczywistym, a zastosowane oznaczenia kolorystyczne pozwalają na szybkie rozpoznanie aktualnych i przetworzonych węzłów. Funkcjonalność panelu sterowania oraz możliwość zapisu i wczytywania konfiguracji labiryntu znacząco zwiększają użyteczność aplikacji.
+
+Podsumowując, projekt zrealizowano zgodnie z przyjętymi założeniami, zarówno pod względem funkcjonalności, jak i wartości edukacyjnej. Praca nad nim umożliwiła pogłębienie wiedzy z zakresu teorii grafów, algorytmiki oraz projektowania interaktywnych aplikacji. Opracowane rozwiązanie może pełnić funkcję skutecznego wsparcia dydaktycznego w nauczaniu algorytmów przeszukiwania grafów, a także stanowić solidną podstawę do pogłębiania wiedzy na temat analizy i przetwarzania struktur grafowych.
+
+\end{document}
