@@ -4,10 +4,12 @@
 
 \section{Wyszukiwanie drogi}
 
-Stany węzłów
 
 \subsection{Stany węzłów}
+
 \label{sec:node_states}
+
+Rozrózniamy następujące stany węzłów:
 
 \begin{itemize}
   \item \textit{Selected} -- pole zaklasyfikowane przez algorytm jako element końcowej ścieżki.
@@ -15,6 +17,9 @@ Stany węzłów
   \item \textit{Queued} -- pole dodane do kolejki przetwarzania, które wkrótce stanie się polem \textit{Candidate}.
   \item \textit{Forsaken} -- pole wcześniej rozważane jako \textit{Candidate}, lecz odrzucone w dalszym przebiegu algorytmu.
 \end{itemize}
+
+
+Ozanaczenia węzłów oraz ich stanów przedstawia \cref{fig:node_states}.
 
 \begin{figure}[H]
   \centering
@@ -91,6 +96,7 @@ Stany węzłów
     \caption{queued}
   \end{subfigure}
   \caption{Oznaczenia}
+  \label{fig:node_states}
 \end{figure}
 
 
