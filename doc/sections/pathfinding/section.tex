@@ -1,12 +1,102 @@
-\documentclass[../doc.tex]{subfiles}
+\documentclass[../../doc.tex]{subfiles}
 
 \begin{document}
 
 \section{Wyszukiwanie drogi}
 
+Stany węzłów
+
+\subsection{Stany węzłów}
+\label{sec:node_states}
+
+\begin{itemize}
+  \item \textit{Selected} -- pole zaklasyfikowane przez algorytm jako element końcowej ścieżki.
+  \item \textit{Candidate} -- pole aktualnie analizowane przez algorytm.
+  \item \textit{Queued} -- pole dodane do kolejki przetwarzania, które wkrótce stanie się polem \textit{Candidate}.
+  \item \textit{Forsaken} -- pole wcześniej rozważane jako \textit{Candidate}, lecz odrzucone w dalszym przebiegu algorytmu.
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.15\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \fill[gray] (0,0) rectangle (1,1);
+      \draw[black] (0,0) grid (1,1);
+    \end{tikzpicture}
+    \caption{ściana}
+  \end{subfigure}%
+  \hfill%
+  \begin{subfigure}[b]{0.15\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \draw[black] (0,0) grid (1,1);
+    \end{tikzpicture}
+    \caption{przejście}
+  \end{subfigure}%
+  \hfill%
+  \begin{subfigure}[b]{0.15\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \node at (0.5, 0.5){\color{orange}\faIcon{arrows-alt}};
+      \draw[black] (0,0) grid (1,1);
+    \end{tikzpicture}
+    \caption{candidate}
+  \end{subfigure}%
+  \hfill%
+  \begin{subfigure}[b]{0.15\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \draw[black] (0,0) grid (1,1);
+      \node at (0.5, 0.5){\color{blue}\faIcon{home}};
+    \end{tikzpicture}
+    \caption{end}
+  \end{subfigure}
+
+
+  % \hfill%
+  \begin{subfigure}[b]{0.15\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \draw[black] (0,0) grid (1,1);
+      \node at (0.5, 0.5){\color{blue}\faIcon{user}};
+    \end{tikzpicture}
+    \caption{start}
+  \end{subfigure}
+  \hfill%
+  \begin{subfigure}[b]{0.15\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \draw[black] (0,0) grid (1,1);
+      \node at (0.5, 0.5){\color{green}\faIcon{check}};
+    \end{tikzpicture}
+    \caption{selected}
+  \end{subfigure}
+  \hfill%
+  \begin{subfigure}[b]{0.15\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \draw[black] (0,0) grid (1,1);
+      \node at (0.5, 0.5){\color{red}\faIcon{skull}};
+    \end{tikzpicture}
+    \caption{Forsaken}
+  \end{subfigure}
+  \hfill%
+  \begin{subfigure}[b]{0.15\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \draw[black] (0,0) grid (1,1);
+      \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
+    \end{tikzpicture}
+    \caption{queued}
+  \end{subfigure}
+  \caption{Oznaczenia}
+\end{figure}
+
+
+
 \subfile{subsections/dfs/section.tex}
 \subfile{subsections/bfs/section.tex}
-
 \subfile{subsections/astar/section.tex}
 
 \end{document}
