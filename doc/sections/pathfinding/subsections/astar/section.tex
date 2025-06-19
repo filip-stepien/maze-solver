@@ -7,10 +7,15 @@ Algorytm A* jest algorytmem wyszukiwania ścieżki w grafie, który znajduje naj
 
 \subsubsection{Opis działania algorytmu}
 
-Algorytm łączy zalety przeszukiwania wszerz (BFS) i zachłannego przeszukiwania najlepszego pierwszego (Best-First Search). Działa poprzez minimalizację funkcji kosztu:
-\[
+Algorytm łączy zalety przeszukiwania wszerz (BFS) i zachłannego przeszukiwania najlepszego pierwszego (Best-First Search).
+Działa poprzez minimalizację funkcji kosztu (\cref{astar_cost})
+
+
+\begin{equation}
   f(n) = g(n) + h(n)
-\]
+  \label{astar_cost}
+\end{equation}
+
 gdzie:
 \begin{itemize}
   \item $g(n)$ - rzeczywisty koszt dotarcia z węzła startowego do bieżącego
@@ -33,11 +38,13 @@ gdzie:
 \end{enumerate}
 
 \subsubsection{Funkcja heurystyczna}
-Wykorzystana heurystyka to \textbf{odległość Manhattan (Taxicab)}:
-\[
+Wykorzystana heurystyka to \textbf{odległość Manhattan (Taxicab)} przedstawiona w równaniu \ref{taxicab_distance}:
+
+\begin{equation}
   h(n) = |n_x - \text{end}_x| + |n_y - \text{end}_y|
-\]
-Zapewnia dopuszczalność (nie przeszacowuje kosztu).
+  \label{taxicab_distance}
+\end{equation}
+Zapewnia dopuszczalność (Nigdy nie oszacuje, że trzeba przejść więcej kroków niż faktycznie potrzeba).
 
 \subsubsection{Główna pętla algorytmu}
 \begin{algorithmic}
