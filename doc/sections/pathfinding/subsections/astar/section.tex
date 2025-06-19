@@ -47,24 +47,30 @@ Wykorzystana heurystyka to \textbf{odległość Manhattan (Taxicab)} przedstawio
 Zapewnia dopuszczalność (Nigdy nie oszacuje, że trzeba przejść więcej kroków niż faktycznie potrzeba).
 
 \subsubsection{Główna pętla algorytmu}
-\begin{algorithmic}
-  \WHILE{kolejka nie jest pusta}
-  \STATE Pobierz węzeł o minimalnym $f(n)$ z \texttt{sortedQueue}
-  \STATE Oznacz bieżący węzeł jako \texttt{candidate}
-  \IF{bieżący węzeł jest metą}
-  \STATE Przerwij pętlę
-  \ENDIF
-  \FOR{każdego sąsiada}
-  \IF{sąsiad nie jest kolizją i nie był odwiedzony}
-  \STATE $g_{\text{new}} \gets g(\text{current}) + 1$
-  \STATE $f_{\text{new}} \gets g_{\text{new}} + h(\text{sąsiad})$
-  \STATE Zapisz stan: $g = g_{\text{new}}$, poprzednik = currentNodePos
-  \STATE Wstaw do kolejki z priorytetem $f_{\text{new}}$
-  \STATE Oznacz jako \texttt{queued}
-  \ENDIF
-  \ENDFOR
-  \ENDWHILE
-\end{algorithmic}
+
+
+
+\begin{algorithm}
+  \caption{Główna pętla algorytmu A*}
+  \begin{algorithmic}
+    \WHILE{kolejka nie jest pusta}
+    \STATE Pobierz węzeł o minimalnym $f(n)$ z \texttt{sortedQueue}
+    \STATE Oznacz bieżący węzeł jako \texttt{candidate}
+    \IF{bieżący węzeł jest metą}
+    \STATE Przerwij pętlę
+    \ENDIF
+    \FOR{każdego sąsiada}
+    \IF{sąsiad nie jest kolizją i nie był odwiedzony}
+    \STATE $g_{\text{new}} \gets g(\text{current}) + 1$
+    \STATE $f_{\text{new}} \gets g_{\text{new}} + h(\text{sąsiad})$
+    \STATE Zapisz stan: $g = g_{\text{new}}$, poprzednik = currentNodePos
+    \STATE Wstaw do kolejki z priorytetem $f_{\text{new}}$
+    \STATE Oznacz jako \texttt{queued}
+    \ENDIF
+    \ENDFOR
+    \ENDWHILE
+  \end{algorithmic}
+\end{algorithm}
 
 \subsubsection{Budowanie ścieżki}
 \begin{enumerate}
