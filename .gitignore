@@ -145,5 +145,4 @@ dist
 *.bbl
 *.blg
 section.pdf
-doc/doc.out
-section.out
+*.out
