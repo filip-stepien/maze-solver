@@ -9,20 +9,20 @@
 
 \subsubsection{Opis działania algorytmu}
 
-Algorytm wykorzystuje \textbf{przeszukiwanie w głąb (Depth-First Search)} do znalezienia ścieżki między punktem startowym a końcowym w labiryncie. Poniżej przedstawiono kluczowe kroki działania:
+Algorytm wykorzystuje \textbf{przeszukiwanie w głąb (Depth-First Search)} do znalezienia ścieżki między punktem startowym a końcowym w labiryncie. Poniżej przedstawiono kluczowe kroki działania.
 
 \subsubsection{Inicjalizacja}
 \begin{enumerate}
   \item Inicjalizacja struktur danych:
         \begin{itemize}
-          \item \texttt{stack} - stos przechowujący węzły do odwiedzenia (zainicjowany pozycją startową)
-          \item \texttt{state} - mapa śledząca stan węzłów (czy węzeł został odwiedzony)
+          \item \texttt{stack} - stos przechowujący węzły do odwiedzenia (zainicjowany pozycją startową),
+          \item \texttt{state} - mapa śledząca stan węzłów (czy węzeł został odwiedzony).
         \end{itemize}
-  \item Oznaczenie węzła startowego jako \texttt{queued} (w kolejce)
+  \item Oznaczenie węzła startowego jako \texttt{queued} (w kolejce).
 \end{enumerate}
 
 \subsubsection{Funkcja rekurencyjna DFS}
-Główna logika zaimplementowana jest w funkcji rekurencyjnej \texttt{dfs(currentNodePos)} przedstawia \cref{find_dfs}
+Główna logika zaimplementowana jest w funkcji rekurencyjnej \texttt{dfs(currentNodePos)} przedstawia algorytm \ref{find_dfs}.
 
 \begin{algorithm}
   \caption{Procedura DFS}
@@ -50,48 +50,45 @@ Główna logika zaimplementowana jest w funkcji rekurencyjnej \texttt{dfs(curren
   \end{algorithmic}
 \end{algorithm}
 
+\vspace{-16pt}
+
 \subsubsection{Proces budowania ścieżki}
 \begin{enumerate}
   \item \textbf{Propagacja w górę:} Po znalezieniu mety:
         \begin{itemize}
-          \item Następuje rekurencyjna propagacja w górę drzewa
-          \item Każdy węzeł dodaje swoją pozycję do ścieżki
-          \item Węzły na ścieżce oznaczane są jako \texttt{selected}
+          \item Następuje rekurencyjna propagacja w górę drzewa.
+          \item Każdy węzeł dodaje swoją pozycję do ścieżki.
+          \item Węzły na ścieżce oznaczane są jako \texttt{selected}.
         \end{itemize}
-  \item \textbf{Weryfikacja ścieżki:} Jeśli ścieżka nie istnieje, zwracana jest pusta lista
-  \item \textbf{Końcowe przetwarzanie:} Po zakończeniu rekurencji:
-        \begin{itemize}
-          \item Ścieżka jest odwracana:
-                \[ \text{finalna\_ścieżka} = \mathrm{reverse}(\text{ścieżka\_z\_rekurencji}) \]
-          \item Powód: ścieżka budowana jest od mety do startu, a wynik powinien przedstawiać kolejność od startu do mety
-        \end{itemize}
+  \item \textbf{Weryfikacja ścieżki:} Jeśli ścieżka nie istnieje, zwracana jest pusta lista.
+  \item \textbf{Końcowe przetwarzanie:} Po zakończeniu rekurencji ścieżka jest odwracana gdyż budowana jest od mety do startu, a wynik powinien przedstawiać kolejność od startu do mety.
 \end{enumerate}
 
-\subsubsection{Stany węzłów}
+\subsubsection{Możliwe stany węzłów}
 \begin{itemize}
-  \item \texttt{queued} - w kolejce do odwiedzenia
-  \item \texttt{candidate} - aktualnie przetwarzany
-  \item \texttt{selected} - część finalnej ścieżki
-  \item \texttt{forsaken} - porzucony (nie prowadzi do mety)
+  \item \texttt{queued} - w kolejce do odwiedzenia,
+  \item \texttt{candidate} - aktualnie przetwarzany,
+  \item \texttt{selected} - część finalnej ścieżki,
+  \item \texttt{forsaken} - porzucony (nie prowadzi do mety).
 \end{itemize}
 
 \subsubsection{Złożoność obliczeniowa}
 \begin{itemize}
-  \item \textbf{Czasowa}: $O(V + E)$
+  \item \textbf{Czasowa}: $O(V + E)$, gdzie:
         \begin{itemize}
-          \item $V$ - liczba węzłów
-          \item $E$ - liczba krawędzi
+          \item $V$ - liczba węzłów,
+          \item $E$ - liczba krawędzi.
         \end{itemize}
-  \item \textbf{Pamięciowa}: $O(V)$
-        \begin{itemize}
-          \item Zdeterminowana głębokością rekurencji
-        \end{itemize}
+  \item \textbf{Pamięciowa}: $O(V)$, zdeterminowana głębokością rekurencji
 \end{itemize}
 
-Przykład działania algorytmu przedstawia \cref{fig:dfs_solve_steps}.
+\noindent Przykład działania algorytmu przedstawiają rysunki \ref{fig:dfs_solve_steps_start}-\ref{fig:dfs_solve_steps_end}.
 
-\begin{multicols}{2}
+\vspace{4pt}
+\noindent \textit{W opisach rysunków współrzędne \( (x, y) \) oznaczają: \( x \) – kolumna, \( y \) – wiersz, licząc od zera.}
+
+% \begin{multicols}{2}
   \input{./figures/dfs_solve_steps.tex}
-\end{multicols}
+% \end{multicols}
 
 \end{document}

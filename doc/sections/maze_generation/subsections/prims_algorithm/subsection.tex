@@ -11,17 +11,17 @@
     
     \input{sections/maze_generation/subsections/prims_algorithm/figures/prim_step_2}
 
-    \item Do zbioru krawędzi dodawane są sąsiednie komórki, do których można przejść bezpośrednio z pola startowego. Za sąsiednie uznaje się komórki oddalone o jedno pole w pionie lub poziomie. Ilustrację tego etapu przedstawiono na Rysunku \ref{fig:prim_step_3}.
+    \item Do zbioru krawędzi dodawane są sąsiednie komórki, do których można przejść bezpośrednio z pola startowego. Za sąsiednie uznaje się komórki oddalone o jedno pole w pionie lub poziomie. Ilustrację tego etapu przedstawiono na rysunku \ref{fig:prim_step_3}.
     
     \input{sections/maze_generation/subsections/prims_algorithm/figures/prim_step_3}
 
-    \item Losowana jest jedna krawędź ze zbioru potencjalnych przejść. Jeśli prowadzi ona do nieodwiedzonego pola, tworzy się przejście między bieżącym polem a nowym (usuwana jest ściana między nimi), a nowe pole zostaje oznaczone jako przejście. Następnie do zbioru krawędzi dodawani są sąsiedzi nowo odwiedzonego pola. Ilustrację tego etapu przedstawiono na Rysunku \ref{fig:prim_step_4}.
+    \item Losowana jest jedna krawędź ze zbioru potencjalnych przejść. Jeśli prowadzi ona do nieodwiedzonego pola, tworzy się przejście między bieżącym polem a nowym (usuwana jest ściana między nimi), a nowe pole zostaje oznaczone jako przejście. Następnie do zbioru krawędzi dodawani są sąsiedzi nowo odwiedzonego pola. Ilustrację tego etapu przedstawiono na rysunku \ref{fig:prim_step_4}.
 
     \input{sections/maze_generation/subsections/prims_algorithm/figures/prim_step_4}
 
     \item Proces powtarza się, aż zbiór krawędzi stanie się pusty, co oznacza, że wszystkie komórki zostały połączone.
 
-    Na Rysunku \ref{fig:prim_later_steps_a} przedstawiono wyznaczanie kolejnych krawędzi labiryntu, a na Rysunku \ref{fig:prim_later_steps_b} końcowy labirynt powstały na podstawie tych krawędzi.
+    Na rysunku \ref{fig:prim_later_steps_a} przedstawiono wyznaczanie kolejnych krawędzi labiryntu, a na rysunku \ref{fig:prim_later_steps_b} końcowy labirynt powstały na podstawie tych krawędzi.
     
     \input{sections/maze_generation/subsections/prims_algorithm/figures/prim_later_steps}
 \end{enumerate}

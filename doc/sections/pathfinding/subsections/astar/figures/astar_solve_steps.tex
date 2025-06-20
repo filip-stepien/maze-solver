@@ -1,59 +1,58 @@
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+          
+  \begin{tikzpicture}[scale=0.8]
+  \node at (1.5, 0.5){\color{blue}\faIcon{user}};
+\fill[gray] (2, 0) rectangle (3, 1);
+\fill[gray] (0, 1) rectangle (1, 2);
+\fill[gray] (2, 1) rectangle (3, 2);
+\fill[gray] (4, 1) rectangle (5, 2);
+\fill[gray] (0, 2) rectangle (1, 3);
+\fill[gray] (2, 2) rectangle (3, 3);
+\fill[gray] (4, 2) rectangle (5, 3);
+\node at (4.5, 3.5){\color{blue}\faIcon{home}};
+\fill[gray] (0, 4) rectangle (1, 5);
+\fill[gray] (1, 4) rectangle (2, 5);
+\fill[gray] (3, 4) rectangle (4, 5);
+\fill[gray] (4, 4) rectangle (5, 5);
+\draw[black] grid (5, 5);
+  \end{tikzpicture}
+  
+          \caption{\centering Dodaj do kolejki węzeł (1,0).}
+          \label{fig:astar_solve_steps_start}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
+          \centering
+          
+  \begin{tikzpicture}[scale=0.8]
+  \node at (1.5, 0.5){\color{blue}\faIcon{user}};
+\fill[gray] (2, 0) rectangle (3, 1);
+\fill[gray] (0, 1) rectangle (1, 2);
+\fill[gray] (2, 1) rectangle (3, 2);
+\fill[gray] (4, 1) rectangle (5, 2);
+\fill[gray] (0, 2) rectangle (1, 3);
+\fill[gray] (2, 2) rectangle (3, 3);
+\fill[gray] (4, 2) rectangle (5, 3);
+\node at (4.5, 3.5){\color{blue}\faIcon{home}};
+\fill[gray] (0, 4) rectangle (1, 5);
+\fill[gray] (1, 4) rectangle (2, 5);
+\fill[gray] (3, 4) rectangle (4, 5);
+\fill[gray] (4, 4) rectangle (5, 5);
+\draw[black] grid (5, 5);
+  \end{tikzpicture}
+  
+          \caption{\centering Rozpatrz pole (1,0).}
+\end{minipage}
+\end{figure}
 
-        \begin{figure}[H]
-          
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
-  \node at (1.5, 0.5){\color{blue}\faIcon{user}};
-\fill[gray] (2, 0) rectangle (3, 1);
-\fill[gray] (0, 1) rectangle (1, 2);
-\fill[gray] (2, 1) rectangle (3, 2);
-\fill[gray] (4, 1) rectangle (5, 2);
-\fill[gray] (0, 2) rectangle (1, 3);
-\fill[gray] (2, 2) rectangle (3, 3);
-\fill[gray] (4, 2) rectangle (5, 3);
-\node at (4.5, 3.5){\color{blue}\faIcon{home}};
-\fill[gray] (0, 4) rectangle (1, 5);
-\fill[gray] (1, 4) rectangle (2, 5);
-\fill[gray] (3, 4) rectangle (4, 5);
-\fill[gray] (4, 4) rectangle (5, 5);
-\draw[black] grid (5, 5);
-  \end{tikzpicture}
-  
-          \caption{Dodaj do kolejki węzeł x: 1 y: 0}
-          \label{fig:astar_solve_steps}
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
-          \centering
-          
-  \begin{tikzpicture}
-  \node at (1.5, 0.5){\color{blue}\faIcon{user}};
-\fill[gray] (2, 0) rectangle (3, 1);
-\fill[gray] (0, 1) rectangle (1, 2);
-\fill[gray] (2, 1) rectangle (3, 2);
-\fill[gray] (4, 1) rectangle (5, 2);
-\fill[gray] (0, 2) rectangle (1, 3);
-\fill[gray] (2, 2) rectangle (3, 3);
-\fill[gray] (4, 2) rectangle (5, 3);
-\node at (4.5, 3.5){\color{blue}\faIcon{home}};
-\fill[gray] (0, 4) rectangle (1, 5);
-\fill[gray] (1, 4) rectangle (2, 5);
-\fill[gray] (3, 4) rectangle (4, 5);
-\fill[gray] (4, 4) rectangle (5, 5);
-\draw[black] grid (5, 5);
-  \end{tikzpicture}
-  
-          \caption{Rozpatrz x: 1 y: 0}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
-          \centering
-          
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
   \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
 \fill[gray] (0, 1) rectangle (1, 2);
@@ -71,15 +70,12 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Dodaj do kolejki węzeł x: 1 y: 1}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
+          \caption{\centering Dodaj do kolejki węzeł (1,1).}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
   \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
 \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
@@ -98,15 +94,16 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Dodaj do kolejki węzeł x: 0 y: 0}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
+          \caption{\centering Dodaj do kolejki węzeł (0,0).}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
   \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
 \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
@@ -125,15 +122,12 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Rozpatrz x: 1 y: 1}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
+          \caption{\centering Rozpatrz pole (1,1).}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
   \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
 \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
@@ -153,15 +147,16 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Dodaj do kolejki węzeł x: 1 y: 2}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
+          \caption{\centering Dodaj do kolejki węzeł (1,2).}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
   \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
 \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
@@ -181,15 +176,12 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Rozpatrz x: 1 y: 2}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
+          \caption{\centering Rozpatrz pole (1,2).}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
   \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
 \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
@@ -210,15 +202,16 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Dodaj do kolejki węzeł x: 1 y: 3}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
+          \caption{\centering Dodaj do kolejki węzeł (1,3).}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
   \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
 \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
@@ -239,15 +232,12 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Rozpatrz x: 1 y: 3}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
+          \caption{\centering Rozpatrz pole (1,3).}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
   \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
 \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
@@ -269,15 +259,16 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Dodaj do kolejki węzeł x: 0 y: 3}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
+          \caption{\centering Dodaj do kolejki węzeł (0,3).}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
   \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
 \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
@@ -300,15 +291,12 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Dodaj do kolejki węzeł x: 2 y: 3}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
+          \caption{\centering Dodaj do kolejki węzeł (2,3).}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
   \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
 \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
@@ -331,15 +319,16 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Rozpatrz x: 2 y: 3}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
+          \caption{\centering Rozpatrz pole (2,3).}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
   \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
 \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
@@ -363,15 +352,12 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Dodaj do kolejki węzeł x: 2 y: 4}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
+          \caption{\centering Dodaj do kolejki węzeł (2,4).}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
   \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
 \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
@@ -396,15 +382,16 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Dodaj do kolejki węzeł x: 3 y: 3}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
+          \caption{\centering Dodaj do kolejki węzeł (3,3).}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
   \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
 \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
@@ -429,49 +416,12 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Rozpatrz x: 3 y: 3}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
+          \caption{\centering Rozpatrz pole (3,3).}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
-  \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
-\node at (1.5, 0.5){\color{blue}\faIcon{user}};
-\fill[gray] (2, 0) rectangle (3, 1);
-\fill[gray] (0, 1) rectangle (1, 2);
-\node at (1.5, 1.5){\color{orange}\faIcon{arrows-alt}};
-\fill[gray] (2, 1) rectangle (3, 2);
-\fill[gray] (4, 1) rectangle (5, 2);
-\fill[gray] (0, 2) rectangle (1, 3);
-\node at (1.5, 2.5){\color{orange}\faIcon{arrows-alt}};
-\fill[gray] (2, 2) rectangle (3, 3);
-\node at (3.5, 2.5){\color{purple}\faIcon{hourglass}};
-\fill[gray] (4, 2) rectangle (5, 3);
-\node at (0.5, 3.5){\color{purple}\faIcon{hourglass}};
-\node at (1.5, 3.5){\color{orange}\faIcon{arrows-alt}};
-\node at (2.5, 3.5){\color{orange}\faIcon{arrows-alt}};
-\node at (3.5, 3.5){\color{orange}\faIcon{arrows-alt}};
-\node at (4.5, 3.5){\color{blue}\faIcon{home}};
-\fill[gray] (0, 4) rectangle (1, 5);
-\fill[gray] (1, 4) rectangle (2, 5);
-\node at (2.5, 4.5){\color{purple}\faIcon{hourglass}};
-\fill[gray] (3, 4) rectangle (4, 5);
-\fill[gray] (4, 4) rectangle (5, 5);
-\draw[black] grid (5, 5);
-  \end{tikzpicture}
-  
-          \caption{Dodaj do kolejki węzeł x: 3 y: 2}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
-          \centering
-          
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
   \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
 \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
@@ -497,15 +447,16 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Dodaj do kolejki węzeł x: 4 y: 3}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
+          \caption{\centering Dodaj do kolejki węzeł (3,2).}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
   \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
 \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
@@ -531,15 +482,12 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Rozpatrz x: 4 y: 3}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
+          \caption{\centering Dodaj do kolejki węzeł (4,3).}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
   \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
 \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
@@ -565,15 +513,47 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Wybierz x: 4 y: 3 do finalnej ścierzki}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
+          \caption{\centering Rozpatrz pole (4,3).}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
+  \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
+\node at (1.5, 0.5){\color{blue}\faIcon{user}};
+\fill[gray] (2, 0) rectangle (3, 1);
+\fill[gray] (0, 1) rectangle (1, 2);
+\node at (1.5, 1.5){\color{orange}\faIcon{arrows-alt}};
+\fill[gray] (2, 1) rectangle (3, 2);
+\fill[gray] (4, 1) rectangle (5, 2);
+\fill[gray] (0, 2) rectangle (1, 3);
+\node at (1.5, 2.5){\color{orange}\faIcon{arrows-alt}};
+\fill[gray] (2, 2) rectangle (3, 3);
+\node at (3.5, 2.5){\color{purple}\faIcon{hourglass}};
+\fill[gray] (4, 2) rectangle (5, 3);
+\node at (0.5, 3.5){\color{purple}\faIcon{hourglass}};
+\node at (1.5, 3.5){\color{orange}\faIcon{arrows-alt}};
+\node at (2.5, 3.5){\color{orange}\faIcon{arrows-alt}};
+\node at (3.5, 3.5){\color{orange}\faIcon{arrows-alt}};
+\node at (4.5, 3.5){\color{blue}\faIcon{home}};
+\fill[gray] (0, 4) rectangle (1, 5);
+\fill[gray] (1, 4) rectangle (2, 5);
+\node at (2.5, 4.5){\color{purple}\faIcon{hourglass}};
+\fill[gray] (3, 4) rectangle (4, 5);
+\fill[gray] (4, 4) rectangle (5, 5);
+\draw[black] grid (5, 5);
+  \end{tikzpicture}
+  
+          \caption{\centering Wybierz (4,3) do finalnej ścieżki.}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
+          \centering
+          
+  \begin{tikzpicture}[scale=0.8]
   \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
 \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
@@ -599,15 +579,16 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Wybierz x: 3 y: 3 do finalnej ścierzki}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
+          \caption{\centering Wybierz (3,3) do finalnej ścieżki.}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
   \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
 \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
@@ -633,15 +614,12 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Wybierz x: 2 y: 3 do finalnej ścierzki}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
+          \caption{\centering Wybierz (2,3) do finalnej ścieżki.}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
   \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
 \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
@@ -667,15 +645,16 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Wybierz x: 1 y: 3 do finalnej ścierzki}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
+          \caption{\centering Wybierz (1,3) do finalnej ścieżki.}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
   \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
 \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
@@ -701,15 +680,12 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Wybierz x: 1 y: 2 do finalnej ścierzki}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
+          \caption{\centering Wybierz (1,2) do finalnej ścieżki.}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
   \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
 \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
@@ -735,15 +711,16 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Wybierz x: 1 y: 1 do finalnej ścierzki}
-          
-        \end{figure}
-        
-        \begin{figure}[H]
-          \ContinuedFloat
+          \caption{\centering Wybierz (1,1) do finalnej ścieżki.}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
           \centering
           
-  \begin{tikzpicture}
+  \begin{tikzpicture}[scale=0.8]
   \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
 \node at (1.5, 0.5){\color{blue}\faIcon{user}};
 \fill[gray] (2, 0) rectangle (3, 1);
@@ -769,7 +746,7 @@
 \draw[black] grid (5, 5);
   \end{tikzpicture}
   
-          \caption{Wybierz x: 1 y: 0 do finalnej ścierzki}
-          
-        \end{figure}
-        
+          \caption{\centering Wybierz (1,0) do finalnej ścieżki.}
+          \label{fig:astar_solve_steps_end}
+\end{minipage}\hfill
+\end{figure}

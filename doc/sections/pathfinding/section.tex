@@ -19,83 +19,84 @@ Rozrózniamy następujące stany węzłów:
 \end{itemize}
 
 
-Ozanaczenia węzłów oraz ich stanów przedstawia \cref{fig:node_states}.
+Oznaczenia węzłów oraz ich stanów przedstawia \cref{fig:node_states}.
 
 \begin{figure}[H]
   \centering
-  \begin{subfigure}[b]{0.15\textwidth}
+  \begin{subfigure}[b]{0.2\textwidth}
     \centering
     \begin{tikzpicture}
       \fill[gray] (0,0) rectangle (1,1);
       \draw[black] (0,0) grid (1,1);
     \end{tikzpicture}
-    \caption{ściana}
+    \caption{Ściana.}
   \end{subfigure}%
   \hfill%
-  \begin{subfigure}[b]{0.15\textwidth}
+  \begin{subfigure}[b]{0.2\textwidth}
     \centering
     \begin{tikzpicture}
       \draw[black] (0,0) grid (1,1);
     \end{tikzpicture}
-    \caption{przejście}
+    \caption{Przejście.}
   \end{subfigure}%
   \hfill%
-  \begin{subfigure}[b]{0.15\textwidth}
+  \begin{subfigure}[b]{0.2\textwidth}
     \centering
     \begin{tikzpicture}
       \node at (0.5, 0.5){\color{orange}\faIcon{arrows-alt}};
       \draw[black] (0,0) grid (1,1);
     \end{tikzpicture}
-    \caption{candidate}
+    \caption{Pole \textit{candidate}.}
   \end{subfigure}%
   \hfill%
-  \begin{subfigure}[b]{0.15\textwidth}
+  \begin{subfigure}[b]{0.2\textwidth}
     \centering
     \begin{tikzpicture}
       \draw[black] (0,0) grid (1,1);
       \node at (0.5, 0.5){\color{blue}\faIcon{home}};
     \end{tikzpicture}
-    \caption{end}
+    \caption{Koniec ścieżki.}
   \end{subfigure}
 
+  \vspace{8pt}
 
   % \hfill%
-  \begin{subfigure}[b]{0.15\textwidth}
+  \begin{subfigure}[b]{0.2\textwidth}
     \centering
     \begin{tikzpicture}
       \draw[black] (0,0) grid (1,1);
       \node at (0.5, 0.5){\color{blue}\faIcon{user}};
     \end{tikzpicture}
-    \caption{start}
+    \caption{Pole startowe.}
   \end{subfigure}
   \hfill%
-  \begin{subfigure}[b]{0.15\textwidth}
+  \begin{subfigure}[b]{0.2\textwidth}
     \centering
     \begin{tikzpicture}
       \draw[black] (0,0) grid (1,1);
       \node at (0.5, 0.5){\color{green}\faIcon{check}};
     \end{tikzpicture}
-    \caption{selected}
+    \caption{Pole \textit{selected}.}
   \end{subfigure}
   \hfill%
-  \begin{subfigure}[b]{0.15\textwidth}
+  \begin{subfigure}[b]{0.2\textwidth}
     \centering
     \begin{tikzpicture}
       \draw[black] (0,0) grid (1,1);
       \node at (0.5, 0.5){\color{red}\faIcon{skull}};
     \end{tikzpicture}
-    \caption{Forsaken}
+    \caption{Pole \textit{forsaken}.}
   \end{subfigure}
   \hfill%
-  \begin{subfigure}[b]{0.15\textwidth}
+  \begin{subfigure}[b]{0.2\textwidth}
     \centering
     \begin{tikzpicture}
       \draw[black] (0,0) grid (1,1);
       \node at (0.5, 0.5){\color{purple}\faIcon{hourglass}};
     \end{tikzpicture}
-    \caption{queued}
+    \caption{Pole \textit{queued}.}
   \end{subfigure}
-  \caption{Oznaczenia}
+  \caption{Oznaczenia węzłów.}
   \label{fig:node_states}
 \end{figure}
 

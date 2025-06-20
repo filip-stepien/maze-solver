@@ -11,14 +11,14 @@ Algorytm wykorzystuje \textbf{przeszukiwanie wszerz (Breadth-First Search)} do z
 \begin{enumerate}
   \item Inicjalizacja struktur danych:
         \begin{itemize}
-          \item \texttt{queue} - kolejka FIFO przechowująca węzły do odwiedzenia (zainicjowana pozycją startową)
-          \item \texttt{state} - mapa śledząca pochodzenie węzłów (klucz: pozycja, wartość: pozycja rodzica)
+          \item \texttt{queue} - kolejka FIFO przechowująca węzły do odwiedzenia (zainicjowana pozycją startową),
+          \item \texttt{state} - mapa śledząca pochodzenie węzłów (klucz: pozycja, wartość: pozycja rodzica).
         \end{itemize}
-  \item Oznaczenie węzła startowego jako \texttt{queued} (w kolejce)
+  \item Oznaczenie węzła startowego jako \texttt{queued} (w kolejce).
 \end{enumerate}
 
 \subsubsection{Proces przeszukiwania BFS}
-Główna logika zaimplementowana jest w pętli przetwarzającej kolejkę:
+Główna logika zaimplementowana jest w pętli przetwarzającej kolejkę, co przedstawiono w algorytmie \ref{alg:bfs}:
 
 \begin{algorithm}
   \caption{Procedura BFS}
@@ -38,50 +38,55 @@ Główna logika zaimplementowana jest w pętli przetwarzającej kolejkę:
     \ENDFOR
     \ENDWHILE
   \end{algorithmic}
+  \label{alg:bfs}
 \end{algorithm}
 
 \subsubsection{Proces budowania ścieżki}
 \begin{enumerate}
   \item Jeśli cel ($end$) został osiągnięty:
         \begin{itemize}
-          \item Inicjalizacja pustej ścieżki
+          \item Inicjalizacja pustej ścieżki.
           \item Backtracking od celu do startu:
                 \begin{enumerate}
-                  \item Dodaj aktualną pozycję do ścieżki
-                  \item Przejdź do pozycji rodzica (z mapy \texttt{state})
-                  \item Oznacz węzeł jako \texttt{selected}
+                  \item Dodaj aktualną pozycję do ścieżki.
+                  \item Przejdź do pozycji rodzica (z mapy \texttt{state}).
+                  \item Oznacz węzeł jako \texttt{selected}.
                 \end{enumerate}
-          \item Oznaczenie węzła startowego jako \texttt{selected}
-          \item Odwrócenie ścieżki (od startu do celu)
+          \item Oznaczenie węzła startowego jako \texttt{selected}.
+          \item Odwrócenie ścieżki (od startu do celu).
         \end{itemize}
-  \item Jeśli cel nie został osiągnięty, zwracana jest pusta lista
+  \item Jeśli cel nie został osiągnięty, zwracana jest pusta lista.
 \end{enumerate}
 
 
 \subsubsection{Złożoność obliczeniowa}
 \begin{itemize}
-  \item \textbf{Czasowa}: $O(V + E)$
+  \item \textbf{Czasowa}: $O(V + E)$, gdzie:
         \begin{itemize}
-          \item $V$ - liczba wierzchołków (komórek labiryntu)
-          \item $E$ - liczba krawędzi (połączeń między komórkami)
+          \item $V$ - liczba wierzchołków (komórek labiryntu),
+          \item $E$ - liczba krawędzi (połączeń między komórkami).
         \end{itemize}
-  \item \textbf{Pamięciowa}: $O(V)$
+  \item \textbf{Pamięciowa}: $O(V)$:
         \begin{itemize}
-          \item Przechowywanie odwiedzonych węzłów w mapie stanu
-          \item Kolejka przechowująca do $O(V)$ elementów
+          \item Przechowywanie odwiedzonych węzłów w mapie stanu.
+          \item Kolejka przechowująca do $O(V)$ elementów.
         \end{itemize}
 \end{itemize}
 
 \subsubsection{Właściwości algorytmu}
 \begin{itemize}
-  \item \textbf{Gwarantuje znalezienie najkrótszej ścieżki} (w sensie liczby kroków)
-  \item \textbf{Eksploruje równomiernie} we wszystkich kierunkach
-  \item \textbf{Wymaga pełnej eksploracji} w najgorszym przypadku
+  \item \textbf{Gwarantuje znalezienie najkrótszej ścieżki} (w sensie liczby kroków).
+  \item \textbf{Eksploruje równomiernie} we wszystkich kierunkach.
+  \item \textbf{Wymaga pełnej eksploracji} w najgorszym przypadku.
 \end{itemize}
 
-Przykład działania algorytmu przedstawia \cref{fig:bfs_solve_steps}.
-\begin{multicols}{2}
+\noindent Przykład działania algorytmu przedstawiają rysunki \ref{fig:bfs_solve_steps_start}-\ref{fig:bfs_solve_steps_end}.
+
+\vspace{8pt}
+\noindent \textit{W opisach rysunków współrzędne \( (x, y) \) oznaczają: \( x \) – kolumna, \( y \) – wiersz, licząc od zera.}
+
+% \begin{multicols}{2}
   \input{./figures/bfs_solve_steps.tex}
-\end{multicols}
+% \end{multicols}
 
 \end{document}

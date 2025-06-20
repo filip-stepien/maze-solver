@@ -8,7 +8,7 @@ Algorytm A* jest algorytmem wyszukiwania ścieżki w grafie, który znajduje naj
 \subsubsection{Opis działania algorytmu}
 
 Algorytm łączy zalety przeszukiwania wszerz (BFS) i zachłannego przeszukiwania najlepszego pierwszego (Best-First Search).
-Działa poprzez minimalizację funkcji kosztu (\cref{astar_cost})
+Działa poprzez minimalizację funkcji kosztu (\cref{astar_cost}).
 
 
 \begin{equation}
@@ -18,22 +18,22 @@ Działa poprzez minimalizację funkcji kosztu (\cref{astar_cost})
 
 gdzie:
 \begin{itemize}
-  \item $g(n)$ - rzeczywisty koszt dotarcia z węzła startowego do bieżącego
-  \item $h(n)$ - heurystyczny koszt dotarcia z bieżącego węzła do celu
+  \item $g(n)$ - rzeczywisty koszt dotarcia z węzła startowego do bieżącego,
+  \item $h(n)$ - heurystyczny koszt dotarcia z bieżącego węzła do celu.
 \end{itemize}
 
 \subsubsection{Inicjalizacja}
 \begin{enumerate}
   \item Inicjalizacja struktur danych:
         \begin{itemize}
-          \item \texttt{state} - mapa stanów węzłów (przechowuje $g(n)$ i poprzednika)
-          \item \texttt{sortedQueue} - kolejka priorytetowa węzłów (posortowana po $f(n)$)
+          \item \texttt{state} - mapa stanów węzłów (przechowuje $g(n)$ i poprzednika),
+          \item \texttt{sortedQueue} - kolejka priorytetowa węzłów (posortowana po $f(n)$).
         \end{itemize}
   \item Dodanie węzła startowego:
         \begin{itemize}
           \item $g(\text{start}) = 0$
           \item $f(\text{start}) = h(\text{start})$
-          \item Oznaczenie startu jako \texttt{queued}
+          \item Oznaczenie startu jako \texttt{queued}.
         \end{itemize}
 \end{enumerate}
 
@@ -44,11 +44,11 @@ Wykorzystana heurystyka to \textbf{odległość Manhattan (Taxicab)} przedstawio
   h(n) = |n_x - \text{end}_x| + |n_y - \text{end}_y|
   \label{taxicab_distance}
 \end{equation}
-Zapewnia dopuszczalność (Nigdy nie oszacuje, że trzeba przejść więcej kroków niż faktycznie potrzeba).
+Zapewnia dopuszczalność (nigdy nie oszacuje, że trzeba przejść więcej kroków niż faktycznie potrzeba).
 
 \subsubsection{Główna pętla algorytmu}
 
-
+Główna pętla algorytmu A* została przedstawiona w algorytmie \ref{alg:astar}.
 
 \begin{algorithm}
   \caption{Główna pętla algorytmu A*}
@@ -70,33 +70,37 @@ Zapewnia dopuszczalność (Nigdy nie oszacuje, że trzeba przejść więcej krok
     \ENDFOR
     \ENDWHILE
   \end{algorithmic}
+  \label{alg:astar}
 \end{algorithm}
 
 \subsubsection{Budowanie ścieżki}
 \begin{enumerate}
   \item \textbf{Śledzenie wsteczne:}
         \begin{itemize}
-          \item Rozpocznij od mety
-          \item Podążaj do poprzedników aż do startu
-          \item Oznaczaj węzły jako \texttt{selected}
+          \item Rozpocznij od mety.
+          \item Podążaj do poprzedników aż do startu.
+          \item Oznaczaj węzły jako \texttt{selected}.
         \end{itemize}
   \item \textbf{Końcowe przetwarzanie:}
         \begin{itemize}
-          \item Odwróć ścieżkę (start $\rightarrow$ meta)
-          \item Oznacz start jako \texttt{selected}
+          \item Odwróć ścieżkę (start $\rightarrow$ meta).
+          \item Oznacz start jako \texttt{selected}.
         \end{itemize}
 \end{enumerate}
 
 
 \subsubsection{Złożoność obliczeniowa}
 \begin{itemize}
-  \item \textbf{Czasowa}: $O(n^2)$ (dla implementacji z listą)
-  \item \textbf{Pamięciowa}: $O(n)$ (przechowywanie stanów i kolejki)
+  \item \textbf{Czasowa}: $O(n^2)$ - dla implementacji z listą.
+  \item \textbf{Pamięciowa}: $O(n)$ - przechowywanie stanów i kolejki.
 \end{itemize}
-Przykład działania algorytmu przedstawia \cref{fig:astar_solve_steps}.
+\noindent Przykład działania algorytmu przedstawiają rysunki \ref{fig:astar_solve_steps_start}-\ref{fig:astar_solve_steps_end}.
 
-\begin{multicols}{2}
+\vspace{8pt}
+\noindent \textit{W opisach rysunków współrzędne \( (x, y) \) oznaczają: \( x \) – kolumna, \( y \) – wiersz, licząc od zera.}
+
+% \begin{multicols}{2}
   \input{./figures/astar_solve_steps.tex}
-\end{multicols}
+% \end{multicols}
 
 \end{document}
