@@ -243,7 +243,8 @@ export class MazePathFinderNode extends MazeNode {
 
     protected getChalkForegroundColorFunction() {
         const labelColorMap = new Map([
-            ['purple', chalk.rgb(64, 64, 233)],
+            ['purple', chalk.rgb(170, 0, 255)],
+            ['orange', chalk.rgb(255, 165, 0)],
             ['green', chalk.green],
             ['blue', chalk.blue],
             ['yellow', chalk.yellow],
