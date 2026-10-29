@@ -5,7 +5,7 @@ import { Vec2d } from '../../types';
 import { Random } from '../../utils/Random';
 import { GenerationStrategy } from './GenerationStrategy';
 
-export class DFSGenerationStategy implements GenerationStrategy {
+export class DFSGenerationStrategy implements GenerationStrategy {
     public generateMaze(cols: number, rows: number): boolean[][] {
         const maze = new Maze({
             size: new Vec2d([rows, cols]),

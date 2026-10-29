@@ -1,7 +1,7 @@
 import { MazeFacade } from '../maze/god';
 import MazePathFinder from '../maze/MazePathFinder';
 import { TikzExporter } from '../maze/tikzExporter';
-import { DFSGenerationStategy } from '../strategies/generation/DFSGenerationStrategy';
+import { DFSGenerationStrategy } from '../strategies/generation/DFSGenerationStrategy';
 import { KruskalsStrategy } from '../strategies/generation/KrushalsStrategy';
 import { PrimsStrategy } from '../strategies/generation/PrimsStrategy';
 import { DFSStrategy } from '../strategies/MazePathFindStrategy/DFSStrategy';

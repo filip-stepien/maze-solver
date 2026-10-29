@@ -9,10 +9,10 @@ import { Sleep } from './utils/Sleep';
 
 import commandLineArgs from 'command-line-args';
 import commandLineUsage from 'command-line-usage';
-import { availableStrategies } from './config/strategies';
+import { availableGenerationStrategies, availableStrategies } from './config/strategies';
 import { MazePathFindStrategy } from './strategies/MazePathFindStrategy/MazePathFindStrategy';
 import { MazeFacade } from './maze/god';
-import { PrimsStrategy } from './strategies/generation/PrimsStrategy';
+import { GenerationStrategy } from './strategies/generation/GenerationStrategy';
 
 const setupMaze = () => {
     console.debug('initializer: ', MazeNode.initializer);
@@ -60,9 +60,9 @@ const setupMaze = () => {
     return { start: new Vec2d([0, 0]), end: new Vec2d([30, 15]), maze };
 };
 
-const generateMaze = (size: Vec2d) => {
+const generateMaze = (size: Vec2d, generationStrategy: GenerationStrategy) => {
     const god: MazeFacade = new MazeFacade();
-    god.setGeneratorStrategy(new PrimsStrategy());
+    god.setGeneratorStrategy(generationStrategy);
     god.generateMaze(size);
     const maze = god.getMazePathFinder();
     const { start, end } = god.randomizeStartEndPositions();
@@ -75,7 +75,8 @@ const main = (
     mazeSize: Vec2d,
     animate: boolean,
     frameDuration: number,
-    maximize: boolean
+    maximize: boolean,
+    generationStrategy: GenerationStrategy
 ) => {
     const placeHolderMaze = new MazePathFinder({
         nodeFactory: () => {
@@ -143,7 +144,7 @@ const main = (
         process.stdout.moveCursor(-999999, 1);
     };
 
-    const { maze, start, end } = generateMaze(finallMazeSize);
+    const { maze, start, end } = generateMaze(finallMazeSize, generationStrategy);
     maze.getNode(start).makeStart();
     maze.getNode(end).makeFinish();
     // const { maze, start, end } = setupMaze();
@@ -235,6 +236,18 @@ const strategyOptions = availableStrategies.reduce((map, strategy) => {
     return map;
 }, new Map<string, MazePathFindStrategy<MazePathFinderNode>>());
 
+/**
+ * map of generation strategies as strings for option flags and their implementations
+ */
+const generationStrategyOptions = availableGenerationStrategies.reduce((map, strategy) => {
+    const strategyStringRepresentation = Object.getPrototypeOf(strategy).constructor.name.replace(
+        /Strategy/,
+        ''
+    );
+    map.set(strategyStringRepresentation, strategy);
+    return map;
+}, new Map<string, GenerationStrategy>());
+
 const optionDefinitions = [
     {
         name: 'animate',
@@ -264,6 +277,20 @@ const optionDefinitions = [
         alias: 'S',
         type: Boolean,
         description: 'list solving strategies'
+    },
+    {
+        name: 'generation',
+        alias: 'g',
+        type: String,
+        description:
+            'maze generation strategy (case insensitive). Use --generation-list to see allowed values.',
+        defaultValue: 'prims'
+    },
+    {
+        name: 'generation-list',
+        alias: 'G',
+        type: Boolean,
+        description: 'list maze generation strategies'
     },
     {
         name: 'frame-duration',
@@ -325,6 +352,12 @@ if (options['strategy-list'] === true) {
     console.log('Avilable strategies:\n\t' + Array.from(strategyOptions.keys()).join(' '));
     process.exit(0);
 }
+if (options['generation-list'] === true) {
+    console.log(
+        'Avilable generation strategies:\n\t' + Array.from(generationStrategyOptions.keys()).join(' ')
+    );
+    process.exit(0);
+}
 
 const mazeSize: Vec2d = new Vec2d([options.width, options.height]);
 const frameDuration: number = options['frame-duration'];
@@ -346,4 +379,21 @@ const strategies = options.strategy.reduce(
     []
 );
 
-main(strategies, mazeSize, animate, frameDuration, maximize);
+// parse generation strategy name
+const generationStrategyName: string = options.generation;
+let generationStrategy: GenerationStrategy;
+generationStrategyOptions.forEach((strategyImpl, strategyName) => {
+    if (generationStrategyName.toLowerCase() === strategyName.toLowerCase()) {
+        generationStrategy = strategyImpl;
+    }
+});
+if (!generationStrategy) {
+    console.log(
+        `Unknown generation strategy: ${generationStrategyName}\n` +
+            'Avilable generation strategies:\n\t' +
+            Array.from(generationStrategyOptions.keys()).join(' ')
+    );
+    process.exit(1);
+}
+
+main(strategies, mazeSize, animate, frameDuration, maximize, generationStrategy);
